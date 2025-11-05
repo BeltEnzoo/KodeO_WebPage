@@ -25,7 +25,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <div className={styles.contactLabel}>WhatsApp Business</div>
-                  <div className={styles.contactValue}>+54 9 11 2345-6789</div>
+                  <div className={styles.contactValue}>+54 9 2281 59-8338</div>
                 </div>
               </div>
               
@@ -35,7 +35,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <div className={styles.contactLabel}>Email</div>
-                  <div className={styles.contactValue}>contacto@kodeon.com.ar</div>
+                  <div className={styles.contactValue}>on.code.soluciones@gmail.com</div>
                 </div>
               </div>
               
@@ -54,17 +54,17 @@ const Contact = () => {
               <h4 className={styles.socialTitle}>Síguenos en Redes Sociales</h4>
               <div className={styles.socialLinks}>
                 <a 
-                  href="https://instagram.com/kodeon.health" 
+                  href="https://www.instagram.com/kode.on.soluciones/" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className={styles.socialLink}
                   aria-label="Instagram de KodeON"
                 >
                   <Instagram className={styles.socialIcon} />
-                  <span>@kodeon.health</span>
+                  <span>@kode.on.soluciones</span>
                 </a>
                 <a 
-                  href="https://facebook.com/kodeon.health" 
+                  href="https://www.facebook.com/kodeon.soluciones" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className={styles.socialLink}
@@ -105,7 +105,7 @@ const Contact = () => {
             
             <div className={styles.demoButtons}>
               <a 
-                href="https://wa.me/5491123456789?text=Hola%2C%20me%20gustar%C3%ADa%20agendar%20una%20demo%20de%20KodeON" 
+                href="https://wa.me/2281598338?text=Hola%2C%20me%20gustar%C3%ADa%20agendar%20una%20demo%20de%20KodeON" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className={styles.demoPrimaryButton}
@@ -115,7 +115,7 @@ const Contact = () => {
               </a>
               
               <a 
-                href="mailto:contacto@kodeon.com.ar?subject=Solicitud%20de%20Demo%20KodeON" 
+                href="mailto:on.code.soluciones@gmail.com?subject=Solicitud%20de%20Demo%20KodeON" 
                 className={styles.demoSecondaryButton}
               >
                 <Mail className="w-5 h-5" />

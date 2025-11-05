@@ -1,0 +1,60 @@
+.backToTop {
+  position: fixed;
+  bottom: 8rem;
+  right: 2rem;
+  width: 3.5rem;
+  height: 3.5rem;
+  background: linear-gradient(to bottom right, #2563eb, #059669);
+  border: 3px solid white;
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
+  transition: all 0.3s ease;
+  z-index: 998;
+  animation: fadeIn 0.3s ease;
+}
+
+.backToTop:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.6);
+  background: linear-gradient(to bottom right, #1d4ed8, #047857);
+}
+
+.backToTop:active {
+  transform: translateY(-2px);
+}
+
+.backToTopIcon {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (max-width: 640px) {
+  .backToTop {
+    bottom: 7rem;
+    right: 1.5rem;
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .backToTopIcon {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+}
+

@@ -34,7 +34,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 0;
+  padding: 1.25rem 0;
+}
+
+@media (min-width: 768px) {
+  .headerContent {
+    padding: 1.5rem 0;
+  }
 }
 
 .headerBrand {

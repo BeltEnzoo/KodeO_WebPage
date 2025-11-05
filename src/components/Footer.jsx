@@ -10,8 +10,7 @@ const Footer = () => {
         <div className={styles.footerGrid}>
           <div>
             <div className={styles.footerBrand}>
-              <Logo className="w-12 h-12" />
-              <span className={styles.footerLogoText}>KodeON</span>
+              <Logo />
             </div>
             <p className={styles.footerDescription}>
               Agencia especializada en desarrollo de software médico. 
@@ -19,7 +18,7 @@ const Footer = () => {
             </p>
             <div className={styles.socialLinks}>
               <a 
-                href="https://instagram.com/kodeon.health" 
+                href="https://www.instagram.com/kode.on.soluciones/" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className={styles.socialLink}
@@ -28,7 +27,7 @@ const Footer = () => {
                 <Instagram className={styles.socialIcon} />
               </a>
               <a 
-                href="https://facebook.com/kodeon.health" 
+                href="https://www.facebook.com/kodeon.soluciones" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className={styles.socialLink}
@@ -72,8 +71,8 @@ const Footer = () => {
           <div>
             <h4>Contacto</h4>
             <ul className={styles.footerLinks}>
-              <li>+54 9 11 2345-6789</li>
-              <li>contacto@kodeon.com.ar</li>
+              <li>+54 9 2281 59-8338</li>
+              <li>on.code.soluciones@gmail.com</li>
               <li>Buenos Aires, Argentina</li>
             </ul>
           </div>

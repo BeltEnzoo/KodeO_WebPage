@@ -3,9 +3,11 @@ import Logo from './components/Logo';
 import Products from './components/Products';
 import Services from './components/Services';
 import Benefits from './components/Benefits';
+import FAQ from './components/FAQ';
 import Pricing from './components/Pricing';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
+import BackToTop from './components/BackToTop';
 import { 
   Phone,
   ArrowRight,
@@ -20,8 +22,7 @@ function App() {
       <header className={styles.header}>
         <div className={styles.headerContainer}>
           <div className={styles.headerContent}>
-            <Logo className="w-16 h-16" showText={true} />
-            
+            <Logo />
             <nav className={styles.headerNav}>
               <a href="#productos" className={styles.navLink}>Nuestros Productos</a>
               <a href="#beneficios" className={styles.navLink}>Beneficios</a>
@@ -75,6 +76,8 @@ function App() {
       {/* Beneficios Section */}
       <Benefits />
 
+      {/* FAQ Section */}
+      <FAQ />
 
       {/* Pricing Section */}
       <Pricing />
@@ -96,6 +99,9 @@ function App() {
             <MessageCircle className={styles.whatsappIcon} />
             <span className={styles.whatsappText}>WhatsApp</span>
           </a>
+
+          {/* Botón Volver Arriba */}
+          <BackToTop />
         </div>
       );
     }

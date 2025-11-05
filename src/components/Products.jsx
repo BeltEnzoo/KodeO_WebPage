@@ -22,7 +22,7 @@ const Products = () => {
             <h3 className={styles.productTitle}>KodeON Consultorio</h3>
             <p className={styles.productDescription}>
               Software completo para consultorios médicos privados.
-              Gestión de pacientes, turnos, historias clínicas y facturación.
+              Gestión de pacientes, turnos, historias clinicas y mas.
             </p>
             <div className={styles.productFeatures}>
               <div className={styles.productFeature}>

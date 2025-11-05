@@ -48,28 +48,6 @@ const Benefits = () => {
               </div>
             </div>
           </div>
-          
-          <div className={styles.statsCard}>
-            <h3 className={styles.statsTitle}>Resultados Comprobados</h3>
-            <div className={styles.statsGrid}>
-              <div className={styles.statItem}>
-                <div className={styles.statNumber}>40%</div>
-                <div className={styles.statLabel}>Mejora eficiencia</div>
-              </div>
-              <div className={styles.statItem}>
-                <div className={styles.statNumber}>60%</div>
-                <div className={styles.statLabel}>Menos tiempo administrativo</div>
-              </div>
-              <div className={styles.statItem}>
-                <div className={styles.statNumber}>95%</div>
-                <div className={styles.statLabel}>Reducción errores</div>
-              </div>
-              <div className={styles.statItem}>
-                <div className={styles.statNumber}>100%</div>
-                <div className={styles.statLabel}>Satisfacción cliente</div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </section>

@@ -1,40 +1,43 @@
 .logoContainer {
   display: flex;
   align-items: center;
-  cursor: pointer;
   gap: 0.75rem;
 }
 
-.logoContainer svg {
-  flex-shrink: 0;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.3));
-  transform: translateY(-1px); /* Ajuste fino para centrar visualmente */
+.logoImage {
+  height: auto;
+  width: auto;
+  object-fit: contain;
+  display: block;
+  max-height: 4rem;
+  max-width: 300px;
 }
 
-.logoContainer span {
+@media (min-width: 768px) {
+  .logoImage {
+    max-height: 4.5rem;
+    max-width: 350px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .logoImage {
+    max-height: 5rem;
+    max-width: 400px;
+  }
+}
+
+@media (max-width: 640px) {
+  .logoImage {
+    max-height: 3rem;
+    max-width: 220px;
+  }
+}
+
+.logoText {
   font-size: 1.25rem;
   font-weight: 700;
   color: #1f2937;
   letter-spacing: -0.025em;
-  line-height: 1;
-  transform: translateY(1px); /* Compensación para el centrado visual */
 }
 
-.logoContainer:hover svg {
-  transform: scale(1.1) rotate(2deg) translateY(-1px);
-  filter: drop-shadow(0 0 16px rgba(59, 130, 246, 0.6)) drop-shadow(0 0 24px rgba(16, 185, 129, 0.4));
-}
-
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.8;
-  }
-}
-
-.logoContainer svg path {
-  animation: pulse 3s ease-in-out infinite;
-}
