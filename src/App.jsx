@@ -90,7 +90,7 @@ function App() {
 
           {/* WhatsApp Flotante */}
           <a 
-            href="https://wa.me/2281598338?text=Hola%2C%20me%20interesa%20conocer%20más%20sobre%20KodeON" 
+            href="https://wa.me/5492944369647?text=Hola%2C%20me%20interesa%20conocer%20más%20sobre%20KodeON" 
             target="_blank" 
             rel="noopener noreferrer"
             className={styles.whatsappFloating}

@@ -55,7 +55,7 @@ const Pricing = () => {
                 <span>¡No esperes más! Cada día sin digitalizar es tiempo perdido</span>
               </div>
               <a 
-                href="https://wa.me/2281598338?text=Hola%2C%20quiero%20transformar%20mi%20institución%20con%20KodeON" 
+                href="https://wa.me/5492944369647?text=Hola%2C%20quiero%20transformar%20mi%20institución%20con%20KodeON" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className={styles.pricingButton}

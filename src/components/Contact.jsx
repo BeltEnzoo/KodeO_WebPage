@@ -25,7 +25,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <div className={styles.contactLabel}>WhatsApp Business</div>
-                  <div className={styles.contactValue}>+54 9 2281 59-8338</div>
+                  <div className={styles.contactValue}>+54 9 2944 36-9647</div>
                 </div>
               </div>
               
@@ -105,7 +105,7 @@ const Contact = () => {
             
             <div className={styles.demoButtons}>
               <a 
-                href="https://wa.me/2281598338?text=Hola%2C%20me%20gustar%C3%ADa%20agendar%20una%20demo%20de%20KodeON" 
+                href="https://wa.me/5492944369647?text=Hola%2C%20me%20gustar%C3%ADa%20agendar%20una%20demo%20de%20KodeON" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className={styles.demoPrimaryButton}

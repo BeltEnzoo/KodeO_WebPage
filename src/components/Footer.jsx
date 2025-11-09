@@ -71,7 +71,7 @@ const Footer = () => {
           <div>
             <h4>Contacto</h4>
             <ul className={styles.footerLinks}>
-              <li>+54 9 2281 59-8338</li>
+              <li>+54 9 2944 36-9647</li>
               <li>on.code.soluciones@gmail.com</li>
               <li>Buenos Aires, Argentina</li>
             </ul>

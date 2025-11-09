@@ -39,7 +39,7 @@ const Products = () => {
               </div>
             </div>
             <a 
-              href="https://wa.me/2281598338?text=Hola%2C%20me%20interesa%20KodeON%20Consultorio" 
+              href="https://wa.me/5492944369647?text=Hola%2C%20me%20interesa%20KodeON%20Consultorio" 
               target="_blank" 
               rel="noopener noreferrer"
               className={styles.productContactButton}
@@ -100,7 +100,7 @@ const Products = () => {
               </div>
             </div>
             <a 
-              href="https://wa.me/2281598338?text=Hola%2C%20me%20interesa%20KodeON%20Hospital" 
+              href="https://wa.me/5492944369647?text=Hola%2C%20me%20interesa%20KodeON%20Hospital" 
               target="_blank" 
               rel="noopener noreferrer"
               className={styles.productContactButton}
@@ -134,7 +134,7 @@ const Products = () => {
               </div>
             </div>
             <a 
-              href="https://wa.me/2281598338?text=Hola%2C%20me%20interesa%20KodeON%20Equipment" 
+              href="https://wa.me/5492944369647?text=Hola%2C%20me%20interesa%20KodeON%20Equipment" 
               target="_blank" 
               rel="noopener noreferrer"
               className={styles.productContactButton}
@@ -168,7 +168,7 @@ const Products = () => {
               </div>
             </div>
             <a 
-              href="https://wa.me/2281598338?text=Hola%2C%20me%20interesa%20KodeON%20Farmacia" 
+              href="https://wa.me/5492944369647?text=Hola%2C%20me%20interesa%20KodeON%20Farmacia" 
               target="_blank" 
               rel="noopener noreferrer"
               className={styles.productContactButton}
@@ -202,7 +202,7 @@ const Products = () => {
               </div>
             </div>
             <a 
-              href="https://wa.me/2281598338?text=Hola%2C%20me%20interesa%20KodeON%20Turnera" 
+              href="https://wa.me/5492944369647?text=Hola%2C%20me%20interesa%20KodeON%20Turnera" 
               target="_blank" 
               rel="noopener noreferrer"
               className={styles.productContactButton}
@@ -235,7 +235,7 @@ const Products = () => {
               </div>
             </div>
             <a 
-              href="https://wa.me/2281598338?text=Hola%2C%20me%20interesa%20Desarrollo%20Personalizado" 
+              href="https://wa.me/5492944369647?text=Hola%2C%20me%20interesa%20Desarrollo%20Personalizado" 
               target="_blank" 
               rel="noopener noreferrer"
               className={styles.productContactButton}

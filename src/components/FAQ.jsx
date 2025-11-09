@@ -79,7 +79,7 @@ const FAQ = () => {
         <div className={styles.faqCta}>
           <p>¿Tienes otra pregunta?</p>
           <a 
-            href="https://wa.me/2281598338?text=Hola%2C%20tengo%20una%20pregunta%20sobre%20KodeON" 
+            href="https://wa.me/5492944369647?text=Hola%2C%20tengo%20una%20pregunta%20sobre%20KodeON" 
             target="_blank" 
             rel="noopener noreferrer"
             className={styles.faqCtaButton}
