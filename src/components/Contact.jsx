@@ -16,7 +16,7 @@ const Contact = () => {
         
         <div className={styles.contactGrid}>
           <div className={styles.contactInfoSection}>
-            <h3>Información de Contacto</h3>
+            <h3>Información de contacto</h3>
             
             <div className={styles.contactInfo}>
               <div className={styles.contactItem}>
@@ -24,7 +24,7 @@ const Contact = () => {
                   <Phone className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <div className={styles.contactLabel}>WhatsApp Business</div>
+                  <div className={styles.contactLabel}>WhatsApp business</div>
                   <div className={styles.contactValue}>+54 9 2944 36-9647</div>
                 </div>
               </div>
@@ -35,7 +35,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <div className={styles.contactLabel}>Email</div>
-                  <div className={styles.contactValue}>on.code.soluciones@gmail.com</div>
+                  <div className={styles.contactValue}>on.kode.soluciones@gmail.com</div>
                 </div>
               </div>
               
@@ -51,7 +51,7 @@ const Contact = () => {
             </div>
 
             <div className={styles.socialSection}>
-              <h4 className={styles.socialTitle}>Síguenos en Redes Sociales</h4>
+              <h4 className={styles.socialTitle}>Síguenos en redes sociales</h4>
               <div className={styles.socialLinks}>
                 <a 
                   href="https://www.instagram.com/kode.on.soluciones/" 
@@ -74,7 +74,7 @@ const Contact = () => {
                   <span>Facebook</span>
                 </a>
                 <a 
-                  href="https://linkedin.com/company/kodeon-health" 
+                  href="https://www.linkedin.com/company/kodeon-health" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className={styles.socialLink}
@@ -87,7 +87,7 @@ const Contact = () => {
             </div>
             
             <div className={styles.hoursCard}>
-              <h4 className={styles.hoursTitle}>Atención Personalizada</h4>
+              <h4 className={styles.hoursTitle}>Atención personalizada</h4>
               <div className={styles.hoursList}>
                 <div>Horarios flexibles según tu disponibilidad</div>
                 <div>Reuniones adaptadas a tu agenda</div>
@@ -97,7 +97,7 @@ const Contact = () => {
           </div>
           
           <div className={styles.demoCard}>
-            <h3>Solicitar Demo</h3>
+            <h3>Solicitar demo</h3>
             <p className={styles.demoDescription}>
               Agenda una demostración personalizada y descubre todas las funcionalidades 
               de KodeON adaptadas a las necesidades de tu hospital.
@@ -111,15 +111,15 @@ const Contact = () => {
                 className={styles.demoPrimaryButton}
               >
                 <Phone className="w-5 h-5" />
-                <span>Agendar Demo por WhatsApp</span>
+                <span>Agendar demo por WhatsApp</span>
               </a>
               
               <a 
-                href="mailto:on.code.soluciones@gmail.com?subject=Solicitud%20de%20Demo%20KodeON" 
+                href="mailto:on.kode.soluciones@gmail.com?subject=Solicitud%20de%20Demo%20KodeON" 
                 className={styles.demoSecondaryButton}
               >
                 <Mail className="w-5 h-5" />
-                <span>Enviar Email</span>
+                <span>Enviar email</span>
               </a>
             </div>
             

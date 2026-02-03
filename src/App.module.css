@@ -1,12 +1,84 @@
-/* Estilos para App principal con Header y Hero */
+/* Estilos para App principal con Header y Hero - Diseño Tecnológico Moderno */
 .appContainer {
   min-height: 100vh;
-  background-color: white;
+  background-color: #ffffff;
 }
 
+/* Top Bar - Barra Superior de Contacto */
+.topBar {
+  background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+  color: white;
+  padding: 0.625rem 0;
+  font-size: 0.875rem;
+}
+
+.topBarContainer {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .topBarContainer {
+    padding: 0 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .topBarContainer {
+    padding: 0 2rem;
+  }
+}
+
+.topBarLeft {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.topBarItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.topBarIcon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.topBarRight {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.socialIconLink {
+  color: white;
+  transition: opacity 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.socialIconLink:hover {
+  opacity: 0.8;
+}
+
+.socialIcon {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+/* Header */
 .header {
   background-color: white;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   position: sticky;
   top: 0;
   z-index: 50;
@@ -43,15 +115,10 @@
   }
 }
 
-.headerBrand {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
 .headerNav {
   display: none;
   gap: 2rem;
+  align-items: center;
 }
 
 @media (min-width: 768px) {
@@ -61,40 +128,59 @@
 }
 
 .navLink {
-  color: #4b5563;
+  color: #1f2937;
   text-decoration: none;
+  font-weight: 500;
+  font-size: 0.9375rem;
   transition: color 0.3s ease;
+  position: relative;
+  padding: 0.5rem 0;
 }
 
 .navLink:hover {
   color: #2563eb;
 }
 
-.whatsappButton {
-  background-color: #2563eb;
-  color: white;
-  padding: 0.5rem 1.5rem;
-  border-radius: 0.5rem;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: background-color 0.3s ease;
+.navLink::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #2563eb, #059669);
+  transition: width 0.3s ease;
 }
 
-.whatsappButton:hover {
-  background-color: #1d4ed8;
+.navLink:hover::after {
+  width: 100%;
 }
 
+/* Hero Section - Diseño Split Moderno */
 .heroSection {
-  background: linear-gradient(to bottom right, #2563eb, #059669);
-  padding: 5rem 0;
+  background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 50%, #f0f9ff 100%);
+  padding: 3rem 0 4rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.heroSection::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(5, 150, 105, 0.05) 100%);
+  border-radius: 0 0 0 100px;
 }
 
 .heroContainer {
   max-width: 1280px;
   margin: 0 auto;
   padding: 0 1rem;
+  position: relative;
+  z-index: 1;
 }
 
 @media (min-width: 640px) {
@@ -109,63 +195,191 @@
   }
 }
 
+.heroGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+@media (min-width: 1024px) {
+  .heroGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+  }
+}
+
 .heroContent {
-  text-align: center;
+  max-width: 100%;
+}
+
+@media (min-width: 1024px) {
+  .heroContent {
+    max-width: 36rem;
+  }
+}
+
+.heroBadge {
+  display: inline-block;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white;
+  padding: 0.375rem 0.875rem;
+  border-radius: 0.5rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: capitalize;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.heroSectionItem {
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid rgba(37, 99, 235, 0.1);
+}
+
+.heroSectionItem:last-of-type {
+  border-bottom: none;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0;
 }
 
 .heroTitle {
-  font-size: 3rem;
-  font-weight: 700;
-  color: white;
-  margin-bottom: 1.5rem;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #111827;
+  margin-bottom: 0.75rem;
   line-height: 1.1;
+  letter-spacing: -0.02em;
 }
 
 @media (min-width: 768px) {
   .heroTitle {
-    font-size: 3.75rem;
+    font-size: 2.75rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .heroTitle {
+    font-size: 3.25rem;
   }
 }
 
 .heroSubtitle {
   display: block;
-  font-size: 1.875rem;
-  font-weight: 400;
-  margin-top: 0.5rem;
+  font-size: 1.375rem;
+  font-weight: 600;
+  color: #2563eb;
+  margin-top: 0.375rem;
+  background: linear-gradient(135deg, #2563eb, #059669);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 @media (min-width: 768px) {
   .heroSubtitle {
-    font-size: 2.25rem;
+    font-size: 1.75rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .heroSubtitle {
+    font-size: 2rem;
   }
 }
 
 .heroDescription {
+  font-size: 1rem;
+  color: #4b5563;
+  margin-bottom: 0;
+  line-height: 1.6;
+  max-width: 32rem;
+}
+
+@media (min-width: 768px) {
+  .heroDescription {
+    font-size: 1.0625rem;
+  }
+}
+
+.heroTitleSecondary {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #111827;
+  margin-bottom: 0.75rem;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+@media (min-width: 768px) {
+  .heroTitleSecondary {
+    font-size: 2.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .heroTitleSecondary {
+    font-size: 2.5rem;
+  }
+}
+
+.heroSubtitleSecondary {
+  display: block;
   font-size: 1.25rem;
-  color: rgba(147, 197, 253, 1);
-  margin-bottom: 2rem;
-  max-width: 48rem;
-  margin-left: auto;
-  margin-right: auto;
+  font-weight: 600;
+  color: #059669;
+  margin-top: 0.375rem;
+  background: linear-gradient(135deg, #059669, #10b981);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@media (min-width: 768px) {
+  .heroSubtitleSecondary {
+    font-size: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .heroSubtitleSecondary {
+    font-size: 1.75rem;
+  }
+}
+
+.heroDescriptionSecondary {
+  font-size: 1rem;
+  color: #4b5563;
+  margin-bottom: 0;
+  line-height: 1.6;
+  max-width: 32rem;
+}
+
+@media (min-width: 768px) {
+  .heroDescriptionSecondary {
+    font-size: 1.0625rem;
+  }
 }
 
 .heroButtons {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  justify-content: center;
 }
 
 @media (min-width: 640px) {
   .heroButtons {
     flex-direction: row;
+    gap: 1rem;
   }
 }
 
 .heroPrimaryButton {
-  background-color: white;
-  color: #2563eb;
-  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white;
+  padding: 0.75rem 1.5rem;
   border-radius: 0.5rem;
   font-weight: 600;
   text-decoration: none;
@@ -173,26 +387,54 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+  font-size: 0.9375rem;
 }
 
 .heroPrimaryButton:hover {
-  background-color: #f9fafb;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+}
+
+.heroButtonIcon {
+  width: 1.25rem;
+  height: 1.25rem;
 }
 
 .heroSecondaryButton {
-  border: 2px solid white;
-  color: white;
-  padding: 1rem 2rem;
+  border: 2px solid #2563eb;
+  color: #2563eb;
+  padding: 0.75rem 1.5rem;
   border-radius: 0.5rem;
   font-weight: 600;
   text-decoration: none;
   transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  font-size: 0.9375rem;
 }
 
 .heroSecondaryButton:hover {
-  background-color: white;
-  color: #2563eb;
+  background: #2563eb;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+}
+
+/* Hero Visual */
+.heroVisual {
+  display: none;
+  position: relative;
+}
+
+@media (min-width: 1024px) {
+  .heroVisual {
+    display: block;
+  }
 }
 
 /* WhatsApp Flotante */

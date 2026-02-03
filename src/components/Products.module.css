@@ -1,7 +1,8 @@
-/* Componente específico de estilos con CSS puro */
+/* Componente específico de estilos con CSS puro - Diseño Tecnológico */
 .productsSection {
   padding: 3.5rem 0;
-  background-color: #f9fafb;
+  background: linear-gradient(to bottom, #ffffff 0%, #f8fafc 100%);
+  position: relative;
 }
 
 .productsContainer {
@@ -24,18 +25,25 @@
 
 .productsHeader {
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
 }
 
 .productsTitle {
   font-size: 1.875rem;
-  font-weight: 700;
+  font-weight: 800;
   color: #111827;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+}
+
+@media (min-width: 768px) {
+  .productsTitle {
+    font-size: 2.25rem;
+  }
 }
 
 .productsSubtitle {
-  font-size: 1.125rem;
+  font-size: 1rem;
   color: #4b5563;
   max-width: 36rem;
   margin: 0 auto;
@@ -59,16 +67,158 @@
   }
 }
 
+/* Card Destacada - Desarrollo Personalizado */
+.productCardFeatured {
+  grid-column: 1 / -1;
+  background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+  border: 2px solid transparent;
+  background-image: linear-gradient(white, white), linear-gradient(135deg, #2563eb, #059669);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  padding: 2.5rem;
+  position: relative;
+  overflow: visible;
+}
+
+.productCardFeatured::before {
+  height: 6px;
+  background: linear-gradient(90deg, #2563eb, #059669);
+  transform: scaleX(1);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+@media (min-width: 1024px) {
+  .productCardFeatured {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 2rem;
+    align-items: center;
+  }
+}
+
+.featuredBadge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: linear-gradient(135deg, #2563eb, #059669);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 2rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+  z-index: 10;
+}
+
+.productIconFeatured {
+  width: 4rem;
+  height: 4rem;
+  background: linear-gradient(135deg, #2563eb, #059669);
+  border-radius: 1rem;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+  margin-bottom: 0;
+}
+
+@media (min-width: 1024px) {
+  .productIconFeatured {
+    margin-bottom: 0;
+  }
+}
+
+.productIconFeaturedStyle {
+  width: 2rem;
+  height: 2rem;
+  color: white;
+}
+
+.productTitleFeatured {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #111827;
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #111827 0%, #2563eb 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@media (min-width: 768px) {
+  .productTitleFeatured {
+    font-size: 2rem;
+  }
+}
+
+.productDescriptionFeatured {
+  color: #4b5563;
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+}
+
+.productContactButtonFeatured {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+  font-size: 1rem;
+  margin-top: auto;
+}
+
+.productContactButtonFeatured:hover {
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
+}
+
+@media (min-width: 1024px) {
+  .productCardFeatured > *:not(.featuredBadge) {
+    grid-column: 2;
+  }
+  
+  .productIconFeatured {
+    grid-column: 1;
+    grid-row: 1 / 3;
+    align-self: start;
+  }
+}
+
 .productCard {
   background-color: white;
   padding: 1.5rem;
-  border-radius: 0.75rem;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
+  border-radius: 1rem;
+  border: 1px solid rgba(37, 99, 235, 0.1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
   height: 100%;
   position: relative;
+  overflow: hidden;
+}
+
+.productCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #2563eb, #059669);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s ease;
 }
 
 .productCard:has(.comingSoonBadge) {
@@ -77,8 +227,13 @@
 }
 
 .productCard:hover {
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  transform: translateY(-4px);
+  box-shadow: 0 20px 25px -5px rgba(37, 99, 235, 0.15), 0 10px 10px -5px rgba(37, 99, 235, 0.1);
+  transform: translateY(-6px);
+  border-color: rgba(37, 99, 235, 0.3);
+}
+
+.productCard:hover::before {
+  transform: scaleX(1);
 }
 
 .productIconContainer {

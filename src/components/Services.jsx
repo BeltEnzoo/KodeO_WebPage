@@ -7,7 +7,7 @@ const Services = () => {
     <section id="servicios" className={styles.servicesSection}>
       <div className={styles.servicesContainer}>
         <div className={styles.servicesHeader}>
-          <h2 className={styles.servicesTitle}>Nuestros Servicios de Desarrollo</h2>
+          <h2 className={styles.servicesTitle}>Nuestros servicios de desarrollo</h2>
           <p className={styles.servicesSubtitle}>
             Servicios profesionales de desarrollo de software médico a medida
           </p>
@@ -18,7 +18,7 @@ const Services = () => {
             <div className={`${styles.serviceIconContainer} ${styles.serviceIconBlue}`}>
               <Heart className={styles.serviceIconBlueStyle} />
             </div>
-            <h3 className={styles.serviceTitle}>Gestión de Equipamiento</h3>
+            <h3 className={styles.serviceTitle}>Gestión de equipamiento</h3>
             <p className={styles.serviceDescription}>
               Control completo del inventario médico, mantenimiento preventivo y seguimiento de estado de equipos.
             </p>
@@ -42,7 +42,7 @@ const Services = () => {
             <div className={`${styles.serviceIconContainer} ${styles.serviceIconGreen}`}>
               <BarChart3 className={styles.serviceIconGreenStyle} />
             </div>
-            <h3 className={styles.serviceTitle}>Análisis y Reportes</h3>
+            <h3 className={styles.serviceTitle}>Análisis y reportes</h3>
             <p className={styles.serviceDescription}>
               Dashboards intuitivos con métricas clave para la toma de decisiones informadas.
             </p>
@@ -66,7 +66,7 @@ const Services = () => {
             <div className={`${styles.serviceIconContainer} ${styles.serviceIconBlue}`}>
               <Shield className={styles.serviceIconBlueStyle} />
             </div>
-            <h3 className={styles.serviceTitle}>Seguridad y Cumplimiento</h3>
+            <h3 className={styles.serviceTitle}>Seguridad y cumplimiento</h3>
             <p className={styles.serviceDescription}>
               Cumplimiento con normativas médicas y protección de datos sensibles.
             </p>

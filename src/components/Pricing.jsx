@@ -7,7 +7,7 @@ const Pricing = () => {
     <section id="precios" className={styles.pricingSection}>
       <div className={styles.pricingContainer}>
         <div className={styles.pricingHeader}>
-          <h2 className={styles.pricingTitle}>¿Listo para Transformar tu Institución?</h2>
+          <h2 className={styles.pricingTitle}>¿Listo para transformar tu institución?</h2>
           <p className={styles.pricingSubtitle}>Únete a las instituciones de salud que ya digitalizaron sus procesos con KodeON</p>
         </div>
         
@@ -16,14 +16,14 @@ const Pricing = () => {
             <div className={styles.pricingCardHeader}>
               <div className={styles.pricingMotivation}>
                 <Star className={styles.motivationIcon} />
-                <h3 className={styles.pricingCardTitle}>Solución Completa</h3>
-                <p className={styles.pricingCardSubtitle}>Cualquier producto KodeON - Consultorios, Clínicas, Hospitales, Equipos, Farmacias</p>
+                <h3 className={styles.pricingCardTitle}>Solución completa</h3>
+                <p className={styles.pricingCardSubtitle}>Cualquier producto KodeON - Consultorios, clínicas, hospitales, equipos, farmacias</p>
               </div>
             </div>
             
             <div className={styles.pricingFeatures}>
               <div className={styles.pricingFeatureList}>
-                <h4>Lo que incluye tu inversión:</h4>
+                <h4>Lo que incluye tu inversión</h4>
                 <ul>
                   <li className={styles.pricingFeatureItem}>
                     <CheckCircle className={styles.pricingFeatureIcon} />
@@ -61,7 +61,7 @@ const Pricing = () => {
                 className={styles.pricingButton}
               >
                 <Phone className="w-5 h-5" />
-                <span>¡Quiero Transformar mi Institución!</span>
+                <span>¡Quiero transformar mi institución!</span>
               </a>
               <p className={styles.pricingNote}>
                 Consulta sin compromiso • Implementación rápida • Resultados garantizados

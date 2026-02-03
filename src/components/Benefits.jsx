@@ -22,7 +22,7 @@ const Benefits = () => {
                   <CheckCircle className={styles.benefitIconContent} />
                 </div>
                 <div className={styles.benefitContent}>
-                  <h3 className={styles.benefitTitle}>Gestión Integral de la Salud</h3>
+                  <h3 className={styles.benefitTitle}>Gestión integral de la salud</h3>
                   <p className={styles.benefitDescription}>Desde consultorios hasta hospitales completos. Soluciones unificadas que integran pacientes, equipamiento, personal y procesos médicos.</p>
                 </div>
               </div>
@@ -32,7 +32,7 @@ const Benefits = () => {
                   <CheckCircle className={styles.benefitIconContent} />
                 </div>
                 <div className={styles.benefitContent}>
-                  <h3 className={styles.benefitTitle}>Mejora la Experiencia del Paciente</h3>
+                  <h3 className={styles.benefitTitle}>Mejora la experiencia del paciente</h3>
                   <p className={styles.benefitDescription}>Optimiza flujos de atención, reduce tiempos de espera y mejora la coordinación entre diferentes áreas médicas.</p>
                 </div>
               </div>
@@ -42,7 +42,7 @@ const Benefits = () => {
                   <CheckCircle className={styles.benefitIconContent} />
                 </div>
                 <div className={styles.benefitContent}>
-                  <h3 className={styles.benefitTitle}>Digitalización Completa</h3>
+                  <h3 className={styles.benefitTitle}>Digitalización completa</h3>
                   <p className={styles.benefitDescription}>Historiales electrónicos, turnos digitales, facturación automática y reportes en tiempo real para toda la organización médica.</p>
                 </div>
               </div>

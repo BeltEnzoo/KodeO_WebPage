@@ -36,7 +36,7 @@ const Footer = () => {
                 <Facebook className={styles.socialIcon} />
               </a>
               <a 
-                href="https://linkedin.com/company/kodeon-health" 
+                href="https://www.linkedin.com/company/kodeon-health" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className={styles.socialLink}
@@ -53,7 +53,7 @@ const Footer = () => {
               <li>Consultorios</li>
               <li>Clínicas</li>
               <li>Hospitales</li>
-              <li>Equipos Médicos</li>
+              <li>Equipos médicos</li>
               <li>Farmacias</li>
             </ul>
           </div>
@@ -72,7 +72,7 @@ const Footer = () => {
             <h4>Contacto</h4>
             <ul className={styles.footerLinks}>
               <li>+54 9 2944 36-9647</li>
-              <li>on.code.soluciones@gmail.com</li>
+              <li>on.kode.soluciones@gmail.com</li>
               <li>Buenos Aires, Argentina</li>
             </ul>
           </div>
