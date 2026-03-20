@@ -177,3 +177,27 @@ npm run start
 - En desarrollo, Vite ya proxya `/api` a `http://localhost:4000`.
 - En produccion, Express sirve `dist/` y tambien responde `/api`.
 - Asegurate de persistir `data/app.db` y `storage/pdf/`.
+
+## Deploy en Render
+
+Se incluye `render.yaml` para despliegue con disco persistente.
+
+### Recomendado (SQLite + PDFs persistentes)
+
+- Plan: `starter` (permite persistent disk).
+- El disco se monta en `/var/data`.
+- Variables importantes:
+  - `DATABASE_URL=file:/var/data/app.db`
+  - `STORAGE_DIR=/var/data`
+  - `CORS_ORIGIN=https://TU-APP.onrender.com`
+
+### Pasos
+
+1. En Render: **New + > Blueprint** y seleccionar este repo.
+2. Revisar nombre del servicio y ajustar `CORS_ORIGIN` al dominio real.
+3. Deploy.
+4. Primera vez (Shell de Render o deploy command adicional):
+   - `npm run prisma:seed` para crear admin inicial.
+5. Subir assets de PDF al disco:
+   - `/var/data/pdf-assets/logo.png`
+   - `/var/data/pdf-assets/signature.png`

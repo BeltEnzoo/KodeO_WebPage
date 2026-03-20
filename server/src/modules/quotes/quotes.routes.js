@@ -7,6 +7,9 @@ import { prisma } from '../../lib/prisma.js';
 import { requireAuth, requireRole } from '../../middleware/auth.js';
 
 const quotesRouter = Router();
+const storageRoot = process.env.STORAGE_DIR
+  ? path.resolve(process.env.STORAGE_DIR)
+  : path.join(process.cwd(), 'storage');
 
 const quoteItemSchema = z.object({
   description: z.string().min(2, 'Descripcion de item invalida.'),
@@ -112,11 +115,17 @@ async function generateQuotePdf(quote) {
   const quoteCode = getFormattedQuoteCode(quote.number, new Date(quote.issueDate));
   const issueDateLabel = new Date(quote.issueDate).toLocaleDateString('es-AR');
   const logoAsset = await loadImageFromCandidates(pdfDoc, [
+    path.join(storageRoot, 'pdf-assets', 'logo.png'),
+    path.join(storageRoot, 'pdf-assets', 'logo.jpg'),
+    path.join(storageRoot, 'pdf-assets', 'logo.jpeg'),
     path.join(process.cwd(), 'storage', 'pdf-assets', 'logo.png'),
     path.join(process.cwd(), 'storage', 'pdf-assets', 'logo.jpg'),
     path.join(process.cwd(), 'storage', 'pdf-assets', 'logo.jpeg'),
   ]);
   const signatureAsset = await loadImageFromCandidates(pdfDoc, [
+    path.join(storageRoot, 'pdf-assets', 'signature.png'),
+    path.join(storageRoot, 'pdf-assets', 'signature.jpg'),
+    path.join(storageRoot, 'pdf-assets', 'signature.jpeg'),
     path.join(process.cwd(), 'storage', 'pdf-assets', 'signature.png'),
     path.join(process.cwd(), 'storage', 'pdf-assets', 'signature.jpg'),
     path.join(process.cwd(), 'storage', 'pdf-assets', 'signature.jpeg'),
@@ -256,7 +265,7 @@ async function generateQuotePdf(quote) {
   page.drawText('instagram: kode.on.soluciones', { x: 35, y: 30, size: 8, font, color: brandBlue });
   page.drawText('whatsapp: 2944369647', { x: 410, y: 30, size: 8, font, color: brandBlue });
 
-  const outputDir = path.join(process.cwd(), 'storage', 'pdf', 'quotes');
+  const outputDir = path.join(storageRoot, 'pdf', 'quotes');
   await fs.mkdir(outputDir, { recursive: true });
   const fileName = `quote-${quote.number}-${quote.id}.pdf`;
   const filePath = path.join(outputDir, fileName);
@@ -264,7 +273,7 @@ async function generateQuotePdf(quote) {
   const pdfBytes = await pdfDoc.save();
   await fs.writeFile(filePath, pdfBytes);
 
-  return { fileName, relativePath: path.join('storage', 'pdf', 'quotes', fileName) };
+  return { fileName, relativePath: path.join('pdf', 'quotes', fileName) };
 }
 
 quotesRouter.get('/', requireAuth, requireRole('ADMIN'), async (_req, res) => {
@@ -368,7 +377,7 @@ quotesRouter.get('/:quoteId/pdf', requireAuth, async (req, res) => {
     return res.status(403).json({ error: 'No autorizado para ver este documento.' });
   }
 
-  const absolutePath = path.join(process.cwd(), quote.pdfPath);
+  const absolutePath = path.join(storageRoot, quote.pdfPath);
   return res.download(absolutePath, `presupuesto-${getFormattedQuoteCode(quote.number)}.pdf`);
 });
 
@@ -383,7 +392,7 @@ quotesRouter.delete('/:quoteId', requireAuth, requireRole('ADMIN'), async (req, 
   }
 
   if (quote.pdfPath) {
-    const absolutePath = path.join(process.cwd(), quote.pdfPath);
+    const absolutePath = path.join(storageRoot, quote.pdfPath);
     await fs.unlink(absolutePath).catch(() => null);
   }
 

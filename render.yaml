@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: kodeon-app
+    runtime: node
+    plan: starter
+    buildCommand: npm install && npm run build:prod && npx prisma migrate deploy && npx prisma generate
+    startCommand: npm run start
+    healthCheckPath: /api/health
+    disk:
+      name: kodeon-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: API_PORT
+        value: "10000"
+      - key: CORS_ORIGIN
+        value: https://kodeon-app.onrender.com
+      - key: DATABASE_URL
+        value: file:/var/data/app.db
+      - key: STORAGE_DIR
+        value: /var/data
+      - key: JWT_EXPIRES_IN
+        value: 8h
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ADMIN_EMAIL
+        value: admin@kodeon.com
+      - key: ADMIN_PASSWORD
+        value: ChangeMe123!
