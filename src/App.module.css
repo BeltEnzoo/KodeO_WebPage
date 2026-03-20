@@ -156,6 +156,22 @@
   width: 100%;
 }
 
+.loginButton {
+  border: 1px solid #2563eb;
+  color: #2563eb;
+  text-decoration: none;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.875rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.loginButton:hover {
+  background-color: #2563eb;
+  color: #ffffff;
+}
+
 /* Hero Section - Diseño Split Moderno */
 .heroSection {
   background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 50%, #f0f9ff 100%);

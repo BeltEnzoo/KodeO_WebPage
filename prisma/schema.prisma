@@ -1,0 +1,166 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  CLIENT
+}
+
+enum WorkStatus {
+  PENDING
+  IN_PROGRESS
+  DONE
+}
+
+enum BillingStatus {
+  NOT_INVOICED
+  INVOICED
+  PAID
+}
+
+enum QuoteStatus {
+  DRAFT
+  SENT
+  ACCEPTED
+  REJECTED
+}
+
+enum DeliveryNoteStatus {
+  ISSUED
+  DELIVERED
+  CANCELLED
+}
+
+enum MovementType {
+  INCOME
+  EXPENSE
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         UserRole
+  active       Boolean  @default(true)
+  clientId     String?  @unique
+  client       Client?  @relation(fields: [clientId], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  auditLogs AuditLog[]
+}
+
+model Client {
+  id            String   @id @default(cuid())
+  businessName  String
+  cuit          String?  @unique
+  address       String?
+  phone         String?
+  email         String?
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  user          User?
+  jobs          Job[]
+  quotes        Quote[]
+  deliveryNotes DeliveryNote[]
+}
+
+model Job {
+  id            String        @id @default(cuid())
+  clientId      String
+  client        Client        @relation(fields: [clientId], references: [id])
+  title         String
+  description   String?
+  workStatus    WorkStatus    @default(PENDING)
+  billingStatus BillingStatus @default(NOT_INVOICED)
+  amount        Float?
+  startDate     DateTime?
+  endDate       DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+model Quote {
+  id         String      @id @default(cuid())
+  number     Int         @unique
+  clientId   String
+  client     Client      @relation(fields: [clientId], references: [id])
+  issueDate  DateTime    @default(now())
+  validUntil DateTime?
+  status     QuoteStatus @default(DRAFT)
+  subtotal   Float       @default(0)
+  tax        Float       @default(0)
+  total      Float       @default(0)
+  pdfPath    String?
+  notes      String?
+  items      QuoteItem[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+}
+
+model QuoteItem {
+  id          String   @id @default(cuid())
+  quoteId     String
+  quote       Quote    @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  description String
+  imageData   String?
+  qty         Float
+  unitPrice   Float
+  lineTotal   Float
+  createdAt   DateTime @default(now())
+}
+
+model DeliveryNote {
+  id        String             @id @default(cuid())
+  number    Int                @unique
+  clientId  String
+  client    Client             @relation(fields: [clientId], references: [id])
+  issueDate DateTime           @default(now())
+  status    DeliveryNoteStatus @default(ISSUED)
+  pdfPath   String?
+  notes     String?
+  items     DeliveryNoteItem[]
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+}
+
+model DeliveryNoteItem {
+  id             String       @id @default(cuid())
+  deliveryNoteId String
+  deliveryNote   DeliveryNote @relation(fields: [deliveryNoteId], references: [id], onDelete: Cascade)
+  description    String
+  qty            Float
+  createdAt      DateTime     @default(now())
+}
+
+model CashMovement {
+  id            String       @id @default(cuid())
+  type          MovementType
+  category      String
+  description   String?
+  amount        Float
+  date          DateTime     @default(now())
+  paymentMethod String?
+  relatedJobId  String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  entity    String
+  entityId  String
+  action    String
+  details   String?
+  createdAt DateTime @default(now())
+}

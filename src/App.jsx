@@ -78,6 +78,7 @@ function App() {
               <a href="#servicios" className={styles.navLink}>Servicios</a>
               <a href="#beneficios" className={styles.navLink}>Beneficios</a>
               <a href="#contacto" className={styles.navLink}>Contacto</a>
+              <a href="/login" className={styles.loginButton}>Iniciar sesion</a>
             </nav>
           </div>
         </div>
