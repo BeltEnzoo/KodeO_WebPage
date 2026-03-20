@@ -1,6 +1,9 @@
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import express from 'express';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { authRouter } from './modules/auth/auth.routes.js';
 import { clientUsersRouter } from './modules/client-users/client-users.routes.js';
 import { clientsRouter } from './modules/clients/clients.routes.js';
@@ -41,5 +44,22 @@ app.use('/api/client-users', clientUsersRouter);
 app.use('/api/clients', clientsRouter);
 app.use('/api/jobs', jobsRouter);
 app.use('/api/quotes', quotesRouter);
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const distPath = path.resolve(__dirname, '../../dist');
+const indexPath = path.join(distPath, 'index.html');
+const hasFrontendBuild = fs.existsSync(indexPath);
+
+if (hasFrontendBuild) {
+  app.use(express.static(distPath));
+
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api')) {
+      return next();
+    }
+    return res.sendFile(indexPath);
+  });
+}
 
 export { app };

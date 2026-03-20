@@ -136,3 +136,44 @@ Crea nuevos componentes y agrégalos a `App.jsx`.
 ---
 
 **Desarrollado con ❤️ para KodeON**
+
+## Produccion (Frontend + API + SQLite)
+
+Este proyecto ya esta preparado para levantar frontend y backend juntos en un mismo servidor Node.
+
+### Variables de entorno
+
+1. Copiar `.env.example` a `.env`
+2. Completar al menos:
+   - `DATABASE_URL="file:../data/app.db"`
+   - `API_PORT=4000`
+   - `JWT_SECRET=<tu secreto>`
+   - `NODE_ENV=production`
+
+### Comandos de despliegue
+
+```bash
+# instalar dependencias
+npm install
+
+# construir frontend
+npm run build:prod
+
+# aplicar migraciones
+npx prisma migrate deploy
+
+# generar cliente Prisma (si el entorno lo necesita)
+npx prisma generate
+
+# (solo primera vez) crear admin inicial
+npm run prisma:seed
+
+# iniciar servidor de produccion
+npm run start
+```
+
+### Notas
+
+- En desarrollo, Vite ya proxya `/api` a `http://localhost:4000`.
+- En produccion, Express sirve `dist/` y tambien responde `/api`.
+- Asegurate de persistir `data/app.db` y `storage/pdf/`.
