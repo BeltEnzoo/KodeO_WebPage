@@ -1,6 +1,30 @@
 import { useEffect, useState } from 'react';
-import { BriefcaseBusiness, FileText, Menu, UserPlus, Users } from 'lucide-react';
-import { API_BASE_URL, apiRequest } from '../services/api.js';
+import { BriefcaseBusiness, FileText, Menu, TrendingUp, UserPlus, Users } from 'lucide-react';
+import {
+  getProfile,
+  signOut,
+  getClients,
+  createClient as apiCreateClient,
+  updateClient as apiUpdateClient,
+  deleteClient as apiDeleteClient,
+  getJobs,
+  createJob as apiCreateJob,
+  updateJob as apiUpdateJob,
+  deleteJob as apiDeleteJob,
+  getClientUsers,
+  createClientUser as apiCreateClientUser,
+  updateClientUser as apiUpdateClientUser,
+  deleteClientUser as apiDeleteClientUser,
+  getQuotes,
+  createQuote as apiCreateQuote,
+  generateQuotePdf as apiGenerateQuotePdf,
+  deleteQuote as apiDeleteQuote,
+  getQuotePdfSignedUrl,
+  getCashMovements,
+  createCashMovement,
+  deleteCashMovement,
+  getBalanceSummary,
+} from '../../lib/supabaseApi.js';
 import styles from './AdminDashboard.module.css';
 
 function AdminDashboard() {
@@ -26,6 +50,9 @@ function AdminDashboard() {
     title: '',
     description: '',
     amount: '',
+    expenseShipping: '',
+    expenseRepuestos: '',
+    expenseTerciarizacion: '',
     workStatus: 'PENDING',
     billingStatus: 'NOT_INVOICED',
   });
@@ -51,72 +78,111 @@ function AdminDashboard() {
     { description: '', qty: '1', unitPrice: '', imageData: '' },
   ]);
   const [quoteStatus, setQuoteStatus] = useState('');
+  const [balance, setBalance] = useState(null);
+  const [balanceLoading, setBalanceLoading] = useState(false);
+  const [cashMovements, setCashMovements] = useState([]);
+  const [cashMovementsLoading, setCashMovementsLoading] = useState(false);
+  const [expenseForm, setExpenseForm] = useState({
+    category: 'PUBLICIDAD',
+    description: '',
+    amount: '',
+    date: new Date().toISOString().slice(0, 10),
+  });
+  const [expenseStatus, setExpenseStatus] = useState('');
+  const [editingJobId, setEditingJobId] = useState(null);
+  const [editJobForm, setEditJobForm] = useState({});
+  const [editingClientId, setEditingClientId] = useState(null);
+  const [editingClientUserId, setEditingClientUserId] = useState(null);
+  const [editClientUserForm, setEditClientUserForm] = useState({});
 
   useEffect(() => {
     async function loadMe() {
-      const { response, payload } = await apiRequest('/api/auth/me', { method: 'GET' });
-      if (!response.ok || payload?.user?.role !== 'ADMIN') {
+      const profile = await getProfile();
+      if (!profile || profile.role !== 'ADMIN') {
         window.location.href = '/login';
         return;
       }
-
-      setUser(payload.user);
+      setUser(profile);
       setStatus('Panel listo.');
       await loadClients();
       await loadJobs();
       await loadClientUsers();
       await loadQuotes();
     }
-
     loadMe();
   }, []);
 
+  useEffect(() => {
+    if (activeSection === 'balance') {
+      loadBalance();
+      loadCashMovements();
+    }
+  }, [activeSection]);
+
   async function loadClients() {
     setClientsLoading(true);
-    const { response, payload } = await apiRequest('/api/clients', { method: 'GET' });
-    if (!response.ok) {
-      setFormStatus(payload?.error ?? 'No se pudo cargar clientes.');
-      setClientsLoading(false);
-      return;
+    try {
+      const list = await getClients();
+      setClients(list);
+    } catch (e) {
+      setFormStatus(e.message ?? 'No se pudo cargar clientes.');
     }
-    setClients(payload.clients ?? []);
     setClientsLoading(false);
   }
 
   async function loadJobs() {
     setJobsLoading(true);
-    const { response, payload } = await apiRequest('/api/jobs', { method: 'GET' });
-    if (!response.ok) {
-      setJobFormStatus(payload?.error ?? 'No se pudo cargar trabajos.');
-      setJobsLoading(false);
-      return;
+    try {
+      const list = await getJobs();
+      setJobs(list);
+    } catch (e) {
+      setJobFormStatus(e.message ?? 'No se pudo cargar trabajos.');
     }
-    setJobs(payload.jobs ?? []);
     setJobsLoading(false);
   }
 
   async function loadClientUsers() {
     setClientUsersLoading(true);
-    const { response, payload } = await apiRequest('/api/client-users', { method: 'GET' });
-    if (!response.ok) {
-      setClientUserStatus(payload?.error ?? 'No se pudo cargar usuarios cliente.');
-      setClientUsersLoading(false);
-      return;
+    try {
+      const list = await getClientUsers();
+      setClientUsers(list);
+    } catch (e) {
+      setClientUserStatus(e.message ?? 'No se pudo cargar usuarios cliente.');
     }
-    setClientUsers(payload.users ?? []);
     setClientUsersLoading(false);
   }
 
   async function loadQuotes() {
     setQuotesLoading(true);
-    const { response, payload } = await apiRequest('/api/quotes', { method: 'GET' });
-    if (!response.ok) {
-      setQuoteStatus(payload?.error ?? 'No se pudo cargar presupuestos.');
-      setQuotesLoading(false);
-      return;
+    try {
+      const list = await getQuotes();
+      setQuotes(list);
+    } catch (e) {
+      setQuoteStatus(e.message ?? 'No se pudo cargar presupuestos.');
     }
-    setQuotes(payload.quotes ?? []);
     setQuotesLoading(false);
+  }
+
+  async function loadBalance() {
+    setBalanceLoading(true);
+    try {
+      const data = await getBalanceSummary();
+      setBalance(data);
+    } catch (e) {
+      setBalance(null);
+    }
+    setBalanceLoading(false);
+  }
+
+  async function loadCashMovements() {
+    setCashMovementsLoading(true);
+    try {
+      const list = await getCashMovements({ type: 'EXPENSE' });
+      setCashMovements(list);
+    } catch (e) {
+      setExpenseStatus(e.message ?? 'No se pudieron cargar gastos.');
+    }
+    setCashMovementsLoading(false);
   }
 
   function handleInputChange(event) {
@@ -166,178 +232,280 @@ function AdminDashboard() {
     reader.readAsDataURL(file);
   }
 
+  function startEditClient(client) {
+    setEditingClientId(client.id);
+    setForm({
+      businessName: client.businessName ?? '',
+      cuit: client.cuit ?? '',
+      phone: client.phone ?? '',
+      email: client.email ?? '',
+      address: client.address ?? '',
+      notes: client.notes ?? '',
+    });
+  }
+
+  function cancelEditClient() {
+    setEditingClientId(null);
+    setForm({ businessName: '', cuit: '', phone: '', email: '', address: '', notes: '' });
+  }
+
   async function handleCreateClient(event) {
     event.preventDefault();
     setFormStatus('Guardando cliente...');
-
-    const { response, payload } = await apiRequest('/api/clients', {
-      method: 'POST',
-      body: JSON.stringify(form),
-    });
-
-    if (!response.ok) {
-      setFormStatus(payload?.error ?? 'No se pudo crear el cliente.');
-      return;
+    try {
+      if (editingClientId) {
+        await apiUpdateClient(editingClientId, form);
+        setFormStatus('Cliente actualizado correctamente.');
+        cancelEditClient();
+      } else {
+        await apiCreateClient(form);
+        setForm({ businessName: '', cuit: '', phone: '', email: '', address: '', notes: '' });
+        setFormStatus('Cliente creado correctamente.');
+      }
+      await loadClients();
+    } catch (e) {
+      setFormStatus(e.message ?? 'No se pudo guardar el cliente.');
     }
+  }
 
-    setForm({
-      businessName: '',
-      cuit: '',
-      phone: '',
-      email: '',
-      address: '',
-      notes: '',
-    });
-    setFormStatus('Cliente creado correctamente.');
-    await loadClients();
+  async function handleDeleteClient(clientId) {
+    if (!window.confirm('¿Eliminar este cliente? Se eliminarán también sus trabajos y presupuestos asociados.')) return;
+    try {
+      await apiDeleteClient(clientId);
+      setFormStatus('Cliente eliminado.');
+      if (editingClientId === clientId) cancelEditClient();
+      await loadClients();
+      await loadJobs();
+      await loadQuotes();
+      await loadClientUsers();
+    } catch (e) {
+      setFormStatus(e.message ?? 'No se pudo eliminar.');
+    }
   }
 
   async function handleLogout() {
-    await apiRequest('/api/auth/logout', { method: 'POST' });
+    await signOut();
     window.location.href = '/';
   }
 
   async function handleCreateJob(event) {
     event.preventDefault();
     setJobFormStatus('Guardando trabajo...');
-
-    const { response, payload } = await apiRequest('/api/jobs', {
-      method: 'POST',
-      body: JSON.stringify({
-        ...jobForm,
-        amount: jobForm.amount === '' ? undefined : Number(jobForm.amount),
-      }),
-    });
-
-    if (!response.ok) {
-      setJobFormStatus(payload?.error ?? 'No se pudo crear el trabajo.');
-      return;
+    try {
+      await apiCreateJob(jobForm);
+      setJobForm({
+        clientId: '',
+        title: '',
+        description: '',
+        amount: '',
+        expenseShipping: '',
+        expenseRepuestos: '',
+        expenseTerciarizacion: '',
+        workStatus: 'PENDING',
+        billingStatus: 'NOT_INVOICED',
+      });
+      setJobFormStatus('Trabajo creado correctamente.');
+      await loadJobs();
+      await loadClients();
+    } catch (e) {
+      setJobFormStatus(e.message ?? 'No se pudo crear el trabajo.');
     }
+  }
 
-    setJobForm({
-      clientId: '',
-      title: '',
-      description: '',
-      amount: '',
-      workStatus: 'PENDING',
-      billingStatus: 'NOT_INVOICED',
+  function handleExpenseInputChange(event) {
+    const { name, value } = event.target;
+    setExpenseForm((prev) => ({ ...prev, [name]: value }));
+  }
+
+  async function handleAddExpense(event) {
+    event.preventDefault();
+    setExpenseStatus('Guardando gasto...');
+    try {
+      await createCashMovement({
+        type: 'EXPENSE',
+        category: expenseForm.category,
+        description: expenseForm.description,
+        amount: expenseForm.amount,
+        date: expenseForm.date,
+      });
+      setExpenseForm({ category: 'PUBLICIDAD', description: '', amount: '', date: new Date().toISOString().slice(0, 10) });
+      setExpenseStatus('Gasto registrado.');
+      await loadBalance();
+      await loadCashMovements();
+    } catch (e) {
+      setExpenseStatus(e.message ?? 'No se pudo registrar el gasto.');
+    }
+  }
+
+  async function handleDeleteExpense(id) {
+    if (!window.confirm('¿Eliminar este gasto?')) return;
+    try {
+      await deleteCashMovement(id);
+      setExpenseStatus('Gasto eliminado.');
+      await loadBalance();
+      await loadCashMovements();
+    } catch (e) {
+      setExpenseStatus(e.message ?? 'No se pudo eliminar.');
+    }
+  }
+
+  function startEditJob(job) {
+    setEditingJobId(job.id);
+    setEditJobForm({
+      clientId: job.client?.id ?? '',
+      title: job.title ?? '',
+      description: job.description ?? '',
+      amount: job.amount ?? '',
+      expenseShipping: job.expenseShipping ?? '',
+      expenseRepuestos: job.expenseRepuestos ?? '',
+      expenseTerciarizacion: job.expenseTerciarizacion ?? '',
+      workStatus: job.workStatus ?? 'PENDING',
+      billingStatus: job.billingStatus ?? 'NOT_INVOICED',
     });
-    setJobFormStatus('Trabajo creado correctamente.');
-    await loadJobs();
-    await loadClients();
+  }
+
+  async function handleDeleteJob(jobId) {
+    if (!window.confirm('¿Eliminar este trabajo?')) return;
+    try {
+      await apiDeleteJob(jobId);
+      setJobs((prev) => prev.filter((j) => j.id !== jobId));
+      setJobFormStatus('Trabajo eliminado.');
+      if (editingJobId === jobId) setEditingJobId(null);
+      await loadClients();
+      if (activeSection === 'balance') await loadBalance();
+    } catch (e) {
+      setJobFormStatus(e.message ?? 'No se pudo eliminar.');
+    }
+  }
+
+  function handleEditJobChange(e) {
+    const { name, value } = e.target;
+    setEditJobForm((prev) => ({ ...prev, [name]: value }));
+  }
+
+  async function saveEditJob(jobId) {
+    try {
+      const updates = { ...editJobForm };
+      const updated = await apiUpdateJob(jobId, updates);
+      setJobs((prev) => prev.map((j) => (j.id === jobId ? { ...j, ...updated } : j)));
+      setEditingJobId(null);
+      setEditJobForm({});
+      setJobFormStatus('Trabajo actualizado.');
+      await loadClients();
+      if (activeSection === 'balance') await loadBalance();
+    } catch (e) {
+      setJobFormStatus(e.message ?? 'No se pudo actualizar.');
+    }
   }
 
   async function handleUpdateJobStatus(jobId, updates) {
-    const { response, payload } = await apiRequest(`/api/jobs/${jobId}`, {
-      method: 'PATCH',
-      body: JSON.stringify(updates),
-    });
-
-    if (!response.ok) {
-      setJobFormStatus(payload?.error ?? 'No se pudo actualizar estado.');
-      return;
+    try {
+      const updated = await apiUpdateJob(jobId, updates);
+      setJobs((prev) => prev.map((job) => (job.id === jobId ? updated : job)));
+      await loadClients();
+      if (activeSection === 'balance') await loadBalance();
+    } catch (e) {
+      setJobFormStatus(e.message ?? 'No se pudo actualizar estado.');
     }
+  }
 
-    setJobs((prev) => prev.map((job) => (job.id === jobId ? payload.job : job)));
-    await loadClients();
+  function startEditClientUser(u) {
+    setEditingClientUserId(u.id);
+    setEditClientUserForm({
+      name: u.name ?? '',
+      active: u.active ?? true,
+      clientId: u.client?.id ?? '',
+    });
+  }
+
+  function cancelEditClientUser() {
+    setEditingClientUserId(null);
+    setEditClientUserForm({});
   }
 
   async function handleCreateClientUser(event) {
     event.preventDefault();
-    setClientUserStatus('Creando usuario cliente...');
-
-    const { response, payload } = await apiRequest('/api/client-users', {
-      method: 'POST',
-      body: JSON.stringify(clientUserForm),
-    });
-
-    if (!response.ok) {
-      setClientUserStatus(payload?.error ?? 'No se pudo crear el usuario cliente.');
-      return;
+    setClientUserStatus('Guardando usuario...');
+    try {
+      if (editingClientUserId) {
+        await apiUpdateClientUser(editingClientUserId, editClientUserForm);
+        setClientUserStatus('Usuario actualizado correctamente.');
+        cancelEditClientUser();
+      } else {
+        await apiCreateClientUser(clientUserForm);
+        setClientUserForm({ name: '', email: '', password: '', clientId: '' });
+        setClientUserStatus('Usuario cliente creado correctamente.');
+      }
+      await loadClientUsers();
+      await loadClients();
+    } catch (e) {
+      setClientUserStatus(e.message ?? 'No se pudo guardar el usuario cliente.');
     }
+  }
 
-    setClientUserForm({
-      name: '',
-      email: '',
-      password: '',
-      clientId: '',
-    });
-    setClientUserStatus('Usuario cliente creado correctamente.');
-    await loadClientUsers();
-    await loadClients();
+  async function handleDeleteClientUser(userId) {
+    if (!window.confirm('¿Eliminar este usuario cliente? No podrá volver a iniciar sesión.')) return;
+    try {
+      await apiDeleteClientUser(userId);
+      setClientUserStatus('Usuario eliminado.');
+      if (editingClientUserId === userId) cancelEditClientUser();
+      await loadClientUsers();
+      await loadClients();
+    } catch (e) {
+      setClientUserStatus(e.message ?? 'No se pudo eliminar.');
+    }
   }
 
   async function handleCreateQuote(event) {
     event.preventDefault();
     setQuoteStatus('Creando presupuesto...');
-
-    const payload = {
-      clientId: quoteForm.clientId,
-      validUntil: quoteForm.validUntil || undefined,
-      taxPercent: Number(quoteForm.taxPercent || 0),
-      notes: quoteForm.notes || undefined,
-      items: quoteItems.map((item) => ({
-        description: item.description,
-        qty: Number(item.qty || 1),
-        unitPrice: Number(item.unitPrice || 0),
-        imageData: item.imageData || undefined,
-      })),
-    };
-
-    const { response, payload: responsePayload } = await apiRequest('/api/quotes', {
-      method: 'POST',
-      body: JSON.stringify(payload),
-    });
-
-    if (!response.ok) {
-      setQuoteStatus(responsePayload?.error ?? 'No se pudo crear el presupuesto.');
-      return;
+    try {
+      const payload = {
+        clientId: quoteForm.clientId,
+        validUntil: quoteForm.validUntil || undefined,
+        taxPercent: Number(quoteForm.taxPercent || 0),
+        notes: quoteForm.notes || undefined,
+        items: quoteItems.map((item) => ({
+          description: item.description,
+          qty: Number(item.qty || 1),
+          unitPrice: Number(item.unitPrice || 0),
+          imageData: item.imageData || undefined,
+        })),
+      };
+      const quote = await apiCreateQuote(payload);
+      setQuoteForm({ clientId: '', validUntil: '', taxPercent: '0', notes: '' });
+      setQuoteItems([{ description: '', qty: '1', unitPrice: '', imageData: '' }]);
+      setQuoteStatus(`Presupuesto #${quote?.number ?? '?'} creado.`);
+      await loadQuotes();
+    } catch (e) {
+      setQuoteStatus(e.message ?? 'No se pudo crear el presupuesto.');
     }
-
-    setQuoteForm({
-      clientId: '',
-      validUntil: '',
-      taxPercent: '0',
-      notes: '',
-    });
-    setQuoteItems([{ description: '', qty: '1', unitPrice: '', imageData: '' }]);
-    setQuoteStatus(`Presupuesto #${responsePayload.quote.number} creado.`);
-    await loadQuotes();
   }
 
   async function handleGenerateQuotePdf(quoteId) {
     setQuoteStatus('Generando PDF...');
-    const { response, payload } = await apiRequest(`/api/quotes/${quoteId}/generate-pdf`, {
-      method: 'POST',
-    });
-
-    if (!response.ok) {
-      setQuoteStatus(payload?.error ?? 'No se pudo generar el PDF.');
-      return;
+    try {
+      const data = await apiGenerateQuotePdf(quoteId);
+      setQuoteStatus('PDF generado correctamente.');
+      await loadQuotes();
+      if (data?.downloadUrl) {
+        window.open(data.downloadUrl, '_blank');
+      }
+    } catch (e) {
+      setQuoteStatus(e.message ?? 'No se pudo generar el PDF.');
     }
-
-    setQuoteStatus('PDF generado correctamente.');
-    await loadQuotes();
-    window.open(`${API_BASE_URL}${payload.downloadUrl}`, '_blank');
   }
 
   async function handleDeleteQuote(quoteId) {
-    const confirmed = window.confirm('Se eliminara el presupuesto y su PDF generado. Continuar?');
-    if (!confirmed) {
-      return;
+    const confirmed = window.confirm('Se eliminará el presupuesto y su PDF generado. ¿Continuar?');
+    if (!confirmed) return;
+    try {
+      await apiDeleteQuote(quoteId);
+      setQuoteStatus('Presupuesto eliminado correctamente.');
+      await loadQuotes();
+    } catch (e) {
+      setQuoteStatus(e.message ?? 'No se pudo eliminar el presupuesto.');
     }
-
-    const { response, payload } = await apiRequest(`/api/quotes/${quoteId}`, {
-      method: 'DELETE',
-    });
-
-    if (!response.ok) {
-      setQuoteStatus(payload?.error ?? 'No se pudo eliminar el presupuesto.');
-      return;
-    }
-
-    setQuoteStatus('Presupuesto eliminado correctamente.');
-    await loadQuotes();
   }
 
   const sections = [
@@ -345,16 +513,17 @@ function AdminDashboard() {
     { id: 'jobs', label: '2) Crear trabajo', icon: BriefcaseBusiness },
     { id: 'clientUsers', label: '3) Crear usuario cliente', icon: UserPlus },
     { id: 'quotes', label: '4) Crear presupuesto', icon: FileText },
+    { id: 'balance', label: '5) Balance', icon: TrendingUp },
   ];
 
   return (
     <main className={styles.layout}>
       <aside className={styles.sidebar}>
-        <h2 className={styles.sidebarTitle}>Panel Owner</h2>
+        <h2 className={styles.sidebarTitle}>KODEON</h2>
         <p className={styles.sidebarSubtitle}>{status}</p>
         {user && (
           <p className={styles.sidebarSubtitle}>
-            Sesion: <strong>{user.name}</strong>
+            Sesion: <strong>{user.role === 'ADMIN' ? 'Enzo G Beltran' : user.name}</strong>
           </p>
         )}
         <button type="button" className={styles.mobileToggle} onClick={() => setMobileMenuOpen((prev) => !prev)}>
@@ -391,7 +560,7 @@ function AdminDashboard() {
         {activeSection === 'clients' && (
           <>
             <article className={styles.card}>
-              <h3 className={styles.title}>Crear cliente</h3>
+              <h3 className={styles.title}>{editingClientId ? 'Editar cliente' : 'Crear cliente'}</h3>
               <form onSubmit={handleCreateClient} className={styles.form}>
                 <input name="businessName" placeholder="Razon social *" value={form.businessName} onChange={handleInputChange} required />
                 <input name="cuit" placeholder="CUIT" value={form.cuit} onChange={handleInputChange} />
@@ -399,9 +568,16 @@ function AdminDashboard() {
                 <input name="email" placeholder="Email" type="email" value={form.email} onChange={handleInputChange} />
                 <input name="address" placeholder="Direccion" value={form.address} onChange={handleInputChange} />
                 <textarea name="notes" placeholder="Notas" value={form.notes} onChange={handleInputChange} rows={3} />
-                <button type="submit" className={styles.buttonPrimary}>
-                  Crear cliente
-                </button>
+                <div className={styles.actions}>
+                  <button type="submit" className={styles.buttonPrimary}>
+                    {editingClientId ? 'Guardar cambios' : 'Crear cliente'}
+                  </button>
+                  {editingClientId && (
+                    <button type="button" onClick={cancelEditClient} className={styles.danger}>
+                      Cancelar
+                    </button>
+                  )}
+                </div>
               </form>
               {formStatus && <p className={styles.muted}>{formStatus}</p>}
             </article>
@@ -423,6 +599,7 @@ function AdminDashboard() {
                         <th>Telefono</th>
                         <th>Usuario cliente</th>
                         <th>Trabajos</th>
+                        <th></th>
                       </tr>
                     </thead>
                     <tbody>
@@ -434,6 +611,10 @@ function AdminDashboard() {
                           <td>{client.phone ?? '-'}</td>
                           <td>{client.user?.email ?? '-'}</td>
                           <td>{client._count?.jobs ?? 0}</td>
+                          <td className={styles.cellActions}>
+                            <button type="button" onClick={() => startEditClient(client)} className={styles.linkButton}>Editar</button>
+                            <button type="button" onClick={() => handleDeleteClient(client.id)} className={styles.danger} style={{ padding: '4px 8px', fontSize: '12px' }}>Eliminar</button>
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -459,7 +640,12 @@ function AdminDashboard() {
                 </select>
                 <input name="title" placeholder="Titulo del trabajo *" value={jobForm.title} onChange={handleJobInputChange} required />
                 <textarea name="description" placeholder="Descripcion" value={jobForm.description} onChange={handleJobInputChange} rows={3} />
-                <input name="amount" type="number" min="0" step="0.01" placeholder="Monto" value={jobForm.amount} onChange={handleJobInputChange} />
+                <input name="amount" type="number" min="0" step="0.01" placeholder="Monto cobrado *" value={jobForm.amount} onChange={handleJobInputChange} />
+                <div className={styles.row3}>
+                  <input name="expenseShipping" type="number" min="0" step="0.01" placeholder="Gastos envio" value={jobForm.expenseShipping} onChange={handleJobInputChange} />
+                  <input name="expenseRepuestos" type="number" min="0" step="0.01" placeholder="Gastos repuestos" value={jobForm.expenseRepuestos} onChange={handleJobInputChange} />
+                  <input name="expenseTerciarizacion" type="number" min="0" step="0.01" placeholder="Gastos terciarizacion" value={jobForm.expenseTerciarizacion} onChange={handleJobInputChange} />
+                </div>
                 <div className={styles.row2}>
                   <select name="workStatus" value={jobForm.workStatus} onChange={handleJobInputChange}>
                     <option value="PENDING">Pendiente</option>
@@ -493,8 +679,62 @@ function AdminDashboard() {
                       <p className={styles.muted}>
                         Cliente: <strong>{job.client?.businessName}</strong>
                       </p>
-                      <p className={styles.muted}>Monto: {job.amount != null ? `$${Number(job.amount).toFixed(2)}` : '-'}</p>
-                      <div className={styles.row2}>
+                      <p className={styles.muted}>Monto cobrado: {job.amount != null ? `$${Number(job.amount).toLocaleString('es-AR', { minimumFractionDigits: 2 })}` : '-'}</p>
+                      <p className={styles.muted}>
+                        Gastos: Envios ${Number(job.expenseShipping ?? 0).toLocaleString('es-AR', { minimumFractionDigits: 2 })} | Repuestos ${Number(job.expenseRepuestos ?? 0).toLocaleString('es-AR', { minimumFractionDigits: 2 })} | Terciarizacion ${Number(job.expenseTerciarizacion ?? 0).toLocaleString('es-AR', { minimumFractionDigits: 2 })}
+                      </p>
+                      {job.amount != null && (
+                        <p className={styles.muted}>
+                          Ganancia neta: <strong>${(Number(job.amount) - Number(job.expenseShipping ?? 0) - Number(job.expenseRepuestos ?? 0) - Number(job.expenseTerciarizacion ?? 0)).toLocaleString('es-AR', { minimumFractionDigits: 2 })}</strong>
+                        </p>
+                      )}
+                      {editingJobId === job.id ? (
+                        <div className={styles.form} style={{ marginTop: '0.75rem' }}>
+                          <select name="clientId" value={editJobForm.clientId} onChange={handleEditJobChange}>
+                            {clients.map((c) => (
+                              <option key={c.id} value={c.id}>{c.businessName}</option>
+                            ))}
+                          </select>
+                          <input name="title" placeholder="Titulo" value={editJobForm.title} onChange={handleEditJobChange} required />
+                          <textarea name="description" placeholder="Descripcion" value={editJobForm.description} onChange={handleEditJobChange} rows={2} />
+                          <div className={styles.row3}>
+                            <input name="amount" placeholder="Monto" type="number" value={editJobForm.amount} onChange={handleEditJobChange} />
+                            <input name="expenseShipping" placeholder="Gastos envio" type="number" value={editJobForm.expenseShipping} onChange={handleEditJobChange} />
+                            <input name="expenseRepuestos" placeholder="Repuestos" type="number" value={editJobForm.expenseRepuestos} onChange={handleEditJobChange} />
+                            <input name="expenseTerciarizacion" placeholder="Terciarizacion" type="number" value={editJobForm.expenseTerciarizacion} onChange={handleEditJobChange} />
+                          </div>
+                          <div className={styles.row2}>
+                            <select name="workStatus" value={editJobForm.workStatus} onChange={handleEditJobChange}>
+                              <option value="PENDING">Pendiente</option>
+                              <option value="IN_PROGRESS">En progreso</option>
+                              <option value="DONE">Finalizado</option>
+                            </select>
+                            <select name="billingStatus" value={editJobForm.billingStatus} onChange={handleEditJobChange}>
+                              <option value="NOT_INVOICED">No facturado</option>
+                              <option value="INVOICED">Facturado</option>
+                              <option value="PAID">Pagado</option>
+                            </select>
+                          </div>
+                          <div className={styles.actions}>
+                            <button type="button" onClick={() => saveEditJob(job.id)} className={styles.buttonPrimary}>
+                              Guardar
+                            </button>
+                            <button type="button" onClick={() => setEditingJobId(null)} className={styles.danger}>
+                              Cancelar
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className={styles.actions} style={{ marginTop: '0.5rem' }}>
+                          <button type="button" onClick={() => startEditJob(job)} className={styles.linkButton} style={{ fontSize: '0.8rem' }}>
+                            Editar
+                          </button>
+                          <button type="button" onClick={() => handleDeleteJob(job.id)} className={styles.danger} style={{ padding: '4px 8px', fontSize: '12px' }}>
+                            Eliminar
+                          </button>
+                        </div>
+                      )}
+                      <div className={styles.row2} style={{ marginTop: '0.5rem' }}>
                         <select value={job.workStatus} onChange={(event) => handleUpdateJobStatus(job.id, { workStatus: event.target.value })}>
                           <option value="PENDING">Pendiente</option>
                           <option value="IN_PROGRESS">En progreso</option>
@@ -516,24 +756,49 @@ function AdminDashboard() {
 
         {activeSection === 'clientUsers' && (
           <article className={styles.card}>
-            <h3 className={styles.title}>Crear usuario cliente</h3>
+            <h3 className={styles.title}>{editingClientUserId ? 'Editar usuario cliente' : 'Crear usuario cliente'}</h3>
             <form onSubmit={handleCreateClientUser} className={styles.form}>
-              <input name="name" placeholder="Nombre *" value={clientUserForm.name} onChange={handleClientUserInputChange} required />
-              <input name="email" type="email" placeholder="Email de acceso *" value={clientUserForm.email} onChange={handleClientUserInputChange} required />
-              <input name="password" type="password" placeholder="Contrasena inicial *" value={clientUserForm.password} onChange={handleClientUserInputChange} required />
-              <select name="clientId" value={clientUserForm.clientId} onChange={handleClientUserInputChange} required>
+              <input name="name" placeholder="Nombre *" value={editingClientUserId ? editClientUserForm.name : clientUserForm.name} onChange={editingClientUserId ? (e) => setEditClientUserForm((p) => ({ ...p, name: e.target.value })) : handleClientUserInputChange} required />
+              {!editingClientUserId && (
+                <>
+                  <input name="email" type="email" placeholder="Email de acceso *" value={clientUserForm.email} onChange={handleClientUserInputChange} required />
+                  <input name="password" type="password" placeholder="Contrasena inicial *" value={clientUserForm.password} onChange={handleClientUserInputChange} required />
+                </>
+              )}
+              <select
+                name="clientId"
+                value={editingClientUserId ? editClientUserForm.clientId : clientUserForm.clientId}
+                onChange={editingClientUserId ? (e) => setEditClientUserForm((p) => ({ ...p, clientId: e.target.value })) : handleClientUserInputChange}
+                required
+              >
                 <option value="">Seleccionar cliente *</option>
-                {clients
-                  .filter((client) => !client.user)
-                  .map((client) => (
-                    <option key={client.id} value={client.id}>
-                      {client.businessName}
+                {clients.map((client) => {
+                  const editingUser = editingClientUserId ? clientUsers.find((u) => u.id === editingClientUserId) : null;
+                  const editingUserClientId = editingUser?.client?.id;
+                  const hasOtherUser = client.user && client.id !== editingUserClientId;
+                  return (
+                    <option key={client.id} value={client.id} disabled={!!hasOtherUser}>
+                      {client.businessName}{hasOtherUser ? ' (ya tiene usuario)' : ''}
                     </option>
-                  ))}
+                  );
+                })}
               </select>
-              <button type="submit" className={styles.buttonPrimary}>
-                Crear usuario cliente
-              </button>
+              {editingClientUserId && (
+                <label className={styles.checkboxLabel}>
+                  <input type="checkbox" checked={editClientUserForm.active} onChange={(e) => setEditClientUserForm((p) => ({ ...p, active: e.target.checked }))} />
+                  Activo
+                </label>
+              )}
+              <div className={styles.actions}>
+                <button type="submit" className={styles.buttonPrimary}>
+                  {editingClientUserId ? 'Guardar cambios' : 'Crear usuario cliente'}
+                </button>
+                {editingClientUserId && (
+                  <button type="button" onClick={cancelEditClientUser} className={styles.danger}>
+                    Cancelar
+                  </button>
+                )}
+              </div>
             </form>
             {clientUserStatus && <p className={styles.muted}>{clientUserStatus}</p>}
 
@@ -550,6 +815,7 @@ function AdminDashboard() {
                       <th>Email</th>
                       <th>Cliente</th>
                       <th>Estado</th>
+                      <th></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -559,6 +825,10 @@ function AdminDashboard() {
                         <td>{clientUser.email}</td>
                         <td>{clientUser.client?.businessName ?? '-'}</td>
                         <td>{clientUser.active ? 'Activo' : 'Inactivo'}</td>
+                        <td className={styles.cellActions}>
+                          <button type="button" onClick={() => startEditClientUser(clientUser)} className={styles.linkButton}>Editar</button>
+                          <button type="button" onClick={() => handleDeleteClientUser(clientUser.id)} className={styles.danger} style={{ padding: '4px 8px', fontSize: '12px' }}>Eliminar</button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -664,9 +934,16 @@ function AdminDashboard() {
                         Eliminar
                       </button>
                       {quote.pdfPath && (
-                        <a href={`${API_BASE_URL}/api/quotes/${quote.id}/pdf`} target="_blank" rel="noreferrer" className={styles.link}>
+                        <button
+                          type="button"
+                          className={styles.linkButton}
+                          onClick={async () => {
+                            const url = await getQuotePdfSignedUrl(quote.id);
+                            if (url) window.open(url, '_blank');
+                          }}
+                        >
                           Ver PDF
-                        </a>
+                        </button>
                       )}
                     </div>
                   </article>
@@ -674,6 +951,115 @@ function AdminDashboard() {
               </div>
             )}
           </article>
+        )}
+
+        {activeSection === 'balance' && (
+          <>
+            <article className={styles.card}>
+              <h3 className={styles.title}>Resumen de balance</h3>
+              {balanceLoading ? (
+                <p className={styles.muted}>Cargando balance...</p>
+              ) : balance ? (
+                <div className={styles.balanceSummary}>
+                  <div className={styles.balanceRow}>
+                    <span>Ingresos (trabajos pagados)</span>
+                    <strong className={styles.positive}>${balance.ingresos.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</strong>
+                  </div>
+                  <div className={styles.balanceRow}>
+                    <span>Otros ingresos</span>
+                    <strong className={styles.positive}>${balance.otrosIngresos.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</strong>
+                  </div>
+                  <div className={styles.balanceRow}>
+                    <span>Gastos por trabajos (envios, repuestos, terciarizacion)</span>
+                    <strong className={styles.negative}>-${balance.gastosTrabajos.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</strong>
+                  </div>
+                  <div className={styles.balanceRow}>
+                    <span>Gastos generales (prensa, publicidad, etc.)</span>
+                    <strong className={styles.negative}>-${balance.gastosGenerales.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</strong>
+                  </div>
+                  {Object.keys(balance.gastosPorCategoria || {}).length > 0 && (
+                    <div className={styles.balanceSub}>
+                      <p className={styles.muted}>Detalle por categoria:</p>
+                      {Object.entries(balance.gastosPorCategoria).map(([cat, val]) => (
+                        <div key={cat} className={styles.balanceRow}>
+                          <span>{cat}</span>
+                          <span>${Number(val).toLocaleString('es-AR', { minimumFractionDigits: 2 })}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  <div className={`${styles.balanceRow} ${styles.balanceTotal}`}>
+                    <span>Balance</span>
+                    <strong className={balance.balance >= 0 ? styles.positive : styles.negative}>
+                      ${balance.balance.toLocaleString('es-AR', { minimumFractionDigits: 2 })}
+                    </strong>
+                  </div>
+                </div>
+              ) : (
+                <p className={styles.muted}>No se pudo cargar el balance.</p>
+              )}
+            </article>
+
+            <article className={styles.card}>
+              <h3 className={styles.title}>Registrar gasto general</h3>
+              <p className={styles.muted}>Prensa, publicidad, y otros gastos operativos.</p>
+              <form onSubmit={handleAddExpense} className={styles.form}>
+                <select name="category" value={expenseForm.category} onChange={handleExpenseInputChange} required>
+                  <option value="PUBLICIDAD">Publicidad</option>
+                  <option value="PRENSA">Prensa</option>
+                  <option value="SUELDOS">Sueldos</option>
+                  <option value="ALQUILER">Alquiler</option>
+                  <option value="SERVICIOS">Servicios</option>
+                  <option value="OTROS">Otros</option>
+                </select>
+                <input name="description" placeholder="Descripcion" value={expenseForm.description} onChange={handleExpenseInputChange} />
+                <input name="amount" type="number" min="0" step="0.01" placeholder="Monto *" value={expenseForm.amount} onChange={handleExpenseInputChange} required />
+                <input name="date" type="date" value={expenseForm.date} onChange={handleExpenseInputChange} required />
+                <button type="submit" className={styles.buttonPrimary}>
+                  Registrar gasto
+                </button>
+              </form>
+              {expenseStatus && <p className={styles.muted}>{expenseStatus}</p>}
+            </article>
+
+            <article className={styles.card}>
+              <h3 className={styles.title}>Gastos generales recientes</h3>
+              {cashMovementsLoading ? (
+                <p className={styles.muted}>Cargando...</p>
+              ) : cashMovements.length === 0 ? (
+                <p className={styles.muted}>Aun no hay gastos generales registrados.</p>
+              ) : (
+                <div className={styles.tableWrap}>
+                  <table className={styles.table}>
+                    <thead>
+                      <tr>
+                        <th>Fecha</th>
+                        <th>Categoria</th>
+                        <th>Descripcion</th>
+                        <th>Monto</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {cashMovements.map((m) => (
+                        <tr key={m.id}>
+                          <td>{new Date(m.date).toLocaleDateString('es-AR')}</td>
+                          <td>{m.category}</td>
+                          <td>{m.description ?? '-'}</td>
+                          <td className={styles.negative}>${Number(m.amount).toLocaleString('es-AR', { minimumFractionDigits: 2 })}</td>
+                          <td>
+                            <button type="button" onClick={() => handleDeleteExpense(m.id)} className={styles.danger} style={{ padding: '4px 8px', fontSize: '12px' }}>
+                              Eliminar
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </article>
+          </>
         )}
       </section>
     </main>

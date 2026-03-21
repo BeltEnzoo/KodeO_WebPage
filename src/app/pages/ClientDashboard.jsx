@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { BriefcaseBusiness } from 'lucide-react';
-import { apiRequest } from '../services/api.js';
+import { getProfile, signOut, getMyJobs } from '../../lib/supabaseApi.js';
 import styles from './ClientDashboard.module.css';
 
 function ClientDashboard() {
@@ -12,34 +12,31 @@ function ClientDashboard() {
 
   useEffect(() => {
     async function loadMe() {
-      const { response, payload } = await apiRequest('/api/auth/me', { method: 'GET' });
-      if (!response.ok || payload?.user?.role !== 'CLIENT') {
+      const profile = await getProfile();
+      if (!profile || profile.role !== 'CLIENT') {
         window.location.href = '/login';
         return;
       }
-
-      setUser(payload.user);
+      setUser(profile);
       setStatus('Panel listo.');
       await loadMyJobs();
     }
-
     loadMe();
   }, []);
 
   async function loadMyJobs() {
     setJobsLoading(true);
-    const { response, payload } = await apiRequest('/api/jobs/me', { method: 'GET' });
-    if (!response.ok) {
-      setJobsError(payload?.error ?? 'No se pudo cargar tus trabajos.');
-      setJobsLoading(false);
-      return;
+    try {
+      const list = await getMyJobs();
+      setJobs(list);
+    } catch (e) {
+      setJobsError(e.message ?? 'No se pudo cargar tus trabajos.');
     }
-    setJobs(payload.jobs ?? []);
     setJobsLoading(false);
   }
 
   async function handleLogout() {
-    await apiRequest('/api/auth/logout', { method: 'POST' });
+    await signOut();
     window.location.href = '/';
   }
 

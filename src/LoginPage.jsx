@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
-import { apiRequest, getDashboardPathByRole } from './app/services/api.js';
+import Logo from './components/Logo';
+import { supabase, getMyProfile, getDashboardPathByRole } from './lib/supabase.js';
+import styles from './LoginPage.module.css';
 
 function LoginPage() {
   const [email, setEmail] = useState('');
@@ -10,13 +12,16 @@ function LoginPage() {
   useEffect(() => {
     async function checkSession() {
       try {
-        const { response, payload } = await apiRequest('/api/auth/me', { method: 'GET' });
-        if (response.ok && payload?.user?.role) {
-          window.location.href = getDashboardPathByRole(payload.user.role);
-          return;
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const profile = await getMyProfile();
+          if (profile?.role) {
+            window.location.href = getDashboardPathByRole(profile.role);
+            return;
+          }
         }
       } catch {
-        // Keep login visible if API is unavailable.
+        // Keep login visible if Supabase unavailable
       } finally {
         setLoadingSession(false);
       }
@@ -30,73 +35,81 @@ function LoginPage() {
     setStatus('Ingresando...');
 
     try {
-      const { response, payload } = await apiRequest('/api/auth/login', {
-        method: 'POST',
-        body: JSON.stringify({ email, password }),
-      });
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
-      if (!response.ok) {
-        setStatus(payload?.error ?? 'No se pudo iniciar sesion.');
+      if (error) {
+        setStatus(error.message === 'Invalid login credentials'
+          ? 'Credenciales inválidas.'
+          : error.message);
         return;
       }
 
-      window.location.href = getDashboardPathByRole(payload.user.role);
+      const profile = await getMyProfile();
+      if (!profile?.role) {
+        setStatus('No se encontró el perfil. Contacta al administrador.');
+        return;
+      }
+
+      if (!profile.active) {
+        await supabase.auth.signOut();
+        setStatus('Cuenta desactivada.');
+        return;
+      }
+
+      window.location.href = getDashboardPathByRole(profile.role);
     } catch {
-      setStatus('No se pudo conectar con la API.');
+      setStatus('No se pudo conectar con el servidor.');
     }
   }
 
   if (loadingSession) {
     return (
-      <main style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', padding: '1rem' }}>
-        <p>Verificando sesion...</p>
+      <main className={styles.loading}>
+        <p>Verificando sesión...</p>
       </main>
     );
   }
 
   return (
-    <main style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', padding: '1rem' }}>
-      <section style={{ width: '100%', maxWidth: 420, border: '1px solid #e5e7eb', borderRadius: 12, padding: 24 }}>
-        <h1 style={{ marginTop: 0 }}>Iniciar sesion</h1>
-        <p style={{ color: '#4b5563' }}>Acceso para dueño y clientes de KodeON.</p>
-        <form onSubmit={handleSubmit} style={{ display: 'grid', gap: 12 }}>
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            required
-            style={{ padding: 10, borderRadius: 8, border: '1px solid #d1d5db' }}
-          />
-          <input
-            type="password"
-            placeholder="Contrasena"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            required
-            style={{ padding: 10, borderRadius: 8, border: '1px solid #d1d5db' }}
-          />
-          <button
-            type="submit"
-            style={{
-              padding: 10,
-              borderRadius: 8,
-              border: 'none',
-              background: '#2563eb',
-              color: '#fff',
-              cursor: 'pointer',
-              fontWeight: 600,
-            }}
-          >
-            Entrar
-          </button>
-        </form>
-        {status && <p style={{ marginTop: 12 }}>{status}</p>}
-        <a href="/" style={{ display: 'inline-block', marginTop: 12, color: '#2563eb' }}>
-          Volver a la landing
-        </a>
-      </section>
-    </main>
+    <div className={styles.page}>
+      <div className={styles.topStrip} aria-hidden />
+      <div className={styles.inner}>
+        <section className={styles.card}>
+          <div className={styles.logoWrap}>
+            <Logo />
+          </div>
+          <h1 className={styles.title}>Iniciar sesión</h1>
+          <p className={styles.subtitle}>Acceso para dueño y clientes de KodeON.</p>
+          <form onSubmit={handleSubmit} className={styles.form}>
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className={styles.input}
+              autoComplete="email"
+            />
+            <input
+              type="password"
+              placeholder="Contraseña"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className={styles.input}
+              autoComplete="current-password"
+            />
+            <button type="submit" className={styles.submit}>
+              Entrar
+            </button>
+          </form>
+          {status && <p className={styles.status}>{status}</p>}
+          <a href="/" className={styles.back}>
+            Volver a la landing
+          </a>
+        </section>
+      </div>
+    </div>
   );
 }
 

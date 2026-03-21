@@ -25,3 +25,6 @@ dist-ssr
 data/*.db
 storage/pdf/**/*.pdf
 .env
+
+# Supabase
+supabase/.temp

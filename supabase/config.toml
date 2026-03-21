@@ -1,0 +1,8 @@
+# Supabase local/config - evita 401 por verificación JWT en Edge Functions
+# Nuestras funciones validan auth internamente (requieren admin)
+
+[functions.create-client-user]
+verify_jwt = false
+
+[functions.generate-quote-pdf]
+verify_jwt = false
