@@ -158,7 +158,7 @@ const HeroVisual = () => {
           <g stroke="url(#accentGradient)" strokeWidth="3" strokeDasharray="5,5" opacity="0.3" fill="none">
             <line x1="325" y1="310" x2="550" y2="370" />
             <line x1="325" y1="310" x2="150" y2="440" />
-            <line x1="550" y2="370" x2="200" y2="440" />
+            <line x1="550" y1="370" x2="200" y2="440" />
           </g>
 
           {/* Floating Code Elements */}
