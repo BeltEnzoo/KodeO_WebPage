@@ -481,3 +481,82 @@ export async function getBalanceSummary(filters = {}) {
     balance: Number((ingresos + otrosIngresos - gastosTrabajos - gastosGenerales).toFixed(2)),
   };
 }
+
+// --- Equipment interventions (inventario taller/campo) ---
+export async function getEquipmentInterventions() {
+  const { data, error } = await supabase
+    .from('equipment_interventions')
+    .select(`
+      *,
+      client:clients(id, business_name)
+    `)
+    .order('created_at', { ascending: false });
+
+  if (error) throw new Error(error.message);
+  return (data || []).map((row) => ({
+    ...mapKeys(row),
+    client: row.client ? { id: row.client.id, businessName: row.client.business_name } : null,
+  }));
+}
+
+export async function createEquipmentIntervention(payload) {
+  const { data, error } = await supabase
+    .from('equipment_interventions')
+    .insert({
+      client_id: payload.clientId || null,
+      location: payload.location || 'TALLER',
+      equipment_name: payload.equipmentName,
+      brand: payload.brand || null,
+      model: payload.model || null,
+      serial_number: payload.serialNumber || null,
+      intake_date: payload.intakeDate || null,
+      diagnosis: payload.diagnosis || null,
+      technical_action: payload.technicalAction || null,
+      updated_at: new Date().toISOString(),
+    })
+    .select(`
+      *,
+      client:clients(id, business_name)
+    `)
+    .single();
+
+  if (error) throw new Error(error.message);
+  return {
+    ...mapKeys(data),
+    client: data.client ? { id: data.client.id, businessName: data.client.business_name } : null,
+  };
+}
+
+export async function updateEquipmentIntervention(id, updates) {
+  const payload = { updated_at: new Date().toISOString() };
+  if (updates.clientId !== undefined) payload.client_id = updates.clientId || null;
+  if (updates.location !== undefined) payload.location = updates.location || 'TALLER';
+  if (updates.equipmentName !== undefined) payload.equipment_name = updates.equipmentName;
+  if (updates.brand !== undefined) payload.brand = updates.brand || null;
+  if (updates.model !== undefined) payload.model = updates.model || null;
+  if (updates.serialNumber !== undefined) payload.serial_number = updates.serialNumber || null;
+  if (updates.intakeDate !== undefined) payload.intake_date = updates.intakeDate || null;
+  if (updates.diagnosis !== undefined) payload.diagnosis = updates.diagnosis || null;
+  if (updates.technicalAction !== undefined) payload.technical_action = updates.technicalAction || null;
+
+  const { data, error } = await supabase
+    .from('equipment_interventions')
+    .update(payload)
+    .eq('id', id)
+    .select(`
+      *,
+      client:clients(id, business_name)
+    `)
+    .single();
+
+  if (error) throw new Error(error.message);
+  return {
+    ...mapKeys(data),
+    client: data.client ? { id: data.client.id, businessName: data.client.business_name } : null,
+  };
+}
+
+export async function deleteEquipmentIntervention(id) {
+  const { error } = await supabase.from('equipment_interventions').delete().eq('id', id);
+  if (error) throw new Error(error.message);
+}

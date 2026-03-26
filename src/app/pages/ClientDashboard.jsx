@@ -3,6 +3,18 @@ import { BriefcaseBusiness } from 'lucide-react';
 import { getProfile, signOut, getMyJobs } from '../../lib/supabaseApi.js';
 import styles from './ClientDashboard.module.css';
 
+const workStatusLabel = {
+  PENDING: 'Pendiente',
+  IN_PROGRESS: 'En progreso',
+  DONE: 'Finalizado',
+};
+
+const billingStatusLabel = {
+  NOT_INVOICED: 'No facturado',
+  INVOICED: 'Facturado',
+  PAID: 'Pagado',
+};
+
 function ClientDashboard() {
   const [status, setStatus] = useState('Cargando panel...');
   const [user, setUser] = useState(null);
@@ -80,10 +92,10 @@ function ClientDashboard() {
                   <h3 className={styles.title}>{job.title}</h3>
                   {job.description && <p className={styles.muted}>{job.description}</p>}
                   <p className={styles.muted}>
-                    Estado trabajo: <strong>{job.workStatus}</strong>
+                    Estado trabajo: <strong>{workStatusLabel[job.workStatus] ?? job.workStatus}</strong>
                   </p>
                   <p className={styles.muted}>
-                    Estado facturacion: <strong>{job.billingStatus}</strong>
+                    Estado facturacion: <strong>{billingStatusLabel[job.billingStatus] ?? job.billingStatus}</strong>
                   </p>
                   <p className={styles.muted}>
                     Monto: {job.amount != null ? `$${Number(job.amount).toFixed(2)}` : '-'}

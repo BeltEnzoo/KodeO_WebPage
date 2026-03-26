@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { BriefcaseBusiness, FileText, Menu, TrendingUp, UserPlus, Users } from 'lucide-react';
+import { BriefcaseBusiness, FileText, Menu, Stethoscope, TrendingUp, UserPlus, Users } from 'lucide-react';
 import {
   getProfile,
   signOut,
@@ -24,6 +24,10 @@ import {
   createCashMovement,
   deleteCashMovement,
   getBalanceSummary,
+  getEquipmentInterventions,
+  createEquipmentIntervention,
+  updateEquipmentIntervention,
+  deleteEquipmentIntervention,
 } from '../../lib/supabaseApi.js';
 import styles from './AdminDashboard.module.css';
 
@@ -94,6 +98,28 @@ function AdminDashboard() {
   const [editingClientId, setEditingClientId] = useState(null);
   const [editingClientUserId, setEditingClientUserId] = useState(null);
   const [editClientUserForm, setEditClientUserForm] = useState({});
+  const [equipments, setEquipments] = useState([]);
+  const [equipmentsLoading, setEquipmentsLoading] = useState(false);
+  const [equipmentStatus, setEquipmentStatus] = useState('');
+  const [editingEquipmentId, setEditingEquipmentId] = useState(null);
+  const [equipmentForm, setEquipmentForm] = useState({
+    clientId: '',
+    location: 'TALLER',
+    equipmentName: '',
+    brand: '',
+    model: '',
+    serialNumber: '',
+    intakeDate: new Date().toISOString().slice(0, 10),
+    diagnosis: '',
+    technicalAction: '',
+  });
+  const [equipmentFilters, setEquipmentFilters] = useState({
+    q: '',
+    clientId: '',
+    location: '',
+    from: '',
+    to: '',
+  });
 
   useEffect(() => {
     async function loadMe() {
@@ -116,6 +142,9 @@ function AdminDashboard() {
     if (activeSection === 'balance') {
       loadBalance();
       loadCashMovements();
+    }
+    if (activeSection === 'equipments') {
+      loadEquipments();
     }
   }, [activeSection]);
 
@@ -185,6 +214,17 @@ function AdminDashboard() {
     setCashMovementsLoading(false);
   }
 
+  async function loadEquipments() {
+    setEquipmentsLoading(true);
+    try {
+      const list = await getEquipmentInterventions();
+      setEquipments(list);
+    } catch (e) {
+      setEquipmentStatus(e.message ?? 'No se pudieron cargar los equipos.');
+    }
+    setEquipmentsLoading(false);
+  }
+
   function handleInputChange(event) {
     const { name, value } = event.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -203,6 +243,155 @@ function AdminDashboard() {
   function handleQuoteInputChange(event) {
     const { name, value } = event.target;
     setQuoteForm((prev) => ({ ...prev, [name]: value }));
+  }
+
+  function handleEquipmentInputChange(event) {
+    const { name, value } = event.target;
+    setEquipmentForm((prev) => ({ ...prev, [name]: value }));
+  }
+
+  function startEditEquipment(row) {
+    setEditingEquipmentId(row.id);
+    setEquipmentForm({
+      clientId: row.client?.id ?? '',
+      location: row.location ?? 'TALLER',
+      equipmentName: row.equipmentName ?? '',
+      brand: row.brand ?? '',
+      model: row.model ?? '',
+      serialNumber: row.serialNumber ?? '',
+      intakeDate: row.intakeDate ? String(row.intakeDate).slice(0, 10) : new Date().toISOString().slice(0, 10),
+      diagnosis: row.diagnosis ?? '',
+      technicalAction: row.technicalAction ?? '',
+    });
+  }
+
+  function cancelEditEquipment() {
+    setEditingEquipmentId(null);
+    setEquipmentForm({
+      clientId: '',
+      location: 'TALLER',
+      equipmentName: '',
+      brand: '',
+      model: '',
+      serialNumber: '',
+      intakeDate: new Date().toISOString().slice(0, 10),
+      diagnosis: '',
+      technicalAction: '',
+    });
+  }
+
+  async function handleSaveEquipment(event) {
+    event.preventDefault();
+    setEquipmentStatus('Guardando equipo...');
+    try {
+      if (editingEquipmentId) {
+        await updateEquipmentIntervention(editingEquipmentId, equipmentForm);
+        setEquipmentStatus('Equipo actualizado.');
+      } else {
+        await createEquipmentIntervention(equipmentForm);
+        setEquipmentStatus('Equipo registrado.');
+      }
+      cancelEditEquipment();
+      await loadEquipments();
+    } catch (e) {
+      setEquipmentStatus(e.message ?? 'No se pudo guardar.');
+    }
+  }
+
+  async function handleDeleteEquipment(id) {
+    if (!window.confirm('¿Eliminar este registro de equipo?')) return;
+    try {
+      await deleteEquipmentIntervention(id);
+      setEquipmentStatus('Registro eliminado.');
+      if (editingEquipmentId === id) cancelEditEquipment();
+      await loadEquipments();
+    } catch (e) {
+      setEquipmentStatus(e.message ?? 'No se pudo eliminar.');
+    }
+  }
+
+  function handleEquipmentFilterChange(e) {
+    const { name, value } = e.target;
+    setEquipmentFilters((prev) => ({ ...prev, [name]: value }));
+  }
+
+  function normalizeText(v) {
+    return String(v ?? '')
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim();
+  }
+
+  const filteredEquipments = equipments.filter((row) => {
+    if (equipmentFilters.clientId && (row.client?.id ?? '') !== equipmentFilters.clientId) return false;
+    if (equipmentFilters.location && (row.location ?? '') !== equipmentFilters.location) return false;
+
+    if (equipmentFilters.from) {
+      const d = row.intakeDate ? String(row.intakeDate).slice(0, 10) : '';
+      if (d && d < equipmentFilters.from) return false;
+    }
+    if (equipmentFilters.to) {
+      const d = row.intakeDate ? String(row.intakeDate).slice(0, 10) : '';
+      if (d && d > equipmentFilters.to) return false;
+    }
+
+    const q = normalizeText(equipmentFilters.q);
+    if (!q) return true;
+    const hay = normalizeText([
+      row.equipmentName,
+      row.brand,
+      row.model,
+      row.serialNumber,
+      row.diagnosis,
+      row.technicalAction,
+      row.client?.businessName,
+      row.location,
+    ].join(' '));
+    return hay.includes(q);
+  });
+
+  function exportEquipmentsCsv() {
+    const headers = [
+      'Fecha',
+      'Ubicacion',
+      'Cliente',
+      'Equipo',
+      'Marca',
+      'Modelo',
+      'Serie',
+      'Diagnostico',
+      'AccionTecnica',
+    ];
+
+    const rows = filteredEquipments.map((e) => [
+      e.intakeDate ? String(e.intakeDate).slice(0, 10) : '',
+      e.location === 'CAMPO' ? 'CAMPO' : 'TALLER',
+      e.client?.businessName ?? '',
+      e.equipmentName ?? '',
+      e.brand ?? '',
+      e.model ?? '',
+      e.serialNumber ?? '',
+      (e.diagnosis ?? '').replace(/\s+/g, ' ').trim(),
+      (e.technicalAction ?? '').replace(/\s+/g, ' ').trim(),
+    ]);
+
+    const esc = (v) => {
+      const s = String(v ?? '');
+      if (/[",\n;]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
+      return s;
+    };
+
+    const csv = [headers.join(';'), ...rows.map((r) => r.map(esc).join(';'))].join('\n');
+    const blob = new Blob([`\uFEFF${csv}`], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `equipos_intervenidos_${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
   }
 
   function handleQuoteItemChange(index, field, value) {
@@ -514,6 +703,7 @@ function AdminDashboard() {
     { id: 'clientUsers', label: '3) Crear usuario cliente', icon: UserPlus },
     { id: 'quotes', label: '4) Crear presupuesto', icon: FileText },
     { id: 'balance', label: '5) Balance', icon: TrendingUp },
+    { id: 'equipments', label: '6) Equipos intervenidos', icon: Stethoscope },
   ];
 
   return (
@@ -1057,6 +1247,120 @@ function AdminDashboard() {
                     </tbody>
                   </table>
                 </div>
+              )}
+            </article>
+          </>
+        )}
+
+        {activeSection === 'equipments' && (
+          <>
+            <article className={styles.card}>
+              <h3 className={styles.title}>{editingEquipmentId ? 'Editar equipo intervenido' : 'Registrar equipo intervenido'}</h3>
+              <form onSubmit={handleSaveEquipment} className={styles.form}>
+                <select name="clientId" value={equipmentForm.clientId} onChange={handleEquipmentInputChange}>
+                  <option value="">Sin cliente (opcional)</option>
+                  {clients.map((c) => (
+                    <option key={c.id} value={c.id}>{c.businessName}</option>
+                  ))}
+                </select>
+                <div className={styles.row2}>
+                  <select name="location" value={equipmentForm.location} onChange={handleEquipmentInputChange}>
+                    <option value="TALLER">Taller</option>
+                    <option value="CAMPO">Campo (hospital)</option>
+                  </select>
+                  <input name="intakeDate" type="date" value={equipmentForm.intakeDate} onChange={handleEquipmentInputChange} />
+                </div>
+                <input name="equipmentName" placeholder="Nombre de equipo * (ej: Autoclave, Centrífuga)" value={equipmentForm.equipmentName} onChange={handleEquipmentInputChange} required />
+                <div className={styles.row3}>
+                  <input name="brand" placeholder="Marca" value={equipmentForm.brand} onChange={handleEquipmentInputChange} />
+                  <input name="model" placeholder="Modelo" value={equipmentForm.model} onChange={handleEquipmentInputChange} />
+                  <input name="serialNumber" placeholder="N° de serie" value={equipmentForm.serialNumber} onChange={handleEquipmentInputChange} />
+                </div>
+                <textarea name="diagnosis" placeholder="Diagnóstico de ingreso" value={equipmentForm.diagnosis} onChange={handleEquipmentInputChange} rows={3} />
+                <textarea name="technicalAction" placeholder="Acción técnica realizada" value={equipmentForm.technicalAction} onChange={handleEquipmentInputChange} rows={3} />
+                <div className={styles.actions}>
+                  <button type="submit" className={styles.buttonPrimary}>
+                    {editingEquipmentId ? 'Guardar cambios' : 'Registrar equipo'}
+                  </button>
+                  {editingEquipmentId && (
+                    <button type="button" onClick={cancelEditEquipment} className={styles.danger}>
+                      Cancelar
+                    </button>
+                  )}
+                </div>
+              </form>
+              {equipmentStatus && <p className={styles.muted}>{equipmentStatus}</p>}
+            </article>
+
+            <article className={styles.card}>
+              <h3 className={styles.title}>Equipos intervenidos</h3>
+              {equipmentsLoading ? (
+                <p className={styles.muted}>Cargando...</p>
+              ) : equipments.length === 0 ? (
+                <p className={styles.muted}>Aún no hay registros.</p>
+              ) : (
+                <>
+                  <div className={styles.filtersBar}>
+                    <input
+                      name="q"
+                      placeholder="Buscar (equipo, marca, modelo, serie, diagnóstico...)"
+                      value={equipmentFilters.q}
+                      onChange={handleEquipmentFilterChange}
+                    />
+                    <select name="clientId" value={equipmentFilters.clientId} onChange={handleEquipmentFilterChange}>
+                      <option value="">Todos los clientes</option>
+                      {clients.map((c) => (
+                        <option key={c.id} value={c.id}>{c.businessName}</option>
+                      ))}
+                    </select>
+                    <select name="location" value={equipmentFilters.location} onChange={handleEquipmentFilterChange}>
+                      <option value="">Taller + Campo</option>
+                      <option value="TALLER">Solo taller</option>
+                      <option value="CAMPO">Solo campo</option>
+                    </select>
+                    <input name="from" type="date" value={equipmentFilters.from} onChange={handleEquipmentFilterChange} />
+                    <input name="to" type="date" value={equipmentFilters.to} onChange={handleEquipmentFilterChange} />
+                    <button type="button" className={styles.buttonPrimary} onClick={exportEquipmentsCsv}>
+                      Exportar CSV
+                    </button>
+                  </div>
+                  <p className={styles.muted} style={{ marginTop: '0.5rem' }}>
+                    Mostrando <strong>{filteredEquipments.length}</strong> de <strong>{equipments.length}</strong>
+                  </p>
+                  <div className={styles.tableWrap}>
+                    <table className={styles.table}>
+                    <thead>
+                      <tr>
+                        <th>Fecha</th>
+                        <th>Ubicación</th>
+                        <th>Equipo</th>
+                        <th>Marca</th>
+                        <th>Modelo</th>
+                        <th>Serie</th>
+                        <th>Cliente</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredEquipments.map((e) => (
+                        <tr key={e.id}>
+                          <td>{e.intakeDate ? new Date(e.intakeDate).toLocaleDateString('es-AR') : '-'}</td>
+                          <td>{e.location === 'CAMPO' ? 'Campo' : 'Taller'}</td>
+                          <td>{e.equipmentName}</td>
+                          <td>{e.brand ?? '-'}</td>
+                          <td>{e.model ?? '-'}</td>
+                          <td>{e.serialNumber ?? '-'}</td>
+                          <td>{e.client?.businessName ?? '-'}</td>
+                          <td className={styles.cellActions}>
+                            <button type="button" onClick={() => startEditEquipment(e)} className={styles.linkButton}>Editar</button>
+                            <button type="button" onClick={() => handleDeleteEquipment(e.id)} className={styles.danger} style={{ padding: '4px 8px', fontSize: '12px' }}>Eliminar</button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                    </table>
+                  </div>
+                </>
               )}
             </article>
           </>
