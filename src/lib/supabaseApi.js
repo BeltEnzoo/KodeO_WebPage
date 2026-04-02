@@ -145,19 +145,23 @@ export async function getMyJobs() {
 }
 
 export async function createJob(data) {
+  const billingStatus = data.billingStatus ?? 'NOT_INVOICED';
+  const insertPayload = {
+    client_id: data.clientId,
+    title: data.title,
+    description: data.description || null,
+    work_status: data.workStatus ?? 'PENDING',
+    billing_status: billingStatus,
+    amount: data.amount != null && data.amount !== '' ? Number(data.amount) : null,
+    expense_shipping: Number(data.expenseShipping ?? 0) || 0,
+    expense_repuestos: Number(data.expenseRepuestos ?? 0) || 0,
+    expense_terciarizacion: Number(data.expenseTerciarizacion ?? 0) || 0,
+  };
+  if (billingStatus === 'PAID' && data.paidAt) insertPayload.paid_at = data.paidAt;
+
   const { data: row, error } = await supabase
     .from('jobs')
-    .insert({
-      client_id: data.clientId,
-      title: data.title,
-      description: data.description || null,
-      work_status: data.workStatus ?? 'PENDING',
-      billing_status: data.billingStatus ?? 'NOT_INVOICED',
-      amount: data.amount != null && data.amount !== '' ? Number(data.amount) : null,
-      expense_shipping: Number(data.expenseShipping ?? 0) || 0,
-      expense_repuestos: Number(data.expenseRepuestos ?? 0) || 0,
-      expense_terciarizacion: Number(data.expenseTerciarizacion ?? 0) || 0,
-    })
+    .insert(insertPayload)
     .select(`
       *,
       client:clients(id, business_name)
@@ -185,6 +189,9 @@ export async function updateJob(jobId, updates) {
   if (updates.expenseShipping != null) payload.expense_shipping = Number(updates.expenseShipping ?? 0);
   if (updates.expenseRepuestos != null) payload.expense_repuestos = Number(updates.expenseRepuestos ?? 0);
   if (updates.expenseTerciarizacion != null) payload.expense_terciarizacion = Number(updates.expenseTerciarizacion ?? 0);
+  if (updates.paidAt !== undefined && updates.paidAt !== '' && updates.paidAt != null) {
+    payload.paid_at = updates.paidAt;
+  }
 
   const { data, error } = await supabase
     .from('jobs')
@@ -357,6 +364,40 @@ export async function createQuote(payload) {
   };
 }
 
+export async function updateQuote(quoteId, updates) {
+  const payload = { updated_at: new Date().toISOString() };
+  if (updates.status != null) payload.status = updates.status;
+  if (updates.followUpAt !== undefined) {
+    payload.follow_up_at = updates.followUpAt === '' || updates.followUpAt == null ? null : updates.followUpAt;
+  }
+  if (updates.lastContactAt !== undefined) {
+    payload.last_contact_at = updates.lastContactAt === '' || updates.lastContactAt == null ? null : updates.lastContactAt;
+  }
+  if (updates.lostReason !== undefined) payload.lost_reason = updates.lostReason || null;
+  if (updates.validUntil !== undefined) {
+    payload.valid_until = updates.validUntil ? new Date(updates.validUntil).toISOString() : null;
+  }
+  if (updates.notes !== undefined) payload.notes = updates.notes || null;
+
+  const { data, error } = await supabase
+    .from('quotes')
+    .update(payload)
+    .eq('id', quoteId)
+    .select(`
+      *,
+      client:clients(id, business_name),
+      items:quote_items(*)
+    `)
+    .single();
+
+  if (error) throw new Error(error.message);
+  return {
+    ...mapKeys(data),
+    client: data.client ? { id: data.client.id, businessName: data.client.business_name } : null,
+    items: (data.items || []).map(mapKeys),
+  };
+}
+
 export async function generateQuotePdf(quoteId) {
   const { data: { session } } = await supabase.auth.getSession();
   const { data, error } = await supabase.functions.invoke('generate-quote-pdf', {
@@ -426,44 +467,75 @@ export async function deleteCashMovement(id) {
 }
 
 // --- Balance (resumen financiero) ---
-export async function getBalanceSummary(filters = {}) {
-  const fromDate = filters.fromDate || null;
-  const toDate = filters.toDate || null;
+function pad2(n) {
+  return String(n).padStart(2, '0');
+}
 
-  let jobsQuery = supabase.from('jobs').select('amount, billing_status, expense_shipping, expense_repuestos, expense_terciarizacion');
-  if (fromDate) jobsQuery = jobsQuery.gte('created_at', fromDate);
-  if (toDate) jobsQuery = jobsQuery.lte('created_at', toDate + 'T23:59:59.999Z');
+function addDaysYmd(ymd, delta) {
+  const [y, m, d] = ymd.split('-').map(Number);
+  const dt = new Date(y, m - 1, d);
+  dt.setDate(dt.getDate() + delta);
+  return `${dt.getFullYear()}-${pad2(dt.getMonth() + 1)}-${pad2(dt.getDate())}`;
+}
 
-  const { data: jobs, error: jobsErr } = await jobsQuery;
-  if (jobsErr) throw new Error(jobsErr.message);
+function daysBetweenInclusive(from, to) {
+  const a = new Date(`${from}T12:00:00`);
+  const b = new Date(`${to}T12:00:00`);
+  return Math.round((b - a) / (24 * 60 * 60 * 1000)) + 1;
+}
 
-  let movQuery = supabase
-    .from('cash_movements')
-    .select('type, category, amount');
-  if (fromDate) movQuery = movQuery.gte('date', fromDate);
-  if (toDate) movQuery = movQuery.lte('date', toDate + 'T23:59:59.999Z');
+function previousPeriod(fromDate, toDate) {
+  const len = daysBetweenInclusive(fromDate, toDate);
+  const prevTo = addDaysYmd(fromDate, -1);
+  const prevFrom = addDaysYmd(prevTo, -(len - 1));
+  return { fromDate: prevFrom, toDate: prevTo };
+}
 
-  const { data: movements, error: movErr } = await movQuery;
-  if (movErr) throw new Error(movErr.message);
+function monthKeysInRange(fromDate, toDate) {
+  const keys = [];
+  const y = +fromDate.slice(0, 4);
+  const m = +fromDate.slice(5, 7) - 1;
+  const end = new Date(+toDate.slice(0, 4), +toDate.slice(5, 7) - 1, +toDate.slice(8, 10));
+  let cur = new Date(y, m, 1);
+  while (cur <= end) {
+    keys.push(`${cur.getFullYear()}-${pad2(cur.getMonth() + 1)}`);
+    cur.setMonth(cur.getMonth() + 1);
+  }
+  return keys;
+}
 
-  const paidJobs = (jobs || []).filter((j) => j.billing_status === 'PAID');
-  const ingresos = paidJobs.reduce((s, j) => s + Number(j.amount || 0), 0);
-  const gastosTrabajos = (jobs || []).reduce(
-    (s, j) =>
-      s +
-      Number(j.expense_shipping || 0) +
-      Number(j.expense_repuestos || 0) +
-      Number(j.expense_terciarizacion || 0),
-    0
+function monthLabel(ym) {
+  const [y, m] = ym.split('-').map(Number);
+  return new Date(y, m - 1, 1).toLocaleDateString('es-AR', { month: 'short', year: 'numeric' });
+}
+
+function movementMonthKey(dateVal) {
+  if (!dateVal) return '';
+  const s = typeof dateVal === 'string' ? dateVal : new Date(dateVal).toISOString();
+  return s.slice(0, 7);
+}
+
+function jobExpensesTotal(j) {
+  return (
+    Number(j.expense_shipping || 0) +
+    Number(j.expense_repuestos || 0) +
+    Number(j.expense_terciarizacion || 0)
   );
+}
 
+function roundMoney(n) {
+  return Number(Number(n).toFixed(2));
+}
+
+function aggregatePaidJobsAndMovements(paidJobs, movements) {
+  const ingresos = paidJobs.reduce((s, j) => s + Number(j.amount || 0), 0);
+  const gastosTrabajos = paidJobs.reduce((s, j) => s + jobExpensesTotal(j), 0);
   const gastosGenerales = (movements || [])
     .filter((m) => m.type === 'EXPENSE')
     .reduce((s, m) => s + Number(m.amount || 0), 0);
   const otrosIngresos = (movements || [])
     .filter((m) => m.type === 'INCOME')
     .reduce((s, m) => s + Number(m.amount || 0), 0);
-
   const gastosPorCategoria = (movements || [])
     .filter((m) => m.type === 'EXPENSE')
     .reduce((acc, m) => {
@@ -471,14 +543,172 @@ export async function getBalanceSummary(filters = {}) {
       acc[cat] = (acc[cat] || 0) + Number(m.amount || 0);
       return acc;
     }, {});
+  const balance = ingresos + otrosIngresos - gastosTrabajos - gastosGenerales;
+  return {
+    ingresos: roundMoney(ingresos),
+    otrosIngresos: roundMoney(otrosIngresos),
+    gastosTrabajos: roundMoney(gastosTrabajos),
+    gastosGenerales: roundMoney(gastosGenerales),
+    gastosPorCategoria,
+    balance: roundMoney(balance),
+  };
+}
+
+function buildMonthlyRows(paidJobs, movements, monthKeys) {
+  const empty = () => ({
+    ingresos: 0,
+    otrosIngresos: 0,
+    gastosTrabajos: 0,
+    gastosGenerales: 0,
+  });
+  const byMonth = Object.fromEntries(monthKeys.map((k) => [k, empty()]));
+
+  for (const j of paidJobs) {
+    const pk = (j.paid_at || '').slice(0, 7);
+    if (!byMonth[pk]) continue;
+    byMonth[pk].ingresos += Number(j.amount || 0);
+    byMonth[pk].gastosTrabajos += jobExpensesTotal(j);
+  }
+  for (const m of movements || []) {
+    const dk = movementMonthKey(m.date);
+    if (!byMonth[dk]) continue;
+    if (m.type === 'EXPENSE') byMonth[dk].gastosGenerales += Number(m.amount || 0);
+    if (m.type === 'INCOME') byMonth[dk].otrosIngresos += Number(m.amount || 0);
+  }
+
+  return monthKeys.map((ym) => {
+    const row = byMonth[ym];
+    const balance = roundMoney(
+      row.ingresos + row.otrosIngresos - row.gastosTrabajos - row.gastosGenerales
+    );
+    return {
+      month: ym,
+      label: monthLabel(ym),
+      ingresos: roundMoney(row.ingresos),
+      otrosIngresos: roundMoney(row.otrosIngresos),
+      gastosTrabajos: roundMoney(row.gastosTrabajos),
+      gastosGenerales: roundMoney(row.gastosGenerales),
+      balance,
+    };
+  });
+}
+
+export async function getBalanceSummary(filters = {}) {
+  const fromDate = filters.fromDate || null;
+  const toDate = filters.toDate || null;
+
+  if (!fromDate || !toDate) {
+    const { data: jobs, error: jobsErr } = await supabase
+      .from('jobs')
+      .select('amount, billing_status, expense_shipping, expense_repuestos, expense_terciarizacion, paid_at');
+    if (jobsErr) throw new Error(jobsErr.message);
+
+    const { data: movements, error: movErr } = await supabase
+      .from('cash_movements')
+      .select('type, category, amount, date');
+    if (movErr) throw new Error(movErr.message);
+
+    const paidJobs = (jobs || []).filter((j) => j.billing_status === 'PAID');
+    const ingresos = paidJobs.reduce((s, j) => s + Number(j.amount || 0), 0);
+    const gastosTrabajos = (jobs || []).reduce((s, j) => s + jobExpensesTotal(j), 0);
+    const gastosGenerales = (movements || [])
+      .filter((m) => m.type === 'EXPENSE')
+      .reduce((s, m) => s + Number(m.amount || 0), 0);
+    const otrosIngresos = (movements || [])
+      .filter((m) => m.type === 'INCOME')
+      .reduce((s, m) => s + Number(m.amount || 0), 0);
+    const gastosPorCategoria = (movements || [])
+      .filter((m) => m.type === 'EXPENSE')
+      .reduce((acc, m) => {
+        const cat = m.category || 'Otros';
+        acc[cat] = (acc[cat] || 0) + Number(m.amount || 0);
+        return acc;
+      }, {});
+    const balance = ingresos + otrosIngresos - gastosTrabajos - gastosGenerales;
+
+    return {
+      ingresos: roundMoney(ingresos),
+      otrosIngresos: roundMoney(otrosIngresos),
+      gastosTrabajos: roundMoney(gastosTrabajos),
+      gastosGenerales: roundMoney(gastosGenerales),
+      gastosPorCategoria,
+      balance: roundMoney(balance),
+      monthly: [],
+      previousPeriod: null,
+      comparison: null,
+      range: null,
+    };
+  }
+
+  const toEnd = `${toDate}T23:59:59.999Z`;
+
+  let jobsQuery = supabase
+    .from('jobs')
+    .select('amount, billing_status, expense_shipping, expense_repuestos, expense_terciarizacion, paid_at')
+    .eq('billing_status', 'PAID')
+    .gte('paid_at', fromDate)
+    .lte('paid_at', toDate);
+
+  const { data: paidJobs, error: jobsErr } = await jobsQuery;
+  if (jobsErr) throw new Error(jobsErr.message);
+
+  let movQuery = supabase
+    .from('cash_movements')
+    .select('type, category, amount, date')
+    .gte('date', fromDate)
+    .lte('date', toEnd);
+
+  const { data: movements, error: movErr } = await movQuery;
+  if (movErr) throw new Error(movErr.message);
+
+  const summary = aggregatePaidJobsAndMovements(paidJobs || [], movements || []);
+  const monthKeys = monthKeysInRange(fromDate, toDate);
+  const monthly = buildMonthlyRows(paidJobs || [], movements || [], monthKeys);
+
+  const prev = previousPeriod(fromDate, toDate);
+  const prevToEnd = `${prev.toDate}T23:59:59.999Z`;
+
+  const { data: prevPaidJobs, error: prevJobsErr } = await supabase
+    .from('jobs')
+    .select('amount, billing_status, expense_shipping, expense_repuestos, expense_terciarizacion, paid_at')
+    .eq('billing_status', 'PAID')
+    .gte('paid_at', prev.fromDate)
+    .lte('paid_at', prev.toDate);
+
+  if (prevJobsErr) throw new Error(prevJobsErr.message);
+
+  const { data: prevMovements, error: prevMovErr } = await supabase
+    .from('cash_movements')
+    .select('type, category, amount, date')
+    .gte('date', prev.fromDate)
+    .lte('date', prevToEnd);
+
+  if (prevMovErr) throw new Error(prevMovErr.message);
+
+  const prevSummary = aggregatePaidJobsAndMovements(prevPaidJobs || [], prevMovements || []);
+
+  const pct = (cur, prevVal) => {
+    if (prevVal === 0 || prevVal === null || prevVal === undefined) return null;
+    return roundMoney(((cur - prevVal) / Math.abs(prevVal)) * 100);
+  };
+
+  const comparison = {
+    balanceDelta: roundMoney(summary.balance - prevSummary.balance),
+    balancePct: pct(summary.balance, prevSummary.balance),
+    ingresosDelta: roundMoney(summary.ingresos - prevSummary.ingresos),
+    ingresosPct: pct(summary.ingresos, prevSummary.ingresos),
+  };
 
   return {
-    ingresos: Number(ingresos.toFixed(2)),
-    otrosIngresos: Number(otrosIngresos.toFixed(2)),
-    gastosTrabajos: Number(gastosTrabajos.toFixed(2)),
-    gastosGenerales: Number(gastosGenerales.toFixed(2)),
-    gastosPorCategoria,
-    balance: Number((ingresos + otrosIngresos - gastosTrabajos - gastosGenerales).toFixed(2)),
+    ...summary,
+    monthly,
+    previousPeriod: {
+      fromDate: prev.fromDate,
+      toDate: prev.toDate,
+      ...prevSummary,
+    },
+    comparison,
+    range: { fromDate, toDate },
   };
 }
 

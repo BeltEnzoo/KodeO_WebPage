@@ -35,7 +35,7 @@ function LoginPage() {
     setStatus('Ingresando...');
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
 
       if (error) {
         setStatus(error.message === 'Invalid login credentials'

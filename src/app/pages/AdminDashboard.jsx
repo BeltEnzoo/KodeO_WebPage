@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { BriefcaseBusiness, FileText, Menu, Stethoscope, TrendingUp, UserPlus, Users } from 'lucide-react';
 import {
   getProfile,
@@ -17,6 +17,7 @@ import {
   deleteClientUser as apiDeleteClientUser,
   getQuotes,
   createQuote as apiCreateQuote,
+  updateQuote as apiUpdateQuote,
   generateQuotePdf as apiGenerateQuotePdf,
   deleteQuote as apiDeleteQuote,
   getQuotePdfSignedUrl,
@@ -30,6 +31,45 @@ import {
   deleteEquipmentIntervention,
 } from '../../lib/supabaseApi.js';
 import styles from './AdminDashboard.module.css';
+
+const INCOME_CATEGORY_LABELS = {
+  APORTE_SUELDO_EXTERNO: 'Aporte desde otro trabajo',
+  AHORROS_PERSONALES: 'Ahorros personales',
+  PRESTAMO_RECIBIDO: 'Préstamo recibido',
+  OTROS: 'Otros ingresos',
+};
+
+function incomeCategoryLabel(code) {
+  return INCOME_CATEGORY_LABELS[code] || code;
+}
+
+const QUOTE_STATUS_LABELS = {
+  DRAFT: 'Borrador',
+  SENT: 'Enviado',
+  NEGOTIATION: 'En negociación',
+  ACCEPTED: 'Aceptado',
+  REJECTED: 'Rechazado',
+};
+
+const QUOTE_PIPELINE_KEYS = ['DRAFT', 'SENT', 'NEGOTIATION', 'ACCEPTED', 'REJECTED'];
+
+function startOfToday() {
+  const t = new Date();
+  t.setHours(0, 0, 0, 0);
+  return t;
+}
+
+function isQuoteOpen(q) {
+  return q.status === 'DRAFT' || q.status === 'SENT' || q.status === 'NEGOTIATION';
+}
+
+function quoteYmd(value) {
+  if (value == null || value === '') return '';
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return '';
+  const p = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+}
 
 function AdminDashboard() {
   const [activeSection, setActiveSection] = useState('clients');
@@ -82,9 +122,13 @@ function AdminDashboard() {
     { description: '', qty: '1', unitPrice: '', imageData: '' },
   ]);
   const [quoteStatus, setQuoteStatus] = useState('');
+  const [quotePipelineFilter, setQuotePipelineFilter] = useState('ALL');
   const [balance, setBalance] = useState(null);
   const [balanceLoading, setBalanceLoading] = useState(false);
+  const [balanceFrom, setBalanceFrom] = useState('');
+  const [balanceTo, setBalanceTo] = useState('');
   const [cashMovements, setCashMovements] = useState([]);
+  const [incomeMovements, setIncomeMovements] = useState([]);
   const [cashMovementsLoading, setCashMovementsLoading] = useState(false);
   const [expenseForm, setExpenseForm] = useState({
     category: 'PUBLICIDAD',
@@ -93,6 +137,13 @@ function AdminDashboard() {
     date: new Date().toISOString().slice(0, 10),
   });
   const [expenseStatus, setExpenseStatus] = useState('');
+  const [incomeForm, setIncomeForm] = useState({
+    category: 'APORTE_SUELDO_EXTERNO',
+    description: '',
+    amount: '',
+    date: new Date().toISOString().slice(0, 10),
+  });
+  const [incomeStatus, setIncomeStatus] = useState('');
   const [editingJobId, setEditingJobId] = useState(null);
   const [editJobForm, setEditJobForm] = useState({});
   const [editingClientId, setEditingClientId] = useState(null);
@@ -121,6 +172,35 @@ function AdminDashboard() {
     to: '',
   });
 
+  async function loadBalance() {
+    setBalanceLoading(true);
+    try {
+      const from = String(balanceFrom ?? '').trim();
+      const to = String(balanceTo ?? '').trim();
+      const data =
+        from && to
+          ? await getBalanceSummary({ fromDate: from, toDate: to })
+          : await getBalanceSummary({});
+      setBalance(data);
+    } catch {
+      setBalance(null);
+    }
+    setBalanceLoading(false);
+  }
+
+  async function loadBalanceGeneral() {
+    setBalanceFrom('');
+    setBalanceTo('');
+    setBalanceLoading(true);
+    try {
+      const data = await getBalanceSummary({});
+      setBalance(data);
+    } catch {
+      setBalance(null);
+    }
+    setBalanceLoading(false);
+  }
+
   useEffect(() => {
     async function loadMe() {
       const profile = await getProfile();
@@ -146,6 +226,7 @@ function AdminDashboard() {
     if (activeSection === 'equipments') {
       loadEquipments();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- solo al abrir sección; fechas con "Actualizar"
   }, [activeSection]);
 
   async function loadClients() {
@@ -192,24 +273,18 @@ function AdminDashboard() {
     setQuotesLoading(false);
   }
 
-  async function loadBalance() {
-    setBalanceLoading(true);
-    try {
-      const data = await getBalanceSummary();
-      setBalance(data);
-    } catch (e) {
-      setBalance(null);
-    }
-    setBalanceLoading(false);
-  }
-
   async function loadCashMovements() {
     setCashMovementsLoading(true);
     try {
-      const list = await getCashMovements({ type: 'EXPENSE' });
-      setCashMovements(list);
+      const [expList, incList] = await Promise.all([
+        getCashMovements({ type: 'EXPENSE' }),
+        getCashMovements({ type: 'INCOME' }),
+      ]);
+      setCashMovements(expList);
+      setIncomeMovements(incList);
     } catch (e) {
-      setExpenseStatus(e.message ?? 'No se pudieron cargar gastos.');
+      setExpenseStatus(e.message ?? 'No se pudieron cargar movimientos de caja.');
+      setIncomeStatus(e.message ?? 'No se pudieron cargar movimientos de caja.');
     }
     setCashMovementsLoading(false);
   }
@@ -526,6 +601,36 @@ function AdminDashboard() {
     }
   }
 
+  function handleIncomeInputChange(event) {
+    const { name, value } = event.target;
+    setIncomeForm((prev) => ({ ...prev, [name]: value }));
+  }
+
+  async function handleAddIncome(event) {
+    event.preventDefault();
+    setIncomeStatus('Guardando ingreso...');
+    try {
+      await createCashMovement({
+        type: 'INCOME',
+        category: incomeForm.category,
+        description: incomeForm.description,
+        amount: incomeForm.amount,
+        date: incomeForm.date,
+      });
+      setIncomeForm({
+        category: 'APORTE_SUELDO_EXTERNO',
+        description: '',
+        amount: '',
+        date: new Date().toISOString().slice(0, 10),
+      });
+      setIncomeStatus('Ingreso registrado.');
+      await loadBalance();
+      await loadCashMovements();
+    } catch (e) {
+      setIncomeStatus(e.message ?? 'No se pudo registrar el ingreso.');
+    }
+  }
+
   async function handleDeleteExpense(id) {
     if (!window.confirm('¿Eliminar este gasto?')) return;
     try {
@@ -535,6 +640,18 @@ function AdminDashboard() {
       await loadCashMovements();
     } catch (e) {
       setExpenseStatus(e.message ?? 'No se pudo eliminar.');
+    }
+  }
+
+  async function handleDeleteIncome(id) {
+    if (!window.confirm('¿Eliminar este ingreso?')) return;
+    try {
+      await deleteCashMovement(id);
+      setIncomeStatus('Ingreso eliminado.');
+      await loadBalance();
+      await loadCashMovements();
+    } catch (e) {
+      setIncomeStatus(e.message ?? 'No se pudo eliminar.');
     }
   }
 
@@ -550,6 +667,7 @@ function AdminDashboard() {
       expenseTerciarizacion: job.expenseTerciarizacion ?? '',
       workStatus: job.workStatus ?? 'PENDING',
       billingStatus: job.billingStatus ?? 'NOT_INVOICED',
+      paidAt: job.paidAt ? String(job.paidAt).slice(0, 10) : '',
     });
   }
 
@@ -696,6 +814,46 @@ function AdminDashboard() {
       setQuoteStatus(e.message ?? 'No se pudo eliminar el presupuesto.');
     }
   }
+
+  async function patchQuote(quoteId, partial) {
+    try {
+      const updated = await apiUpdateQuote(quoteId, partial);
+      setQuotes((prev) => prev.map((q) => (q.id === quoteId ? updated : q)));
+      setQuoteStatus('');
+    } catch (e) {
+      setQuoteStatus(e.message ?? 'No se pudo actualizar el presupuesto.');
+    }
+  }
+
+  const quoteSales = useMemo(() => {
+    const today = startOfToday();
+    const in7 = new Date(today);
+    in7.setDate(in7.getDate() + 7);
+    const list = quotes || [];
+    const open = list.filter(isQuoteOpen);
+    const expired = open.filter((q) => {
+      if (!q.validUntil) return false;
+      return new Date(q.validUntil) < today;
+    });
+    const expiringSoon = open.filter((q) => {
+      if (!q.validUntil) return false;
+      const v = new Date(q.validUntil);
+      return v >= today && v <= in7;
+    });
+    const withFollowUp = open
+      .filter((q) => q.followUpAt)
+      .sort((a, b) => new Date(a.followUpAt) - new Date(b.followUpAt));
+    const counts = { ALL: list.length };
+    for (const k of QUOTE_PIPELINE_KEYS) {
+      counts[k] = list.filter((q) => q.status === k).length;
+    }
+    return { expired, expiringSoon, withFollowUp, counts };
+  }, [quotes]);
+
+  const filteredQuotes = useMemo(() => {
+    if (quotePipelineFilter === 'ALL') return quotes;
+    return quotes.filter((q) => q.status === quotePipelineFilter);
+  }, [quotes, quotePipelineFilter]);
 
   const sections = [
     { id: 'clients', label: '1) Crear cliente', icon: Users },
@@ -873,6 +1031,14 @@ function AdminDashboard() {
                       <p className={styles.muted}>
                         Gastos: Envios ${Number(job.expenseShipping ?? 0).toLocaleString('es-AR', { minimumFractionDigits: 2 })} | Repuestos ${Number(job.expenseRepuestos ?? 0).toLocaleString('es-AR', { minimumFractionDigits: 2 })} | Terciarizacion ${Number(job.expenseTerciarizacion ?? 0).toLocaleString('es-AR', { minimumFractionDigits: 2 })}
                       </p>
+                      {job.billingStatus === 'PAID' && (
+                        <p className={styles.muted}>
+                          Fecha de cobro:{' '}
+                          {job.paidAt
+                            ? new Date(`${String(job.paidAt).slice(0, 10)}T12:00:00`).toLocaleDateString('es-AR')
+                            : '—'}
+                        </p>
+                      )}
                       {job.amount != null && (
                         <p className={styles.muted}>
                           Ganancia neta: <strong>${(Number(job.amount) - Number(job.expenseShipping ?? 0) - Number(job.expenseRepuestos ?? 0) - Number(job.expenseTerciarizacion ?? 0)).toLocaleString('es-AR', { minimumFractionDigits: 2 })}</strong>
@@ -905,6 +1071,12 @@ function AdminDashboard() {
                               <option value="PAID">Pagado</option>
                             </select>
                           </div>
+                          {editJobForm.billingStatus === 'PAID' && (
+                            <label className={styles.balanceFilterLabel}>
+                              Fecha de cobro
+                              <input type="date" name="paidAt" value={editJobForm.paidAt || ''} onChange={handleEditJobChange} />
+                            </label>
+                          )}
                           <div className={styles.actions}>
                             <button type="button" onClick={() => saveEditJob(job.id)} className={styles.buttonPrimary}>
                               Guardar
@@ -1029,162 +1201,474 @@ function AdminDashboard() {
         )}
 
         {activeSection === 'quotes' && (
-          <article className={styles.card}>
-            <h3 className={styles.title}>Crear presupuesto</h3>
-            <form onSubmit={handleCreateQuote} className={styles.form}>
-              <select name="clientId" value={quoteForm.clientId} onChange={handleQuoteInputChange} required>
-                <option value="">Seleccionar cliente *</option>
-                {clients.map((client) => (
-                  <option key={client.id} value={client.id}>
-                    {client.businessName}
-                  </option>
-                ))}
-              </select>
-              <input name="validUntil" type="date" value={quoteForm.validUntil} onChange={handleQuoteInputChange} placeholder="Valido hasta" />
-              <input name="taxPercent" type="number" min="0" max="100" step="0.01" value={quoteForm.taxPercent} onChange={handleQuoteInputChange} placeholder="Impuesto %" />
-              {quoteItems.map((item, index) => (
-                <article key={`quote-item-${index}`} className={styles.jobItem}>
-                  <h4 className={styles.title}>Item {index + 1}</h4>
-                  <input
-                    value={item.description}
-                    onChange={(event) => handleQuoteItemChange(index, 'description', event.target.value)}
-                    placeholder="Descripcion del item *"
-                    required
-                  />
-                  <div className={styles.row2}>
-                    <input
-                      type="number"
-                      min="0.01"
-                      step="0.01"
-                      value={item.qty}
-                      onChange={(event) => handleQuoteItemChange(index, 'qty', event.target.value)}
-                      placeholder="Cantidad *"
-                      required
-                    />
-                    <input
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      value={item.unitPrice}
-                      onChange={(event) => handleQuoteItemChange(index, 'unitPrice', event.target.value)}
-                      placeholder="Precio unitario *"
-                      required
-                    />
-                  </div>
-                  <input
-                    type="file"
-                    accept="image/png,image/jpeg"
-                    onChange={(event) => handleQuoteItemImageChange(index, event.target.files?.[0])}
-                  />
-                  {item.imageData && <p className={styles.muted}>Imagen cargada para este item.</p>}
-                  {quoteItems.length > 1 && (
+          <>
+            <article className={styles.card}>
+              <h3 className={styles.title}>Ventas y seguimiento</h3>
+              <p className={styles.muted}>
+                Embudo de estados, alertas por validez y próximos contactos. Mové el estado cuando avance la venta; usá &quot;En negociación&quot; cuando haya ida y vuelta con el cliente.
+              </p>
+              {quotesLoading ? (
+                <p className={styles.muted}>Cargando...</p>
+              ) : (
+                <>
+                  <div className={styles.quotePipeline}>
                     <button
                       type="button"
-                      onClick={() => removeQuoteItem(index)}
-                      className={styles.danger}
+                      className={quotePipelineFilter === 'ALL' ? styles.quotePipelineBtnActive : styles.quotePipelineBtn}
+                      onClick={() => setQuotePipelineFilter('ALL')}
                     >
-                      Eliminar item
+                      Todos ({quoteSales.counts.ALL})
                     </button>
-                  )}
-                </article>
-              ))}
-              <button type="button" onClick={addQuoteItem} className={styles.buttonPrimary}>
-                Agregar item
-              </button>
-              <textarea name="notes" value={quoteForm.notes} onChange={handleQuoteInputChange} rows={3} placeholder="Notas del presupuesto" />
-              <button type="submit" className={styles.buttonPrimary}>
-                Crear presupuesto
-              </button>
-            </form>
-            {quoteStatus && <p className={styles.muted}>{quoteStatus}</p>}
+                    {QUOTE_PIPELINE_KEYS.map((key) => (
+                      <button
+                        key={key}
+                        type="button"
+                        className={quotePipelineFilter === key ? styles.quotePipelineBtnActive : styles.quotePipelineBtn}
+                        onClick={() => setQuotePipelineFilter(key)}
+                      >
+                        {QUOTE_STATUS_LABELS[key]} ({quoteSales.counts[key] ?? 0})
+                      </button>
+                    ))}
+                  </div>
 
-            {quotesLoading ? (
-              <p className={styles.muted}>Cargando presupuestos...</p>
-            ) : quotes.length === 0 ? (
-              <p className={styles.muted}>Aun no hay presupuestos creados.</p>
-            ) : (
-              <div className={styles.jobsList}>
-                {quotes.map((quote) => (
-                  <article key={quote.id} className={styles.jobItem}>
-                    <h4 className={styles.title}>Presupuesto #{quote.number}</h4>
-                    <p className={styles.muted}>
-                      Cliente: <strong>{quote.client?.businessName}</strong>
-                    </p>
-                    <p className={styles.muted}>
-                      Total: <strong>${Number(quote.total).toFixed(2)}</strong>
-                    </p>
-                    <p className={styles.muted}>
-                      Items: <strong>{quote.items?.length ?? 0}</strong>
-                    </p>
-                    <div className={styles.actions}>
-                      <button type="button" onClick={() => handleGenerateQuotePdf(quote.id)} className={styles.buttonPrimary}>
-                        Generar PDF
-                      </button>
-                      <button type="button" onClick={() => handleDeleteQuote(quote.id)} className={styles.danger}>
-                        Eliminar
-                      </button>
-                      {quote.pdfPath && (
-                        <button
-                          type="button"
-                          className={styles.linkButton}
-                          onClick={async () => {
-                            const url = await getQuotePdfSignedUrl(quote.id);
-                            if (url) window.open(url, '_blank');
-                          }}
-                        >
-                          Ver PDF
-                        </button>
+                  {(quoteSales.expired.length > 0 || quoteSales.expiringSoon.length > 0 || quoteSales.withFollowUp.length > 0) && (
+                    <div className={styles.quoteAlerts}>
+                      {quoteSales.expired.length > 0 && (
+                        <div className={styles.quoteAlertBlock}>
+                          <p className={styles.quoteAlertTitle}>
+                            <strong className={styles.negative}>Validez vencida</strong> (abiertos — renovar o cerrar)
+                          </p>
+                          <ul className={styles.quoteAlertList}>
+                            {quoteSales.expired.map((q) => (
+                              <li key={q.id}>
+                                #{q.number} · {q.client?.businessName ?? '?'}
+                                {q.validUntil && (
+                                  <span className={styles.muted}> — venció {new Date(q.validUntil).toLocaleDateString('es-AR')}</span>
+                                )}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      {quoteSales.expiringSoon.length > 0 && (
+                        <div className={styles.quoteAlertBlock}>
+                          <p className={styles.quoteAlertTitle}>
+                            <strong className={styles.positive}>Por vencer</strong> (próximos 7 días)
+                          </p>
+                          <ul className={styles.quoteAlertList}>
+                            {quoteSales.expiringSoon.map((q) => (
+                              <li key={q.id}>
+                                #{q.number} · {q.client?.businessName ?? '?'}
+                                {q.validUntil && (
+                                  <span className={styles.muted}> — hasta {new Date(q.validUntil).toLocaleDateString('es-AR')}</span>
+                                )}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      {quoteSales.withFollowUp.length > 0 && (
+                        <div className={styles.quoteAlertBlock}>
+                          <p className={styles.quoteAlertTitle}>
+                            <strong>Próximos contactos</strong> (ordenados por fecha)
+                          </p>
+                          <ul className={styles.quoteAlertList}>
+                            {quoteSales.withFollowUp.map((q) => (
+                              <li key={q.id}>
+                                #{q.number} · {q.client?.businessName ?? '?'}
+                                {q.followUpAt && (
+                                  <span className={styles.muted}>
+                                    {' '}
+                                    — seguimiento {new Date(q.followUpAt).toLocaleDateString('es-AR')}
+                                    {new Date(q.followUpAt) < startOfToday() ? ' (pendiente)' : ''}
+                                  </span>
+                                )}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
                       )}
                     </div>
+                  )}
+                </>
+              )}
+            </article>
+
+            <article className={styles.card}>
+              <h3 className={styles.title}>Crear presupuesto</h3>
+              <form onSubmit={handleCreateQuote} className={styles.form}>
+                <select name="clientId" value={quoteForm.clientId} onChange={handleQuoteInputChange} required>
+                  <option value="">Seleccionar cliente *</option>
+                  {clients.map((client) => (
+                    <option key={client.id} value={client.id}>
+                      {client.businessName}
+                    </option>
+                  ))}
+                </select>
+                <input name="validUntil" type="date" value={quoteForm.validUntil} onChange={handleQuoteInputChange} placeholder="Valido hasta" />
+                <input name="taxPercent" type="number" min="0" max="100" step="0.01" value={quoteForm.taxPercent} onChange={handleQuoteInputChange} placeholder="Impuesto %" />
+                {quoteItems.map((item, index) => (
+                  <article key={`quote-item-${index}`} className={styles.jobItem}>
+                    <h4 className={styles.title}>Item {index + 1}</h4>
+                    <input
+                      value={item.description}
+                      onChange={(event) => handleQuoteItemChange(index, 'description', event.target.value)}
+                      placeholder="Descripcion del item *"
+                      required
+                    />
+                    <div className={styles.row2}>
+                      <input
+                        type="number"
+                        min="0.01"
+                        step="0.01"
+                        value={item.qty}
+                        onChange={(event) => handleQuoteItemChange(index, 'qty', event.target.value)}
+                        placeholder="Cantidad *"
+                        required
+                      />
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={item.unitPrice}
+                        onChange={(event) => handleQuoteItemChange(index, 'unitPrice', event.target.value)}
+                        placeholder="Precio unitario *"
+                        required
+                      />
+                    </div>
+                    <input
+                      type="file"
+                      accept="image/png,image/jpeg"
+                      onChange={(event) => handleQuoteItemImageChange(index, event.target.files?.[0])}
+                    />
+                    {item.imageData && <p className={styles.muted}>Imagen cargada para este item.</p>}
+                    {quoteItems.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeQuoteItem(index)}
+                        className={styles.danger}
+                      >
+                        Eliminar item
+                      </button>
+                    )}
                   </article>
                 ))}
-              </div>
-            )}
-          </article>
+                <button type="button" onClick={addQuoteItem} className={styles.buttonPrimary}>
+                  Agregar item
+                </button>
+                <textarea name="notes" value={quoteForm.notes} onChange={handleQuoteInputChange} rows={3} placeholder="Notas del presupuesto" />
+                <button type="submit" className={styles.buttonPrimary}>
+                  Crear presupuesto
+                </button>
+              </form>
+              {quoteStatus && <p className={styles.muted}>{quoteStatus}</p>}
+            </article>
+
+            <article className={styles.card}>
+              <h3 className={styles.title}>Presupuestos</h3>
+              {quotesLoading ? (
+                <p className={styles.muted}>Cargando presupuestos...</p>
+              ) : quotes.length === 0 ? (
+                <p className={styles.muted}>Aun no hay presupuestos creados.</p>
+              ) : filteredQuotes.length === 0 ? (
+                <p className={styles.muted}>No hay presupuestos en este filtro.</p>
+              ) : (
+                <div className={styles.jobsList}>
+                  {filteredQuotes.map((quote) => (
+                    <article key={quote.id} className={styles.jobItem}>
+                      <h4 className={styles.title}>Presupuesto #{quote.number}</h4>
+                      <p className={styles.muted}>
+                        Cliente: <strong>{quote.client?.businessName}</strong>
+                      </p>
+                      <p className={styles.muted}>
+                        Total: <strong>${Number(quote.total).toFixed(2)}</strong>
+                        {' · '}
+                        Items: <strong>{quote.items?.length ?? 0}</strong>
+                      </p>
+                      <div className={styles.quoteCrm}>
+                        <label className={styles.balanceFilterLabel}>
+                          Estado
+                          <select
+                            value={quote.status}
+                            onChange={(e) => patchQuote(quote.id, { status: e.target.value })}
+                          >
+                            {QUOTE_PIPELINE_KEYS.map((key) => (
+                              <option key={key} value={key}>
+                                {QUOTE_STATUS_LABELS[key]}
+                              </option>
+                            ))}
+                          </select>
+                        </label>
+                        <label className={styles.balanceFilterLabel}>
+                          Válido hasta
+                          <input
+                            type="date"
+                            value={quoteYmd(quote.validUntil)}
+                            onChange={(e) => patchQuote(quote.id, { validUntil: e.target.value || null })}
+                          />
+                        </label>
+                        {isQuoteOpen(quote) && (
+                          <>
+                            <label className={styles.balanceFilterLabel}>
+                              Próximo contacto
+                              <input
+                                type="date"
+                                value={quoteYmd(quote.followUpAt)}
+                                onChange={(e) => patchQuote(quote.id, { followUpAt: e.target.value || null })}
+                              />
+                            </label>
+                            <label className={styles.balanceFilterLabel}>
+                              Último contacto
+                              <input
+                                type="date"
+                                value={quoteYmd(quote.lastContactAt)}
+                                onChange={(e) => patchQuote(quote.id, { lastContactAt: e.target.value || null })}
+                              />
+                            </label>
+                          </>
+                        )}
+                        {quote.status === 'REJECTED' && (
+                          <label className={styles.balanceFilterLabel} style={{ gridColumn: '1 / -1' }}>
+                            Motivo de cierre
+                            <textarea
+                              rows={2}
+                              placeholder="Ej: precio, plazo, otro proveedor..."
+                              defaultValue={quote.lostReason ?? ''}
+                              key={`${quote.id}-lost-${quote.lostReason ?? ''}`}
+                              onBlur={(e) => {
+                                const v = e.target.value;
+                                if (v !== (quote.lostReason ?? '')) patchQuote(quote.id, { lostReason: v });
+                              }}
+                            />
+                          </label>
+                        )}
+                      </div>
+                      <div className={styles.actions}>
+                        <button type="button" onClick={() => handleGenerateQuotePdf(quote.id)} className={styles.buttonPrimary}>
+                          Generar PDF
+                        </button>
+                        <button type="button" onClick={() => handleDeleteQuote(quote.id)} className={styles.danger}>
+                          Eliminar
+                        </button>
+                        {quote.pdfPath && (
+                          <button
+                            type="button"
+                            className={styles.linkButton}
+                            onClick={async () => {
+                              const url = await getQuotePdfSignedUrl(quote.id);
+                              if (url) window.open(url, '_blank');
+                            }}
+                          >
+                            Ver PDF
+                          </button>
+                        )}
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              )}
+            </article>
+          </>
         )}
 
         {activeSection === 'balance' && (
           <>
             <article className={styles.card}>
               <h3 className={styles.title}>Resumen de balance</h3>
+              <p className={styles.muted}>
+                Por defecto se muestra el <strong>balance general</strong> (todo el historial). Para analizar un período, completá <strong>Desde</strong> y <strong>Hasta</strong> y pulsá{' '}
+                <strong>Actualizar</strong>. En un período, los ingresos por trabajos se cuentan por fecha de cobro.
+              </p>
+              <div className={styles.balanceFilters}>
+                <label className={styles.balanceFilterLabel}>
+                  Desde
+                  <input type="date" value={balanceFrom} onChange={(e) => setBalanceFrom(e.target.value)} />
+                </label>
+                <label className={styles.balanceFilterLabel}>
+                  Hasta
+                  <input type="date" value={balanceTo} onChange={(e) => setBalanceTo(e.target.value)} />
+                </label>
+                <button type="button" className={styles.buttonPrimary} onClick={() => loadBalance()}>
+                  Actualizar
+                </button>
+                {(balanceFrom || balanceTo) && (
+                  <button type="button" className={styles.linkButton} onClick={() => loadBalanceGeneral()}>
+                    Ver balance general
+                  </button>
+                )}
+              </div>
               {balanceLoading ? (
                 <p className={styles.muted}>Cargando balance...</p>
               ) : balance ? (
-                <div className={styles.balanceSummary}>
-                  <div className={styles.balanceRow}>
-                    <span>Ingresos (trabajos pagados)</span>
-                    <strong className={styles.positive}>${balance.ingresos.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</strong>
+                <>
+                  <p className={styles.muted} style={{ marginBottom: '0.75rem' }}>
+                    {balance.range ? (
+                      <>
+                        <strong>Período:</strong>{' '}
+                        {new Date(balance.range.fromDate + 'T12:00:00').toLocaleDateString('es-AR')} —{' '}
+                        {new Date(balance.range.toDate + 'T12:00:00').toLocaleDateString('es-AR')}
+                      </>
+                    ) : (
+                      <strong>Balance general</strong>
+                    )}
+                  </p>
+                  <div className={styles.balanceSummary}>
+                    <div className={styles.balanceRow}>
+                      <span>
+                        {balance.range
+                          ? 'Ingresos (trabajos pagados, por fecha de cobro en el período)'
+                          : 'Ingresos (trabajos pagados, total histórico)'}
+                      </span>
+                      <strong className={styles.positive}>${balance.ingresos.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</strong>
+                    </div>
+                    <div className={styles.balanceRow}>
+                      <span>
+                        {balance.range ? 'Otros ingresos (en el período)' : 'Otros ingresos (total histórico)'}
+                      </span>
+                      <strong className={styles.positive}>${balance.otrosIngresos.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</strong>
+                    </div>
+                    <div className={styles.balanceRow}>
+                      <span>
+                        {balance.range
+                          ? 'Gastos por trabajos (mismos trabajos cobrados en el período)'
+                          : 'Gastos por trabajos (todos los trabajos)'}
+                      </span>
+                      <strong className={styles.negative}>-${balance.gastosTrabajos.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</strong>
+                    </div>
+                    <div className={styles.balanceRow}>
+                      <span>
+                        {balance.range
+                          ? 'Gastos generales (prensa, publicidad, etc., en el período)'
+                          : 'Gastos generales (prensa, publicidad, etc., total histórico)'}
+                      </span>
+                      <strong className={styles.negative}>-${balance.gastosGenerales.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</strong>
+                    </div>
+                    {Object.keys(balance.gastosPorCategoria || {}).length > 0 && (
+                      <div className={styles.balanceSub}>
+                        <p className={styles.muted}>Detalle por categoria:</p>
+                        {Object.entries(balance.gastosPorCategoria).map(([cat, val]) => (
+                          <div key={cat} className={styles.balanceRow}>
+                            <span>{cat}</span>
+                            <span>${Number(val).toLocaleString('es-AR', { minimumFractionDigits: 2 })}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <div className={`${styles.balanceRow} ${styles.balanceTotal}`}>
+                      <span>Balance</span>
+                      <strong className={balance.balance >= 0 ? styles.positive : styles.negative}>
+                        ${balance.balance.toLocaleString('es-AR', { minimumFractionDigits: 2 })}
+                      </strong>
+                    </div>
                   </div>
-                  <div className={styles.balanceRow}>
-                    <span>Otros ingresos</span>
-                    <strong className={styles.positive}>${balance.otrosIngresos.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</strong>
-                  </div>
-                  <div className={styles.balanceRow}>
-                    <span>Gastos por trabajos (envios, repuestos, terciarizacion)</span>
-                    <strong className={styles.negative}>-${balance.gastosTrabajos.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</strong>
-                  </div>
-                  <div className={styles.balanceRow}>
-                    <span>Gastos generales (prensa, publicidad, etc.)</span>
-                    <strong className={styles.negative}>-${balance.gastosGenerales.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</strong>
-                  </div>
-                  {Object.keys(balance.gastosPorCategoria || {}).length > 0 && (
-                    <div className={styles.balanceSub}>
-                      <p className={styles.muted}>Detalle por categoria:</p>
-                      {Object.entries(balance.gastosPorCategoria).map(([cat, val]) => (
-                        <div key={cat} className={styles.balanceRow}>
-                          <span>{cat}</span>
-                          <span>${Number(val).toLocaleString('es-AR', { minimumFractionDigits: 2 })}</span>
-                        </div>
-                      ))}
+
+                  {balance.comparison && balance.previousPeriod && (
+                    <div className={styles.balanceCompare}>
+                      <h4 className={styles.balanceCompareTitle}>Vs período anterior (misma cantidad de días)</h4>
+                      <p className={styles.muted}>
+                        Período de referencia: {new Date(balance.previousPeriod.fromDate + 'T12:00:00').toLocaleDateString('es-AR')} —{' '}
+                        {new Date(balance.previousPeriod.toDate + 'T12:00:00').toLocaleDateString('es-AR')}
+                      </p>
+                      <div className={styles.balanceRow}>
+                        <span>Diferencia de balance</span>
+                        <strong className={balance.comparison.balanceDelta >= 0 ? styles.positive : styles.negative}>
+                          {balance.comparison.balanceDelta >= 0 ? '+' : ''}
+                          ${balance.comparison.balanceDelta.toLocaleString('es-AR', { minimumFractionDigits: 2 })}
+                          {balance.comparison.balancePct != null && (
+                            <span className={styles.muted}> ({balance.comparison.balancePct >= 0 ? '+' : ''}
+                            {balance.comparison.balancePct.toLocaleString('es-AR', { maximumFractionDigits: 1 })}%)</span>
+                          )}
+                        </strong>
+                      </div>
+                      <div className={styles.balanceRow}>
+                        <span>Diferencia de ingresos (trabajos)</span>
+                        <strong className={balance.comparison.ingresosDelta >= 0 ? styles.positive : styles.negative}>
+                          {balance.comparison.ingresosDelta >= 0 ? '+' : ''}
+                          ${balance.comparison.ingresosDelta.toLocaleString('es-AR', { minimumFractionDigits: 2 })}
+                          {balance.comparison.ingresosPct != null && (
+                            <span className={styles.muted}> ({balance.comparison.ingresosPct >= 0 ? '+' : ''}
+                            {balance.comparison.ingresosPct.toLocaleString('es-AR', { maximumFractionDigits: 1 })}%)</span>
+                          )}
+                        </strong>
+                      </div>
                     </div>
                   )}
-                  <div className={`${styles.balanceRow} ${styles.balanceTotal}`}>
-                    <span>Balance</span>
-                    <strong className={balance.balance >= 0 ? styles.positive : styles.negative}>
-                      ${balance.balance.toLocaleString('es-AR', { minimumFractionDigits: 2 })}
-                    </strong>
-                  </div>
-                </div>
+
+                  {balance.monthly && balance.monthly.length > 0 && (
+                    <>
+                      <div className={styles.balanceChart}>
+                        <h4 className={styles.balanceChartTitle}>Ingresos vs gastos por mes (en el rango)</h4>
+                        <p className={styles.balanceChartLegend}>
+                          <span className={styles.balanceLegendIn}>Ingresos</span>
+                          <span className={styles.balanceLegendOut}>Gastos</span>
+                        </p>
+                        <div className={styles.balanceChartBars}>
+                          {(() => {
+                            const m = balance.monthly;
+                            const chartMax = Math.max(
+                              1,
+                              ...m.map((r) =>
+                                Math.max(r.ingresos + r.otrosIngresos, r.gastosTrabajos + r.gastosGenerales)
+                              )
+                            );
+                            return m.map((row) => {
+                              const totalIn = row.ingresos + row.otrosIngresos;
+                              const totalOut = row.gastosTrabajos + row.gastosGenerales;
+                              const hIn = Math.round((totalIn / chartMax) * 100);
+                              const hOut = Math.round((totalOut / chartMax) * 100);
+                              return (
+                                <div key={row.month} className={styles.balanceChartCol}>
+                                  <div className={styles.balanceChartPair}>
+                                    <div
+                                      className={`${styles.balanceBar} ${styles.balanceBarIn}`}
+                                      style={{ height: `${hIn}%` }}
+                                      title={`Ingresos ${totalIn}`}
+                                    />
+                                    <div
+                                      className={`${styles.balanceBar} ${styles.balanceBarOut}`}
+                                      style={{ height: `${hOut}%` }}
+                                      title={`Gastos ${totalOut}`}
+                                    />
+                                  </div>
+                                  <span className={styles.balanceChartColLabel}>{row.label}</span>
+                                </div>
+                              );
+                            });
+                          })()}
+                        </div>
+                      </div>
+
+                      <div className={styles.tableWrap} style={{ marginTop: '1rem' }}>
+                        <table className={styles.table}>
+                          <thead>
+                            <tr>
+                              <th>Mes</th>
+                              <th>Ingresos trab.</th>
+                              <th>Otros ing.</th>
+                              <th>Gastos trab.</th>
+                              <th>Gastos gral.</th>
+                              <th>Balance</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {balance.monthly.map((row) => (
+                              <tr key={row.month}>
+                                <td>{row.label}</td>
+                                <td className={styles.positive}>${row.ingresos.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</td>
+                                <td className={styles.positive}>${row.otrosIngresos.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</td>
+                                <td className={styles.negative}>${row.gastosTrabajos.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</td>
+                                <td className={styles.negative}>${row.gastosGenerales.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</td>
+                                <td className={row.balance >= 0 ? styles.positive : styles.negative}>
+                                  ${row.balance.toLocaleString('es-AR', { minimumFractionDigits: 2 })}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </>
+                  )}
+                </>
               ) : (
                 <p className={styles.muted}>No se pudo cargar el balance.</p>
               )}
@@ -1210,6 +1694,28 @@ function AdminDashboard() {
                 </button>
               </form>
               {expenseStatus && <p className={styles.muted}>{expenseStatus}</p>}
+            </article>
+
+            <article className={styles.card}>
+              <h3 className={styles.title}>Registrar ingreso general</h3>
+              <p className={styles.muted}>
+                Aportes de capital, dinero desde otro trabajo u otros ingresos que no vienen de trabajos facturados. Se suman en el balance como &quot;Otros ingresos&quot;.
+              </p>
+              <form onSubmit={handleAddIncome} className={styles.form}>
+                <select name="category" value={incomeForm.category} onChange={handleIncomeInputChange} required>
+                  <option value="APORTE_SUELDO_EXTERNO">{INCOME_CATEGORY_LABELS.APORTE_SUELDO_EXTERNO}</option>
+                  <option value="AHORROS_PERSONALES">{INCOME_CATEGORY_LABELS.AHORROS_PERSONALES}</option>
+                  <option value="PRESTAMO_RECIBIDO">{INCOME_CATEGORY_LABELS.PRESTAMO_RECIBIDO}</option>
+                  <option value="OTROS">{INCOME_CATEGORY_LABELS.OTROS}</option>
+                </select>
+                <input name="description" placeholder="Detalle (ej: aporte marzo, parte sueldo hospital X)" value={incomeForm.description} onChange={handleIncomeInputChange} />
+                <input name="amount" type="number" min="0" step="0.01" placeholder="Monto *" value={incomeForm.amount} onChange={handleIncomeInputChange} required />
+                <input name="date" type="date" value={incomeForm.date} onChange={handleIncomeInputChange} required />
+                <button type="submit" className={styles.buttonPrimary}>
+                  Registrar ingreso
+                </button>
+              </form>
+              {incomeStatus && <p className={styles.muted}>{incomeStatus}</p>}
             </article>
 
             <article className={styles.card}>
@@ -1239,6 +1745,44 @@ function AdminDashboard() {
                           <td className={styles.negative}>${Number(m.amount).toLocaleString('es-AR', { minimumFractionDigits: 2 })}</td>
                           <td>
                             <button type="button" onClick={() => handleDeleteExpense(m.id)} className={styles.danger} style={{ padding: '4px 8px', fontSize: '12px' }}>
+                              Eliminar
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </article>
+
+            <article className={styles.card}>
+              <h3 className={styles.title}>Ingresos generales recientes</h3>
+              {cashMovementsLoading ? (
+                <p className={styles.muted}>Cargando...</p>
+              ) : incomeMovements.length === 0 ? (
+                <p className={styles.muted}>Aun no hay ingresos generales registrados.</p>
+              ) : (
+                <div className={styles.tableWrap}>
+                  <table className={styles.table}>
+                    <thead>
+                      <tr>
+                        <th>Fecha</th>
+                        <th>Categoria</th>
+                        <th>Detalle</th>
+                        <th>Monto</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {incomeMovements.map((m) => (
+                        <tr key={m.id}>
+                          <td>{new Date(m.date).toLocaleDateString('es-AR')}</td>
+                          <td>{incomeCategoryLabel(m.category)}</td>
+                          <td>{m.description ?? '-'}</td>
+                          <td className={styles.positive}>${Number(m.amount).toLocaleString('es-AR', { minimumFractionDigits: 2 })}</td>
+                          <td>
+                            <button type="button" onClick={() => handleDeleteIncome(m.id)} className={styles.danger} style={{ padding: '4px 8px', fontSize: '12px' }}>
                               Eliminar
                             </button>
                           </td>
