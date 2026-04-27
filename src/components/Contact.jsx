@@ -7,10 +7,10 @@ const Contact = () => {
     <section id="contacto" className={styles.contactSection}>
       <div className={styles.contactContainer}>
         <div className={styles.contactHeader}>
-          <h2 className={styles.contactTitle}>¿Listo para desarrollar tu software médico?</h2>
+          <h2 className={styles.contactTitle}>¿Listo para ordenar tu operación técnica y digital?</h2>
           <p className={styles.contactSubtitle}>
-            Contacta con nuestro equipo de desarrollo especializado. Desde consultorios hasta hospitales, 
-            creamos la solución perfecta para tu práctica médica.
+            Te ayudamos con software de gestión y mantenimiento preventivo/correctivo de equipamiento médico.
+            Podemos empezar por una demo o por una necesidad técnica puntual.
           </p>
         </div>
         
@@ -87,20 +87,20 @@ const Contact = () => {
             </div>
             
             <div className={styles.hoursCard}>
-              <h4 className={styles.hoursTitle}>Atención personalizada</h4>
+              <h4 className={styles.hoursTitle}>Cómo podemos ayudarte</h4>
               <div className={styles.hoursList}>
-                <div>Horarios flexibles según tu disponibilidad</div>
-                <div>Reuniones adaptadas a tu agenda</div>
-                <div>Soporte técnico cuando lo necesites</div>
+                <div>Implementación de software para gestión médica</div>
+                <div>Mantenimiento preventivo y correctivo</div>
+                <div>Soporte técnico y seguimiento operativo</div>
               </div>
             </div>
           </div>
           
           <div className={styles.demoCard}>
-            <h3>Solicitar demo</h3>
+            <h3>Solicitar demo o servicio técnico</h3>
             <p className={styles.demoDescription}>
-              Agenda una demostración personalizada y descubre todas las funcionalidades 
-              de KodeON adaptadas a las necesidades de tu hospital.
+              Contanos si necesitás una demo del sistema o asistencia técnica sobre equipamiento.
+              Armamos una propuesta según tu prioridad actual.
             </p>
             
             <div className={styles.demoButtons}>
@@ -111,7 +111,7 @@ const Contact = () => {
                 className={styles.demoPrimaryButton}
               >
                 <Phone className="w-5 h-5" />
-                <span>Agendar demo por WhatsApp</span>
+                <span>Agendar por WhatsApp</span>
               </a>
               
               <a 

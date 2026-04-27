@@ -7,9 +7,9 @@ const Products = () => {
     <section id="productos" className={styles.productsSection}>
       <div className={styles.productsContainer}>
         <div className={styles.productsHeader}>
-          <h2 className={styles.productsTitle}>Nuestros productos</h2>
+          <h2 className={styles.productsTitle}>Soluciones digitales para escalar tu operación</h2>
           <p className={styles.productsSubtitle}>
-            Soluciones de software médico especializadas para cada sector de la salud
+            Cuando la operación técnica está ordenada, el software te da trazabilidad, control y crecimiento.
           </p>
         </div>
         

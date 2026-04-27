@@ -1,20 +1,19 @@
 import React from 'react';
-import Logo from './Logo';
 import { Instagram, Facebook, Linkedin } from 'lucide-react';
 import styles from './Footer.module.css';
 
 const Footer = () => {
+  const currentYear = new Date().getFullYear();
+
   return (
     <footer className={styles.footer}>
       <div className={styles.footerContainer}>
         <div className={styles.footerGrid}>
-          <div>
-            <div className={styles.footerBrand}>
-              <Logo />
-            </div>
+          <div className={styles.footerSectionBrand}>
+            <h3 className={styles.footerBrandTitle}>KodeON</h3>
             <p className={styles.footerDescription}>
-              Agencia especializada en desarrollo de software médico. 
-              Soluciones a medida para todo el sector salud argentino.
+              Software y servicio tecnico para equipamiento medico.
+              Implementacion, mantenimiento y soporte en campo.
             </p>
             <div className={styles.socialLinks}>
               <a 
@@ -47,39 +46,47 @@ const Footer = () => {
             </div>
           </div>
           
-          <div>
-            <h4>Productos</h4>
+          <div className={styles.footerSection}>
+            <h4>Navegacion</h4>
             <ul className={styles.footerLinks}>
-              <li>Consultorios</li>
-              <li>Clínicas</li>
-              <li>Hospitales</li>
-              <li>Equipos médicos</li>
-              <li>Farmacias</li>
+              <li><a href="#servicios">Servicios tecnicos</a></li>
+              <li><a href="#productos">Soluciones digitales</a></li>
+              <li><a href="#beneficios">Beneficios</a></li>
+              <li><a href="#clientes">Clientes</a></li>
+              <li><a href="#contacto">Contacto</a></li>
             </ul>
           </div>
           
-          <div>
-            <h4>Empresa</h4>
+          <div className={styles.footerSection}>
+            <h4>Soluciones</h4>
             <ul className={styles.footerLinks}>
-              <li>Nosotros</li>
-              <li>Carreras</li>
-              <li>Prensa</li>
-              <li>Blog</li>
+              <li>Mantenimiento preventivo</li>
+              <li>Mantenimiento correctivo</li>
+              <li>Gestion de equipamiento</li>
+              <li>Desarrollo a medida</li>
             </ul>
           </div>
           
-          <div>
+          <div className={styles.footerSection}>
             <h4>Contacto</h4>
             <ul className={styles.footerLinks}>
-              <li>+54 9 2944 36-9647</li>
-              <li>on.kode.soluciones@gmail.com</li>
+              <li>
+                <a href="https://wa.me/5492944369647?text=Hola%2C%20quiero%20consultar%20por%20los%20servicios%20de%20KodeON" target="_blank" rel="noopener noreferrer">
+                  +54 9 2944 36-9647
+                </a>
+              </li>
+              <li>
+                <a href="mailto:on.kode.soluciones@gmail.com">
+                  on.kode.soluciones@gmail.com
+                </a>
+              </li>
               <li>Buenos Aires, Argentina</li>
             </ul>
           </div>
         </div>
         
         <div className={styles.footerBottom}>
-          <p>&copy; 2024 KodeON. Todos los derechos reservados.</p>
+          <p>&copy; {currentYear} KodeON. Todos los derechos reservados.</p>
         </div>
       </div>
     </footer>

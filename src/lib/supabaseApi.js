@@ -111,6 +111,63 @@ export async function deleteClient(clientId) {
   if (error) throw new Error(error.message);
 }
 
+// --- Providers ---
+export async function getProviders() {
+  const { data, error } = await supabase
+    .from('providers')
+    .select('*')
+    .order('business_name', { ascending: true });
+
+  if (error) throw new Error(error.message);
+  return (data || []).map(mapKeys);
+}
+
+export async function createProvider(payload) {
+  const { data, error } = await supabase
+    .from('providers')
+    .insert({
+      business_name: payload.businessName,
+      specialty: payload.specialty || null,
+      contact_name: payload.contactName || null,
+      phone: payload.phone || null,
+      email: payload.email || null,
+      notes: payload.notes || null,
+      active: payload.active ?? true,
+      updated_at: new Date().toISOString(),
+    })
+    .select()
+    .single();
+
+  if (error) throw new Error(error.message);
+  return mapKeys(data);
+}
+
+export async function updateProvider(id, updates) {
+  const payload = { updated_at: new Date().toISOString() };
+  if (updates.businessName !== undefined) payload.business_name = updates.businessName;
+  if (updates.specialty !== undefined) payload.specialty = updates.specialty || null;
+  if (updates.contactName !== undefined) payload.contact_name = updates.contactName || null;
+  if (updates.phone !== undefined) payload.phone = updates.phone || null;
+  if (updates.email !== undefined) payload.email = updates.email || null;
+  if (updates.notes !== undefined) payload.notes = updates.notes || null;
+  if (updates.active !== undefined) payload.active = !!updates.active;
+
+  const { data, error } = await supabase
+    .from('providers')
+    .update(payload)
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) throw new Error(error.message);
+  return mapKeys(data);
+}
+
+export async function deleteProvider(id) {
+  const { error } = await supabase.from('providers').delete().eq('id', id);
+  if (error) throw new Error(error.message);
+}
+
 // --- Jobs ---
 export async function getJobs() {
   const { data, error } = await supabase
@@ -464,6 +521,187 @@ export async function createCashMovement(data) {
 export async function deleteCashMovement(id) {
   const { error } = await supabase.from('cash_movements').delete().eq('id', id);
   if (error) throw new Error(error.message);
+}
+
+// --- Accessory sales (ventas de accesorios) ---
+export async function getAccessorySales() {
+  const { data, error } = await supabase
+    .from('accessory_sales')
+    .select(`
+      *,
+      client:clients(id, business_name)
+    `)
+    .order('sale_date', { ascending: false })
+    .order('created_at', { ascending: false });
+
+  if (error) throw new Error(error.message);
+  return (data || []).map((row) => ({
+    ...mapKeys(row),
+    client: row.client ? { id: row.client.id, businessName: row.client.business_name } : null,
+  }));
+}
+
+export async function createAccessorySale(payload) {
+  const saleDateIso = payload.saleDate ? new Date(payload.saleDate).toISOString() : new Date().toISOString();
+  const acquisitionDateIso = payload.acquisitionDate ? new Date(payload.acquisitionDate).toISOString() : new Date().toISOString();
+  const saleDescription = `Venta accesorio: ${payload.accessoryName} (${payload.equipmentName})`;
+  const acquisitionDescription = `Compra accesorio: ${payload.accessoryName} (${payload.equipmentName})`;
+
+  const { data: acquisitionMovement, error: acqErr } = await supabase
+    .from('cash_movements')
+    .insert({
+      type: 'EXPENSE',
+      category: 'ACCESORIOS',
+      description: acquisitionDescription,
+      amount: Number(payload.acquisitionCost || 0),
+      date: acquisitionDateIso,
+    })
+    .select()
+    .single();
+  if (acqErr) throw new Error(acqErr.message);
+
+  const { data: saleMovement, error: saleErr } = await supabase
+    .from('cash_movements')
+    .insert({
+      type: 'INCOME',
+      category: 'VENTA_ACCESORIOS',
+      description: saleDescription,
+      amount: Number(payload.salePrice || 0),
+      date: saleDateIso,
+    })
+    .select()
+    .single();
+
+  if (saleErr) {
+    await supabase.from('cash_movements').delete().eq('id', acquisitionMovement.id);
+    throw new Error(saleErr.message);
+  }
+
+  const { data, error } = await supabase
+    .from('accessory_sales')
+    .insert({
+      accessory_name: payload.accessoryName,
+      equipment_name: payload.equipmentName,
+      client_id: payload.clientId || null,
+      acquisition_cost: Number(payload.acquisitionCost || 0),
+      acquisition_date: payload.acquisitionDate,
+      sale_price: Number(payload.salePrice || 0),
+      sale_date: payload.saleDate,
+      notes: payload.notes || null,
+      acquisition_movement_id: acquisitionMovement.id,
+      sale_movement_id: saleMovement.id,
+      updated_at: new Date().toISOString(),
+    })
+    .select(`
+      *,
+      client:clients(id, business_name)
+    `)
+    .single();
+
+  if (error) {
+    await supabase.from('cash_movements').delete().eq('id', acquisitionMovement.id);
+    await supabase.from('cash_movements').delete().eq('id', saleMovement.id);
+    throw new Error(error.message);
+  }
+
+  return {
+    ...mapKeys(data),
+    client: data.client ? { id: data.client.id, businessName: data.client.business_name } : null,
+  };
+}
+
+export async function updateAccessorySale(id, updates) {
+  const { data: current, error: currentErr } = await supabase
+    .from('accessory_sales')
+    .select('*')
+    .eq('id', id)
+    .single();
+  if (currentErr) throw new Error(currentErr.message);
+
+  const next = {
+    accessoryName: updates.accessoryName ?? current.accessory_name,
+    equipmentName: updates.equipmentName ?? current.equipment_name,
+    clientId: updates.clientId !== undefined ? (updates.clientId || null) : current.client_id,
+    acquisitionCost: updates.acquisitionCost ?? current.acquisition_cost,
+    acquisitionDate: updates.acquisitionDate ?? current.acquisition_date,
+    salePrice: updates.salePrice ?? current.sale_price,
+    saleDate: updates.saleDate ?? current.sale_date,
+    notes: updates.notes !== undefined ? updates.notes : current.notes,
+  };
+
+  const saleDescription = `Venta accesorio: ${next.accessoryName} (${next.equipmentName})`;
+  const acquisitionDescription = `Compra accesorio: ${next.accessoryName} (${next.equipmentName})`;
+
+  if (current.acquisition_movement_id) {
+    const { error: acqMovErr } = await supabase
+      .from('cash_movements')
+      .update({
+        category: 'ACCESORIOS',
+        description: acquisitionDescription,
+        amount: Number(next.acquisitionCost || 0),
+        date: new Date(next.acquisitionDate).toISOString(),
+      })
+      .eq('id', current.acquisition_movement_id);
+    if (acqMovErr) throw new Error(acqMovErr.message);
+  }
+
+  if (current.sale_movement_id) {
+    const { error: saleMovErr } = await supabase
+      .from('cash_movements')
+      .update({
+        category: 'VENTA_ACCESORIOS',
+        description: saleDescription,
+        amount: Number(next.salePrice || 0),
+        date: new Date(next.saleDate).toISOString(),
+      })
+      .eq('id', current.sale_movement_id);
+    if (saleMovErr) throw new Error(saleMovErr.message);
+  }
+
+  const { data, error } = await supabase
+    .from('accessory_sales')
+    .update({
+      accessory_name: next.accessoryName,
+      equipment_name: next.equipmentName,
+      client_id: next.clientId,
+      acquisition_cost: Number(next.acquisitionCost || 0),
+      acquisition_date: next.acquisitionDate,
+      sale_price: Number(next.salePrice || 0),
+      sale_date: next.saleDate,
+      notes: next.notes || null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', id)
+    .select(`
+      *,
+      client:clients(id, business_name)
+    `)
+    .single();
+
+  if (error) throw new Error(error.message);
+  return {
+    ...mapKeys(data),
+    client: data.client ? { id: data.client.id, businessName: data.client.business_name } : null,
+  };
+}
+
+export async function deleteAccessorySale(id) {
+  const { data: row, error: getErr } = await supabase
+    .from('accessory_sales')
+    .select('id, acquisition_movement_id, sale_movement_id')
+    .eq('id', id)
+    .single();
+  if (getErr) throw new Error(getErr.message);
+
+  const { error } = await supabase.from('accessory_sales').delete().eq('id', id);
+  if (error) throw new Error(error.message);
+
+  if (row.acquisition_movement_id) {
+    await supabase.from('cash_movements').delete().eq('id', row.acquisition_movement_id);
+  }
+  if (row.sale_movement_id) {
+    await supabase.from('cash_movements').delete().eq('id', row.sale_movement_id);
+  }
 }
 
 // --- Balance (resumen financiero) ---

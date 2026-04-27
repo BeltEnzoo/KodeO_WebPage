@@ -1,9 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
-import { BriefcaseBusiness, FileText, Menu, Stethoscope, TrendingUp, UserPlus, Users } from 'lucide-react';
+import { BriefcaseBusiness, FileText, Menu, ShoppingCart, Stethoscope, TrendingUp, UserPlus, Users } from 'lucide-react';
 import {
   getProfile,
   signOut,
   getClients,
+  getProviders,
+  createProvider as apiCreateProvider,
+  updateProvider as apiUpdateProvider,
+  deleteProvider as apiDeleteProvider,
   createClient as apiCreateClient,
   updateClient as apiUpdateClient,
   deleteClient as apiDeleteClient,
@@ -24,6 +28,10 @@ import {
   getCashMovements,
   createCashMovement,
   deleteCashMovement,
+  getAccessorySales,
+  createAccessorySale,
+  updateAccessorySale,
+  deleteAccessorySale,
   getBalanceSummary,
   getEquipmentInterventions,
   createEquipmentIntervention,
@@ -77,6 +85,19 @@ function AdminDashboard() {
   const [status, setStatus] = useState('Cargando panel...');
   const [user, setUser] = useState(null);
   const [clients, setClients] = useState([]);
+  const [providers, setProviders] = useState([]);
+  const [providersLoading, setProvidersLoading] = useState(false);
+  const [providerStatus, setProviderStatus] = useState('');
+  const [editingProviderId, setEditingProviderId] = useState(null);
+  const [providerForm, setProviderForm] = useState({
+    businessName: '',
+    specialty: '',
+    contactName: '',
+    phone: '',
+    email: '',
+    notes: '',
+    active: true,
+  });
   const [clientsLoading, setClientsLoading] = useState(true);
   const [form, setForm] = useState({
     businessName: '',
@@ -171,6 +192,20 @@ function AdminDashboard() {
     from: '',
     to: '',
   });
+  const [accessorySales, setAccessorySales] = useState([]);
+  const [accessorySalesLoading, setAccessorySalesLoading] = useState(false);
+  const [accessoryStatus, setAccessoryStatus] = useState('');
+  const [editingAccessoryId, setEditingAccessoryId] = useState(null);
+  const [accessoryForm, setAccessoryForm] = useState({
+    accessoryName: '',
+    equipmentName: '',
+    clientId: '',
+    acquisitionCost: '',
+    acquisitionDate: new Date().toISOString().slice(0, 10),
+    salePrice: '',
+    saleDate: new Date().toISOString().slice(0, 10),
+    notes: '',
+  });
 
   async function loadBalance() {
     setBalanceLoading(true);
@@ -210,6 +245,7 @@ function AdminDashboard() {
       }
       setUser(profile);
       setStatus('Panel listo.');
+      await loadProviders();
       await loadClients();
       await loadJobs();
       await loadClientUsers();
@@ -222,6 +258,12 @@ function AdminDashboard() {
     if (activeSection === 'balance') {
       loadBalance();
       loadCashMovements();
+    }
+    if (activeSection === 'accessories') {
+      loadAccessorySales();
+    }
+    if (activeSection === 'providers') {
+      loadProviders();
     }
     if (activeSection === 'equipments') {
       loadEquipments();
@@ -238,6 +280,17 @@ function AdminDashboard() {
       setFormStatus(e.message ?? 'No se pudo cargar clientes.');
     }
     setClientsLoading(false);
+  }
+
+  async function loadProviders() {
+    setProvidersLoading(true);
+    try {
+      const list = await getProviders();
+      setProviders(list);
+    } catch (e) {
+      setProviderStatus(e.message ?? 'No se pudieron cargar proveedores.');
+    }
+    setProvidersLoading(false);
   }
 
   async function loadJobs() {
@@ -300,9 +353,81 @@ function AdminDashboard() {
     setEquipmentsLoading(false);
   }
 
+  async function loadAccessorySales() {
+    setAccessorySalesLoading(true);
+    try {
+      const list = await getAccessorySales();
+      setAccessorySales(list);
+    } catch (e) {
+      setAccessoryStatus(e.message ?? 'No se pudieron cargar las ventas de accesorios.');
+    }
+    setAccessorySalesLoading(false);
+  }
+
   function handleInputChange(event) {
     const { name, value } = event.target;
     setForm((prev) => ({ ...prev, [name]: value }));
+  }
+
+  function handleProviderInputChange(event) {
+    const { name, value, type, checked } = event.target;
+    setProviderForm((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
+  }
+
+  function startEditProvider(provider) {
+    setEditingProviderId(provider.id);
+    setProviderForm({
+      businessName: provider.businessName ?? '',
+      specialty: provider.specialty ?? '',
+      contactName: provider.contactName ?? '',
+      phone: provider.phone ?? '',
+      email: provider.email ?? '',
+      notes: provider.notes ?? '',
+      active: provider.active ?? true,
+    });
+  }
+
+  function cancelEditProvider() {
+    setEditingProviderId(null);
+    setProviderForm({
+      businessName: '',
+      specialty: '',
+      contactName: '',
+      phone: '',
+      email: '',
+      notes: '',
+      active: true,
+    });
+  }
+
+  async function handleSaveProvider(event) {
+    event.preventDefault();
+    setProviderStatus('Guardando proveedor...');
+    try {
+      if (editingProviderId) {
+        await apiUpdateProvider(editingProviderId, providerForm);
+        setProviderStatus('Proveedor actualizado.');
+      } else {
+        await apiCreateProvider(providerForm);
+        setProviderStatus('Proveedor creado.');
+      }
+      cancelEditProvider();
+      await loadProviders();
+    } catch (e) {
+      setProviderStatus(e.message ?? 'No se pudo guardar el proveedor.');
+    }
+  }
+
+  async function handleDeleteProvider(providerId) {
+    if (!window.confirm('¿Eliminar este proveedor?')) return;
+    try {
+      await apiDeleteProvider(providerId);
+      setProviderStatus('Proveedor eliminado.');
+      if (editingProviderId === providerId) cancelEditProvider();
+      await loadProviders();
+    } catch (e) {
+      setProviderStatus(e.message ?? 'No se pudo eliminar.');
+    }
   }
 
   function handleJobInputChange(event) {
@@ -323,6 +448,73 @@ function AdminDashboard() {
   function handleEquipmentInputChange(event) {
     const { name, value } = event.target;
     setEquipmentForm((prev) => ({ ...prev, [name]: value }));
+  }
+
+  function handleAccessoryInputChange(event) {
+    const { name, value } = event.target;
+    setAccessoryForm((prev) => ({ ...prev, [name]: value }));
+  }
+
+  function startEditAccessory(row) {
+    setEditingAccessoryId(row.id);
+    setAccessoryForm({
+      accessoryName: row.accessoryName ?? '',
+      equipmentName: row.equipmentName ?? '',
+      clientId: row.client?.id ?? '',
+      acquisitionCost: row.acquisitionCost ?? '',
+      acquisitionDate: row.acquisitionDate ? String(row.acquisitionDate).slice(0, 10) : new Date().toISOString().slice(0, 10),
+      salePrice: row.salePrice ?? '',
+      saleDate: row.saleDate ? String(row.saleDate).slice(0, 10) : new Date().toISOString().slice(0, 10),
+      notes: row.notes ?? '',
+    });
+  }
+
+  function cancelEditAccessory() {
+    setEditingAccessoryId(null);
+    setAccessoryForm({
+      accessoryName: '',
+      equipmentName: '',
+      clientId: '',
+      acquisitionCost: '',
+      acquisitionDate: new Date().toISOString().slice(0, 10),
+      salePrice: '',
+      saleDate: new Date().toISOString().slice(0, 10),
+      notes: '',
+    });
+  }
+
+  async function handleSaveAccessorySale(event) {
+    event.preventDefault();
+    setAccessoryStatus('Guardando venta de accesorio...');
+    try {
+      if (editingAccessoryId) {
+        await updateAccessorySale(editingAccessoryId, accessoryForm);
+        setAccessoryStatus('Venta de accesorio actualizada.');
+      } else {
+        await createAccessorySale(accessoryForm);
+        setAccessoryStatus('Venta de accesorio registrada.');
+      }
+      cancelEditAccessory();
+      await loadAccessorySales();
+      await loadCashMovements();
+      if (activeSection === 'balance') await loadBalance();
+    } catch (e) {
+      setAccessoryStatus(e.message ?? 'No se pudo guardar la venta de accesorio.');
+    }
+  }
+
+  async function handleDeleteAccessorySale(id) {
+    if (!window.confirm('¿Eliminar esta venta de accesorio? También se eliminarán sus movimientos de caja.')) return;
+    try {
+      await deleteAccessorySale(id);
+      setAccessoryStatus('Venta eliminada.');
+      if (editingAccessoryId === id) cancelEditAccessory();
+      await loadAccessorySales();
+      await loadCashMovements();
+      if (activeSection === 'balance') await loadBalance();
+    } catch (e) {
+      setAccessoryStatus(e.message ?? 'No se pudo eliminar.');
+    }
   }
 
   function startEditEquipment(row) {
@@ -862,6 +1054,8 @@ function AdminDashboard() {
     { id: 'quotes', label: '4) Crear presupuesto', icon: FileText },
     { id: 'balance', label: '5) Balance', icon: TrendingUp },
     { id: 'equipments', label: '6) Equipos intervenidos', icon: Stethoscope },
+    { id: 'accessories', label: '7) Venta accesorios', icon: ShoppingCart },
+    { id: 'providers', label: '8) Proveedores', icon: BriefcaseBusiness },
   ];
 
   return (
@@ -1783,6 +1977,262 @@ function AdminDashboard() {
                           <td className={styles.positive}>${Number(m.amount).toLocaleString('es-AR', { minimumFractionDigits: 2 })}</td>
                           <td>
                             <button type="button" onClick={() => handleDeleteIncome(m.id)} className={styles.danger} style={{ padding: '4px 8px', fontSize: '12px' }}>
+                              Eliminar
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </article>
+          </>
+        )}
+
+        {activeSection === 'accessories' && (
+          <>
+            <article className={styles.card}>
+              <h3 className={styles.title}>{editingAccessoryId ? 'Editar venta de accesorio' : 'Registrar venta de accesorio'}</h3>
+              <p className={styles.muted}>
+                Al guardar, se genera automáticamente un egreso (compra) y un ingreso (venta) en caja para que impacte en balance.
+              </p>
+              <form onSubmit={handleSaveAccessorySale} className={styles.form}>
+                <input
+                  name="accessoryName"
+                  placeholder="Nombre del accesorio *"
+                  value={accessoryForm.accessoryName}
+                  onChange={handleAccessoryInputChange}
+                  required
+                />
+                <input
+                  name="equipmentName"
+                  placeholder="Equipo en el que funciona *"
+                  value={accessoryForm.equipmentName}
+                  onChange={handleAccessoryInputChange}
+                  required
+                />
+                <select name="clientId" value={accessoryForm.clientId} onChange={handleAccessoryInputChange}>
+                  <option value="">Sin cliente (opcional)</option>
+                  {clients.map((c) => (
+                    <option key={c.id} value={c.id}>{c.businessName}</option>
+                  ))}
+                </select>
+                <div className={styles.row2}>
+                  <input
+                    name="acquisitionCost"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    placeholder="Costo de adquisición *"
+                    value={accessoryForm.acquisitionCost}
+                    onChange={handleAccessoryInputChange}
+                    required
+                  />
+                  <input
+                    name="acquisitionDate"
+                    type="date"
+                    value={accessoryForm.acquisitionDate}
+                    onChange={handleAccessoryInputChange}
+                    required
+                  />
+                </div>
+                <div className={styles.row2}>
+                  <input
+                    name="salePrice"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    placeholder="Costo de venta *"
+                    value={accessoryForm.salePrice}
+                    onChange={handleAccessoryInputChange}
+                    required
+                  />
+                  <input
+                    name="saleDate"
+                    type="date"
+                    value={accessoryForm.saleDate}
+                    onChange={handleAccessoryInputChange}
+                    required
+                  />
+                </div>
+                <textarea
+                  name="notes"
+                  rows={2}
+                  placeholder="Notas (opcional)"
+                  value={accessoryForm.notes}
+                  onChange={handleAccessoryInputChange}
+                />
+                <div className={styles.actions}>
+                  <button type="submit" className={styles.buttonPrimary}>
+                    {editingAccessoryId ? 'Guardar cambios' : 'Registrar venta'}
+                  </button>
+                  {editingAccessoryId && (
+                    <button type="button" onClick={cancelEditAccessory} className={styles.danger}>
+                      Cancelar
+                    </button>
+                  )}
+                </div>
+              </form>
+              {accessoryStatus && <p className={styles.muted}>{accessoryStatus}</p>}
+            </article>
+
+            <article className={styles.card}>
+              <h3 className={styles.title}>Ventas de accesorios</h3>
+              {accessorySalesLoading ? (
+                <p className={styles.muted}>Cargando ventas...</p>
+              ) : accessorySales.length === 0 ? (
+                <p className={styles.muted}>Aun no hay ventas de accesorios registradas.</p>
+              ) : (
+                <div className={styles.tableWrap}>
+                  <table className={styles.table}>
+                    <thead>
+                      <tr>
+                        <th>Fecha venta</th>
+                        <th>Accesorio</th>
+                        <th>Equipo</th>
+                        <th>Cliente</th>
+                        <th>Adquisición</th>
+                        <th>Venta</th>
+                        <th>Margen</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {accessorySales.map((row) => {
+                        const margin = Number(row.salePrice || 0) - Number(row.acquisitionCost || 0);
+                        return (
+                          <tr key={row.id}>
+                            <td>{row.saleDate ? new Date(row.saleDate).toLocaleDateString('es-AR') : '-'}</td>
+                            <td>{row.accessoryName}</td>
+                            <td>{row.equipmentName}</td>
+                            <td>{row.client?.businessName ?? '-'}</td>
+                            <td>${Number(row.acquisitionCost || 0).toLocaleString('es-AR', { minimumFractionDigits: 2 })}</td>
+                            <td>${Number(row.salePrice || 0).toLocaleString('es-AR', { minimumFractionDigits: 2 })}</td>
+                            <td className={margin >= 0 ? styles.positive : styles.negative}>
+                              ${margin.toLocaleString('es-AR', { minimumFractionDigits: 2 })}
+                            </td>
+                            <td className={styles.cellActions}>
+                              <button type="button" onClick={() => startEditAccessory(row)} className={styles.linkButton}>Editar</button>
+                              <button type="button" onClick={() => handleDeleteAccessorySale(row.id)} className={styles.danger} style={{ padding: '4px 8px', fontSize: '12px' }}>
+                                Eliminar
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </article>
+          </>
+        )}
+
+        {activeSection === 'providers' && (
+          <>
+            <article className={styles.card}>
+              <h3 className={styles.title}>{editingProviderId ? 'Editar proveedor' : 'Registrar proveedor'}</h3>
+              <p className={styles.muted}>
+                Guardá acá tus contactos para trabajos terciarizados (electrónica, soldadura, calibración, etc.).
+              </p>
+              <form onSubmit={handleSaveProvider} className={styles.form}>
+                <input
+                  name="businessName"
+                  placeholder="Nombre del proveedor *"
+                  value={providerForm.businessName}
+                  onChange={handleProviderInputChange}
+                  required
+                />
+                <input
+                  name="specialty"
+                  placeholder="Especialidad (ej: calibración, soldadura, repuestos)"
+                  value={providerForm.specialty}
+                  onChange={handleProviderInputChange}
+                />
+                <input
+                  name="contactName"
+                  placeholder="Persona de contacto"
+                  value={providerForm.contactName}
+                  onChange={handleProviderInputChange}
+                />
+                <div className={styles.row2}>
+                  <input
+                    name="phone"
+                    placeholder="Teléfono"
+                    value={providerForm.phone}
+                    onChange={handleProviderInputChange}
+                  />
+                  <input
+                    name="email"
+                    type="email"
+                    placeholder="Email"
+                    value={providerForm.email}
+                    onChange={handleProviderInputChange}
+                  />
+                </div>
+                <textarea
+                  name="notes"
+                  rows={3}
+                  placeholder="Notas (tiempos de entrega, calidad, condiciones, etc.)"
+                  value={providerForm.notes}
+                  onChange={handleProviderInputChange}
+                />
+                <label className={styles.checkboxLabel}>
+                  <input
+                    type="checkbox"
+                    name="active"
+                    checked={providerForm.active}
+                    onChange={handleProviderInputChange}
+                  />
+                  Proveedor activo
+                </label>
+                <div className={styles.actions}>
+                  <button type="submit" className={styles.buttonPrimary}>
+                    {editingProviderId ? 'Guardar cambios' : 'Registrar proveedor'}
+                  </button>
+                  {editingProviderId && (
+                    <button type="button" onClick={cancelEditProvider} className={styles.danger}>
+                      Cancelar
+                    </button>
+                  )}
+                </div>
+              </form>
+              {providerStatus && <p className={styles.muted}>{providerStatus}</p>}
+            </article>
+
+            <article className={styles.card}>
+              <h3 className={styles.title}>Proveedores</h3>
+              {providersLoading ? (
+                <p className={styles.muted}>Cargando proveedores...</p>
+              ) : providers.length === 0 ? (
+                <p className={styles.muted}>Aun no hay proveedores registrados.</p>
+              ) : (
+                <div className={styles.tableWrap}>
+                  <table className={styles.table}>
+                    <thead>
+                      <tr>
+                        <th>Proveedor</th>
+                        <th>Especialidad</th>
+                        <th>Contacto</th>
+                        <th>Teléfono</th>
+                        <th>Email</th>
+                        <th>Estado</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {providers.map((p) => (
+                        <tr key={p.id}>
+                          <td>{p.businessName}</td>
+                          <td>{p.specialty ?? '-'}</td>
+                          <td>{p.contactName ?? '-'}</td>
+                          <td>{p.phone ?? '-'}</td>
+                          <td>{p.email ?? '-'}</td>
+                          <td>{p.active ? 'Activo' : 'Inactivo'}</td>
+                          <td className={styles.cellActions}>
+                            <button type="button" onClick={() => startEditProvider(p)} className={styles.linkButton}>Editar</button>
+                            <button type="button" onClick={() => handleDeleteProvider(p.id)} className={styles.danger} style={{ padding: '4px 8px', fontSize: '12px' }}>
                               Eliminar
                             </button>
                           </td>

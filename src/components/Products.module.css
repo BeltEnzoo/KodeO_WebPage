@@ -75,7 +75,7 @@
   background-image: linear-gradient(white, white), linear-gradient(135deg, #2563eb, #059669);
   background-origin: border-box;
   background-clip: padding-box, border-box;
-  padding: 2.5rem;
+  padding: 1.75rem;
   position: relative;
   overflow: visible;
 }
@@ -92,15 +92,15 @@
     grid-column: 1 / -1;
     display: grid;
     grid-template-columns: auto 1fr;
-    gap: 2rem;
+    gap: 1.25rem;
     align-items: center;
   }
 }
 
 .featuredBadge {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
+  top: 0.75rem;
+  right: 0.75rem;
   background: linear-gradient(135deg, #2563eb, #059669);
   color: white;
   padding: 0.5rem 1rem;
@@ -114,10 +114,10 @@
 }
 
 .productIconFeatured {
-  width: 4rem;
-  height: 4rem;
+  width: 3rem;
+  height: 3rem;
   background: linear-gradient(135deg, #2563eb, #059669);
-  border-radius: 1rem;
+  border-radius: 0.8rem;
   box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
   margin-bottom: 0;
 }
@@ -129,16 +129,16 @@
 }
 
 .productIconFeaturedStyle {
-  width: 2rem;
-  height: 2rem;
+  width: 1.45rem;
+  height: 1.45rem;
   color: white;
 }
 
 .productTitleFeatured {
-  font-size: 1.75rem;
+  font-size: 1.45rem;
   font-weight: 800;
   color: #111827;
-  margin-bottom: 1rem;
+  margin-bottom: 0.55rem;
   letter-spacing: -0.02em;
   background: linear-gradient(135deg, #111827 0%, #2563eb 100%);
   -webkit-background-clip: text;
@@ -148,21 +148,30 @@
 
 @media (min-width: 768px) {
   .productTitleFeatured {
-    font-size: 2rem;
+    font-size: 1.8rem;
   }
 }
 
 .productDescriptionFeatured {
   color: #4b5563;
-  font-size: 1.0625rem;
-  line-height: 1.7;
-  margin-bottom: 1.5rem;
+  font-size: 0.97rem;
+  line-height: 1.55;
+  margin-bottom: 0.95rem;
+}
+
+.productCardFeatured .productFeatures {
+  gap: 0.3rem;
+  margin-bottom: 0.85rem;
+}
+
+.productCardFeatured .productFeatureText {
+  font-size: 0.84rem;
 }
 
 .productContactButtonFeatured {
   background: linear-gradient(135deg, #2563eb, #1d4ed8);
   color: white;
-  padding: 1rem 2rem;
+  padding: 0.78rem 1.4rem;
   border-radius: 0.75rem;
   font-weight: 700;
   text-decoration: none;
@@ -172,7 +181,7 @@
   gap: 0.5rem;
   transition: all 0.3s ease;
   box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
-  font-size: 1rem;
+  font-size: 0.93rem;
   margin-top: auto;
 }
 

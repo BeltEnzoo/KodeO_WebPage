@@ -3,6 +3,7 @@ import Logo from './components/Logo';
 import Products from './components/Products';
 import Services from './components/Services';
 import Benefits from './components/Benefits';
+import SuccessCases from './components/SuccessCases';
 import FAQ from './components/FAQ';
 import Pricing from './components/Pricing';
 import Contact from './components/Contact';
@@ -11,6 +12,7 @@ import BackToTop from './components/BackToTop';
 import HeroVisual from './components/HeroVisual';
 import { 
   ArrowRight,
+  CheckCircle2,
   MessageCircle,
   Phone,
   Mail,
@@ -74,9 +76,10 @@ function App() {
           <div className={styles.headerContent}>
             <Logo />
             <nav className={styles.headerNav}>
-              <a href="#productos" className={styles.navLink}>Productos</a>
-              <a href="#servicios" className={styles.navLink}>Servicios</a>
+              <a href="#servicios" className={styles.navLink}>Servicio tecnico</a>
+              <a href="#productos" className={styles.navLink}>Soluciones digitales</a>
               <a href="#beneficios" className={styles.navLink}>Beneficios</a>
+              <a href="#clientes" className={styles.navLink}>Clientes</a>
               <a href="#contacto" className={styles.navLink}>Contacto</a>
               <a href="/login" className={styles.loginButton}>Iniciar sesion</a>
             </nav>
@@ -89,51 +92,53 @@ function App() {
         <div className={styles.heroContainer}>
           <div className={styles.heroGrid}>
             <div className={styles.heroContent}>
-              <div className={styles.heroBadge}>Nuevo</div>
+              <div className={styles.heroBadge}>Software + Servicio técnico</div>
               
-              {/* Primera Sección - Desarrollo de Aplicaciones Web */}
+              {/* Propuesta principal equilibrada */}
               <div className={styles.heroSectionItem}>
                 <h1 className={styles.heroTitle}>
-                  Desarrollo de aplicaciones web
+                  Software y mantenimiento
                   <span className={styles.heroSubtitle}>
-                    Especialistas en salud y más
+                    para equipamiento médico
                   </span>
                 </h1>
                 <p className={styles.heroDescription}>
-                  Desarrollamos aplicaciones web a medida para todo tipo de empresas e instituciones. 
-                  Especialistas en software médico para consultorios, clínicas y hospitales, 
-                  pero también trabajamos con cualquier sector o industria.
+                  Digitalizamos la gestión y resolvemos el mantenimiento preventivo y correctivo
+                  de equipos médicos en taller y en campo. Una sola solución para operación técnica
+                  y trazabilidad completa.
                 </p>
               </div>
 
-              {/* Segunda Sección - Páginas Web en 24h */}
+              {/* Bloque secundario */}
               <div className={styles.heroSectionItem}>
                 <h2 className={styles.heroTitleSecondary}>
-                  Páginas web profesionales
+                  Tecnología aplicada a salud
                   <span className={styles.heroSubtitleSecondary}>
-                    Con dominio incluido en 24 horas
+                    Gestión inteligente + soporte biomédico
                   </span>
                 </h2>
                 <p className={styles.heroDescriptionSecondary}>
-                  ¿Necesitas una página web rápida? Creamos páginas web profesionales y modernas 
-                  con dominio incluido, listas en 24 horas. Ideal para empresas que necesitan 
-                  presencia online inmediata.
+                  Centralizá intervenciones, repuestos, accesorios, proveedores y reportes.
+                  Reducí tiempos de parada con mantenimiento planificado y respuesta técnica
+                  para correctivos cuando más lo necesitás.
                 </p>
               </div>
 
               <div className={styles.heroButtons}>
                 <a 
-                  href="#productos" 
+                  href="#servicios" 
                   className={styles.heroPrimaryButton}
                 >
-                  <span>Ver productos</span>
+                  <span>Ver servicios</span>
                   <ArrowRight className={styles.heroButtonIcon} />
                 </a>
                 <a 
-                  href="#contacto" 
+                  href="https://wa.me/5492944369647?text=Hola%2C%20quiero%20solicitar%20servicio%20tecnico%20de%20equipamiento%20medico" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
                   className={styles.heroSecondaryButton}
                 >
-                  Solicitar presupuesto
+                  Solicitar servicio técnico
                 </a>
               </div>
             </div>
@@ -144,11 +149,31 @@ function App() {
         </div>
       </section>
 
-      {/* Products Section */}
-      <Products />
+      <section className={styles.heroStripSection}>
+        <div className={styles.heroStripContainer}>
+          <div className={styles.heroStripItem}>
+            <CheckCircle2 className={styles.heroStripIcon} />
+            <span>Mantenimiento preventivo</span>
+          </div>
+          <div className={styles.heroStripItem}>
+            <CheckCircle2 className={styles.heroStripIcon} />
+            <span>Mantenimiento correctivo</span>
+          </div>
+          <div className={styles.heroStripItem}>
+            <CheckCircle2 className={styles.heroStripIcon} />
+            <span>Plataforma de gestión técnica</span>
+          </div>
+        </div>
+      </section>
+
+      {/* Clientes */}
+      <SuccessCases />
 
       {/* Servicios Section */}
       <Services />
+
+      {/* Products Section */}
+      <Products />
 
       {/* Beneficios Section */}
       <Benefits />

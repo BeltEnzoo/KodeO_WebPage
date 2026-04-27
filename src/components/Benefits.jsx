@@ -9,11 +9,11 @@ const Benefits = () => {
         <div className={styles.benefitsGrid}>
           <div className={styles.benefitsContent}>
             <h2 className={styles.benefitsTitle}>
-              ¿Por qué elegir KodeON?
+              ¿Qué cambia cuando trabajás con KodeON?
             </h2>
             <p className={styles.benefitsDescription}>
-              Como agencia especializada en software médico, desarrollamos soluciones integrales 
-              que transforman la gestión completa del sector salud argentino.
+              Combinamos plataforma digital con experiencia técnica para resolver la operación de
+              equipamiento médico de punta a punta.
             </p>
             
             <div className={styles.benefitsList}>
@@ -22,8 +22,8 @@ const Benefits = () => {
                   <CheckCircle className={styles.benefitIconContent} />
                 </div>
                 <div className={styles.benefitContent}>
-                  <h3 className={styles.benefitTitle}>Gestión integral de la salud</h3>
-                  <p className={styles.benefitDescription}>Desde consultorios hasta hospitales completos. Soluciones unificadas que integran pacientes, equipamiento, personal y procesos médicos.</p>
+                  <h3 className={styles.benefitTitle}>Operación clínica y técnica unificadas</h3>
+                  <p className={styles.benefitDescription}>Un solo lugar para software de gestión, historial de equipos, intervenciones, accesorios, proveedores y costos asociados.</p>
                 </div>
               </div>
               
@@ -32,8 +32,8 @@ const Benefits = () => {
                   <CheckCircle className={styles.benefitIconContent} />
                 </div>
                 <div className={styles.benefitContent}>
-                  <h3 className={styles.benefitTitle}>Mejora la experiencia del paciente</h3>
-                  <p className={styles.benefitDescription}>Optimiza flujos de atención, reduce tiempos de espera y mejora la coordinación entre diferentes áreas médicas.</p>
+                  <h3 className={styles.benefitTitle}>Menos tiempos de parada, más disponibilidad</h3>
+                  <p className={styles.benefitDescription}>Con mantenimiento preventivo/correctivo planificado mejorás continuidad de servicio y reducís urgencias operativas.</p>
                 </div>
               </div>
               
@@ -42,8 +42,8 @@ const Benefits = () => {
                   <CheckCircle className={styles.benefitIconContent} />
                 </div>
                 <div className={styles.benefitContent}>
-                  <h3 className={styles.benefitTitle}>Digitalización completa</h3>
-                  <p className={styles.benefitDescription}>Historiales electrónicos, turnos digitales, facturación automática y reportes en tiempo real para toda la organización médica.</p>
+                  <h3 className={styles.benefitTitle}>Decisiones basadas en datos reales</h3>
+                  <p className={styles.benefitDescription}>Dashboards y balance técnico-financiero para priorizar mantenimiento, controlar costos y escalar con orden.</p>
                 </div>
               </div>
             </div>
