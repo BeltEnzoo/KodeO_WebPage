@@ -1,0 +1,134 @@
+.section {
+  background: var(--surface);
+  padding: 2.75rem 0;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+.intro {
+  display: grid;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+@media (min-width: 860px) {
+  .intro {
+    grid-template-columns: 1.2fr 0.8fr;
+    align-items: start;
+    gap: 2.5rem;
+  }
+}
+
+.header {
+  max-width: 36rem;
+}
+
+.eyebrow {
+  color: var(--accent);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 0.55rem;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: clamp(1.55rem, 2.8vw, 2rem);
+  line-height: 1.2;
+  color: var(--ink);
+  margin-bottom: 0.65rem;
+}
+
+.subtitle {
+  color: var(--muted);
+  font-size: 0.98rem;
+  line-height: 1.55;
+}
+
+.tasks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.tasks li {
+  position: relative;
+  padding: 0.7rem 0.85rem 0.7rem 2rem;
+  border: 1px solid var(--line);
+  background: var(--surface-elevated);
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+
+.tasks li::before {
+  content: '';
+  position: absolute;
+  left: 0.85rem;
+  top: 50%;
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: var(--accent);
+  transform: translateY(-50%);
+}
+
+.grid {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 900px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.item {
+  background: var(--surface-elevated);
+  border: 1px solid var(--line);
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.item:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow);
+}
+
+.imageWrap {
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: #dfe7ec;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.45s ease;
+}
+
+.item:hover .image {
+  transform: scale(1.03);
+}
+
+.itemTitle {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  padding: 0.9rem 1rem 0.25rem;
+  color: var(--ink);
+}
+
+.itemText {
+  color: var(--muted);
+  padding: 0 1rem 1rem;
+  font-size: 0.88rem;
+}

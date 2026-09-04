@@ -1,0 +1,234 @@
+.appContainer {
+  min-height: 100vh;
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+}
+
+.main {
+  flex: 1;
+}
+
+.topBar {
+  background: var(--ink);
+  color: rgba(255, 255, 255, 0.88);
+  padding: 0.55rem 0;
+  font-size: 0.8125rem;
+  letter-spacing: 0.01em;
+}
+
+.topBarContainer {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.topBarLeft {
+  display: flex;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.topBarItem {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.topBarIcon {
+  width: 0.9rem;
+  height: 0.9rem;
+  opacity: 0.85;
+}
+
+.topBarRight {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.socialIconLink {
+  color: rgba(255, 255, 255, 0.85);
+  display: inline-flex;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.socialIconLink:hover {
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.socialIcon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.header {
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.headerContainer {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+.headerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  gap: 1rem;
+}
+
+.logoLink {
+  display: inline-flex;
+  text-decoration: none;
+}
+
+.headerNav {
+  display: none;
+  gap: 1.15rem;
+  align-items: center;
+}
+
+@media (min-width: 960px) {
+  .headerNav {
+    display: flex;
+  }
+}
+
+.navLink {
+  color: var(--ink-soft);
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.navLink:hover,
+.navLinkActive {
+  color: var(--accent);
+}
+
+.loginButton {
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  text-decoration: none;
+  border-radius: var(--radius);
+  padding: 0.4rem 0.8rem;
+  font-size: 0.84rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.loginButton:hover {
+  background: var(--ink);
+  color: #fff;
+}
+
+.menuButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--ink);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.menuButton svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+@media (min-width: 960px) {
+  .menuButton {
+    display: none;
+  }
+}
+
+.mobileNav {
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.5rem 1.25rem 1rem;
+  border-top: 1px solid var(--line);
+  background: #fff;
+}
+
+@media (min-width: 960px) {
+  .mobileNav {
+    display: none;
+  }
+}
+
+.mobileNavLink {
+  text-decoration: none;
+  color: var(--ink-soft);
+  padding: 0.75rem 0.2rem;
+  border-bottom: 1px solid var(--line);
+  font-weight: 500;
+}
+
+.mobileLogin {
+  margin-top: 0.65rem;
+  text-align: center;
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  text-decoration: none;
+  border-radius: var(--radius);
+  padding: 0.7rem 0.8rem;
+  font-weight: 600;
+}
+
+.whatsappFloating {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  background: #128c7e;
+  color: white;
+  padding: 0.75rem 1rem;
+  border-radius: 999px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  box-shadow: 0 10px 30px rgba(18, 140, 126, 0.35);
+  z-index: 1000;
+  font-weight: 600;
+  font-size: 0.82rem;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.whatsappFloating:hover {
+  background: #0f766e;
+  transform: translateY(-2px);
+}
+
+.whatsappIcon {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.whatsappText {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .whatsappText {
+    display: block;
+  }
+}

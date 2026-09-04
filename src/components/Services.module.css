@@ -1,163 +1,98 @@
-/* Componente específico de estilos con CSS puro - Diseño Tecnológico */
-.servicesSection {
-  padding: 3.5rem 0;
-  background: linear-gradient(to bottom, #f8fafc 0%, #ffffff 100%);
-  position: relative;
+.section {
+  background: var(--surface-elevated);
+  padding: 2.75rem 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
 }
 
-.servicesContainer {
-  max-width: 1280px;
+.container {
+  max-width: 1180px;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0 1.25rem;
 }
 
-@media (min-width: 640px) {
-  .servicesContainer {
-    padding: 0 1.5rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .servicesContainer {
-    padding: 0 2rem;
-  }
-}
-
-.servicesHeader {
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-.servicesTitle {
-  font-size: 1.875rem;
-  font-weight: 800;
-  color: #111827;
-  margin-bottom: 0.5rem;
-  letter-spacing: -0.02em;
-}
-
-@media (min-width: 768px) {
-  .servicesTitle {
-    font-size: 2.25rem;
-  }
-}
-
-.servicesSubtitle {
-  font-size: 1rem;
-  color: #4b5563;
-  max-width: 36rem;
-  margin: 0 auto;
-}
-
-.servicesGrid {
+.layout {
   display: grid;
-  gap: 1.5rem;
+  gap: 2.5rem;
+  align-items: start;
 }
 
-@media (min-width: 768px) {
-  .servicesGrid {
-    grid-template-columns: repeat(3, 1fr);
+@media (min-width: 960px) {
+  .layout {
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 3rem;
   }
 }
 
-.serviceCard {
-  background-color: white;
-  padding: 1.5rem;
-  border-radius: 1rem;
-  border: 1px solid rgba(37, 99, 235, 0.1);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-}
-
-.serviceCard::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #2563eb, #059669);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.4s ease;
-}
-
-.serviceCard:hover {
-  box-shadow: 0 20px 25px -5px rgba(37, 99, 235, 0.15), 0 10px 10px -5px rgba(37, 99, 235, 0.1);
-  transform: translateY(-6px);
-  border-color: rgba(37, 99, 235, 0.3);
-}
-
-.serviceCard:hover::before {
-  transform: scaleX(1);
-}
-
-.serviceIconContainer {
-  width: 3rem;
-  height: 3rem;
-  border-radius: 0.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 1rem;
-}
-
-.serviceIconBlue {
-  background-color: rgba(37, 99, 235, 0.1);
-}
-
-.serviceIconGreen {
-  background-color: rgba(5, 150, 105, 0.1);
-}
-
-.serviceTitle {
-  font-size: 1.25rem;
+.eyebrow {
+  color: var(--accent);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   font-weight: 600;
-  color: #111827;
   margin-bottom: 0.75rem;
 }
 
-.serviceDescription {
-  color: #4b5563;
-  margin-bottom: 1rem;
-  line-height: 1.5;
-  font-size: 0.875rem;
+.title {
+  font-family: var(--font-display);
+  font-size: clamp(1.55rem, 2.8vw, 2rem);
+  line-height: 1.15;
+  color: var(--ink);
+  margin-bottom: 0.9rem;
 }
 
-.serviceFeatures {
-  display: flex;
-  flex-direction: column;
-  gap: 0.375rem;
-  font-size: 0.8125rem;
-  color: #4b5563;
+.subtitle {
+  color: var(--muted);
+  font-size: 1.05rem;
+  margin-bottom: 1.75rem;
+  max-width: 38rem;
 }
 
-.serviceFeature {
-  display: flex;
-  align-items: center;
-  gap: 0.375rem;
+.list {
+  display: grid;
+  gap: 1rem;
 }
 
-.serviceFeatureIcon {
-  width: 0.875rem;
-  height: 0.875rem;
-  color: #059669;
+.item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.9rem;
+  padding: 1rem 0;
+  border-top: 1px solid var(--line);
 }
 
-.serviceFeatureText {
-  color: #4b5563;
+.item:last-child {
+  border-bottom: 1px solid var(--line);
 }
 
-.serviceIconBlueStyle {
-  width: 1.5rem;
-  height: 1.5rem;
-  color: #2563eb;
+.icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--accent);
+  margin-top: 0.2rem;
 }
 
-.serviceIconGreenStyle {
-  width: 1.5rem;
-  height: 1.5rem;
-  color: #059669;
+.item h3 {
+  font-size: 1.05rem;
+  margin-bottom: 0.25rem;
+  color: var(--ink);
+}
+
+.item p {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.media img {
+  width: 100%;
+  height: 100%;
+  min-height: 420px;
+  object-fit: cover;
+  border: 1px solid var(--line);
+}
+
+.caption {
+  margin-top: 0.75rem;
+  color: var(--muted);
+  font-size: 0.9rem;
 }

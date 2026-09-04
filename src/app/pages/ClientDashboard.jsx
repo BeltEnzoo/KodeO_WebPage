@@ -82,7 +82,7 @@ function ClientDashboard() {
           {jobsLoading ? (
             <p className={styles.muted}>Cargando tus trabajos...</p>
           ) : jobsError ? (
-            <p style={{ color: '#ef4444' }}>{jobsError}</p>
+            <p className={styles.error}>{jobsError}</p>
           ) : jobs.length === 0 ? (
             <p className={styles.muted}>Aun no hay trabajos asignados para tu cliente.</p>
           ) : (

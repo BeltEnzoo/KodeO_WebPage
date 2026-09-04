@@ -1,139 +1,70 @@
-import React from 'react';
-import { Phone, Mail, MapPin, Instagram, Facebook, Linkedin } from 'lucide-react';
+import { Phone, Mail, MapPin } from 'lucide-react';
 import styles from './Contact.module.css';
 
-const Contact = () => {
+function Contact() {
   return (
-    <section id="contacto" className={styles.contactSection}>
-      <div className={styles.contactContainer}>
-        <div className={styles.contactHeader}>
-          <h2 className={styles.contactTitle}>¿Listo para ordenar tu operación técnica y digital?</h2>
-          <p className={styles.contactSubtitle}>
-            Te ayudamos con software de gestión y mantenimiento preventivo/correctivo de equipamiento médico.
-            Podemos empezar por una demo o por una necesidad técnica puntual.
-          </p>
-        </div>
-        
-        <div className={styles.contactGrid}>
-          <div className={styles.contactInfoSection}>
-            <h3>Información de contacto</h3>
-            
-            <div className={styles.contactInfo}>
-              <div className={styles.contactItem}>
-                <div className={`${styles.contactIcon} ${styles.contactIconBlue}`}>
-                  <Phone className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <div className={styles.contactLabel}>WhatsApp business</div>
-                  <div className={styles.contactValue}>+54 9 2944 36-9647</div>
-                </div>
-              </div>
-              
-              <div className={styles.contactItem}>
-                <div className={`${styles.contactIcon} ${styles.contactIconGreen}`}>
-                  <Mail className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <div className={styles.contactLabel}>Email</div>
-                  <div className={styles.contactValue}>on.kode.soluciones@gmail.com</div>
-                </div>
-              </div>
-              
-              <div className={styles.contactItem}>
-                <div className={`${styles.contactIcon} ${styles.contactIconBlue}`}>
-                  <MapPin className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <div className={styles.contactLabel}>Ubicación</div>
-                  <div className={styles.contactValue}>Buenos Aires, Argentina</div>
-                </div>
-              </div>
-            </div>
+    <section id="contacto" className={styles.section}>
+      <div className={styles.container}>
+        <div className={styles.layout}>
+          <div>
+            <p className={styles.eyebrow}>Contacto</p>
+            <h2 className={styles.title}>Contanos qué necesitás</h2>
+            <p className={styles.subtitle}>
+              Servicio técnico, equipos, asesoramiento o software. Respondemos con una propuesta concreta.
+            </p>
 
-            <div className={styles.socialSection}>
-              <h4 className={styles.socialTitle}>Síguenos en redes sociales</h4>
-              <div className={styles.socialLinks}>
-                <a 
-                  href="https://www.instagram.com/kode.on.soluciones/" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className={styles.socialLink}
-                  aria-label="Instagram de KodeON"
-                >
-                  <Instagram className={styles.socialIcon} />
-                  <span>@kode.on.soluciones</span>
-                </a>
-                <a 
-                  href="https://www.facebook.com/kodeon.soluciones" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className={styles.socialLink}
-                  aria-label="Facebook de KodeON"
-                >
-                  <Facebook className={styles.socialIcon} />
-                  <span>Facebook</span>
-                </a>
-                <a 
-                  href="https://www.linkedin.com/company/kodeon-health" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className={styles.socialLink}
-                  aria-label="LinkedIn de KodeON"
-                >
-                  <Linkedin className={styles.socialIcon} />
-                  <span>LinkedIn</span>
-                </a>
+            <div className={styles.infoList}>
+              <div className={styles.infoItem}>
+                <Phone className={styles.icon} />
+                <div>
+                  <span>WhatsApp</span>
+                  <strong>+54 9 2944 36-9647</strong>
+                </div>
               </div>
-            </div>
-            
-            <div className={styles.hoursCard}>
-              <h4 className={styles.hoursTitle}>Cómo podemos ayudarte</h4>
-              <div className={styles.hoursList}>
-                <div>Implementación de software para gestión médica</div>
-                <div>Mantenimiento preventivo y correctivo</div>
-                <div>Soporte técnico y seguimiento operativo</div>
+              <div className={styles.infoItem}>
+                <Mail className={styles.icon} />
+                <div>
+                  <span>Email</span>
+                  <strong>on.kode.soluciones@gmail.com</strong>
+                </div>
+              </div>
+              <div className={styles.infoItem}>
+                <MapPin className={styles.icon} />
+                <div>
+                  <span>Ubicación</span>
+                  <strong>Buenos Aires, Argentina</strong>
+                </div>
               </div>
             </div>
           </div>
-          
-          <div className={styles.demoCard}>
-            <h3>Solicitar demo o servicio técnico</h3>
-            <p className={styles.demoDescription}>
-              Contanos si necesitás una demo del sistema o asistencia técnica sobre equipamiento.
-              Armamos una propuesta según tu prioridad actual.
+
+          <div className={styles.panel}>
+            <h3>¿Por dónde empezamos?</h3>
+            <p>
+              Contanos si necesitás soporte técnico, un equipo médico, una plataforma o una web
+              profesional. Coordinamos por WhatsApp o email.
             </p>
-            
-            <div className={styles.demoButtons}>
-              <a 
-                href="https://wa.me/5492944369647?text=Hola%2C%20me%20gustar%C3%ADa%20agendar%20una%20demo%20de%20KodeON" 
-                target="_blank" 
+            <div className={styles.actions}>
+              <a
+                href="https://wa.me/5492944369647?text=Hola%2C%20quiero%20consultar%20por%20servicios%20de%20KodeON"
+                target="_blank"
                 rel="noopener noreferrer"
-                className={styles.demoPrimaryButton}
+                className={styles.primary}
               >
-                <Phone className="w-5 h-5" />
-                <span>Agendar por WhatsApp</span>
+                Escribir por WhatsApp
               </a>
-              
-              <a 
-                href="mailto:on.kode.soluciones@gmail.com?subject=Solicitud%20de%20Demo%20KodeON" 
-                className={styles.demoSecondaryButton}
+              <a
+                href="mailto:on.kode.soluciones@gmail.com?subject=Consulta%20KodeON"
+                className={styles.secondary}
               >
-                <Mail className="w-5 h-5" />
-                <span>Enviar email</span>
+                Enviar email
               </a>
-            </div>
-            
-            <div className={styles.demoGuarantee}>
-              <p className={styles.demoGuaranteeText}>
-                <strong>Respuesta garantizada en 24 horas</strong><br/>
-                Nuestro equipo técnico especializado te contactará para coordinar la mejor fecha.
-              </p>
             </div>
           </div>
         </div>
       </div>
     </section>
   );
-};
+}
 
 export default Contact;

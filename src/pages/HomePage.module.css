@@ -1,0 +1,160 @@
+.intro {
+  position: relative;
+  overflow: hidden;
+  color: #fff;
+  border-bottom: 1px solid var(--line);
+}
+
+.introMedia {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.introOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, rgba(8, 18, 28, 0.94) 0%, rgba(8, 18, 28, 0.78) 55%, rgba(8, 18, 28, 0.55) 100%);
+}
+
+.introContainer {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem;
+}
+
+.eyebrow {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #7fd4c8;
+  font-weight: 600;
+  margin-bottom: 0.55rem;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 2.8vw, 2.05rem);
+  font-weight: 600;
+  line-height: 1.25;
+  max-width: 22ch;
+  margin-bottom: 0.65rem;
+}
+
+.description {
+  max-width: 34rem;
+  color: rgba(255, 255, 255, 0.84);
+  font-size: 0.95rem;
+  margin-bottom: 1.15rem;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.primary,
+.secondary {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  border-radius: var(--radius);
+  padding: 0.65rem 1rem;
+  font-weight: 600;
+  font-size: 0.88rem;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.primary {
+  background: var(--accent);
+  color: #fff;
+}
+
+.primary:hover {
+  background: var(--accent-deep);
+}
+
+.secondary {
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  color: #fff;
+}
+
+.secondary:hover {
+  border-color: #fff;
+}
+
+.sections {
+  padding: 2.5rem 0 3rem;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+.sectionsHeader {
+  margin-bottom: 1.25rem;
+}
+
+.sectionsHeader h2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 2.4vw, 1.75rem);
+  color: var(--ink);
+  margin-bottom: 0.35rem;
+}
+
+.sectionsHeader p {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.grid {
+  display: grid;
+  gap: 0.85rem;
+}
+
+@media (min-width: 700px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.card {
+  display: grid;
+  gap: 0.4rem;
+  text-decoration: none;
+  background: var(--surface-elevated);
+  border: 1px solid var(--line);
+  padding: 1.15rem 1.1rem;
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.card h3 {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  color: var(--ink);
+}
+
+.card p {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.card span {
+  margin-top: 0.35rem;
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 600;
+}

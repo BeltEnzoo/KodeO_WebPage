@@ -8,17 +8,17 @@ export default {
     extend: {
       colors: {
         medical: {
-          blue: '#2563eb',
-          'blue-dark': '#1d4ed8',
-          green: '#059669',
-          'green-dark': '#047857',
+          blue: '#0c1a24',
+          'blue-dark': '#08131b',
+          green: '#0f766e',
+          'green-dark': '#0b5f59',
         }
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['Outfit', 'system-ui', 'sans-serif'],
+        display: ['Newsreader', 'Georgia', 'serif'],
       }
     },
   },
   plugins: [],
 }
-

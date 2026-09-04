@@ -11,46 +11,38 @@ const FAQ = () => {
 
   const faqs = [
     {
-      question: "¿Cuánto tiempo toma desarrollar un software médico personalizado?",
-      answer: "El tiempo de desarrollo varía según la complejidad del proyecto. Para consultorios pequeños, puede ser de 2-3 meses. Para hospitales o sistemas más complejos, puede tomar de 4-6 meses. Siempre trabajamos con entregas incrementales para que puedas empezar a usar el software lo antes posible."
+      question: '¿Qué equipos atienden?',
+      answer: 'Equipamiento médico de consultorio y hospitalario: diagnóstico, soporte de vida y electrónica biomédica. Evaluamos cada caso y te indicamos el alcance real.',
     },
     {
-      question: "¿Qué tipo de soporte técnico ofrecen?",
-      answer: "Ofrecemos soporte técnico 24/7 para todos nuestros clientes. Esto incluye: resolución de problemas técnicos, actualizaciones del software, capacitación del personal, mantenimiento preventivo y asistencia remota cuando la necesites."
+      question: '¿Hacen preventivo y correctivo?',
+      answer: 'Sí. Planificamos preventivos y resolvemos correctivos en campo o taller, con seguimiento hasta el cierre.',
     },
     {
-      question: "¿El software se puede integrar con sistemas existentes?",
-      answer: "Sí, nuestros sistemas están diseñados para integrarse con otros sistemas médicos existentes. Podemos conectar con sistemas de facturación, laboratorios, imágenes médicas, y otros softwares que ya estés utilizando en tu institución."
+      question: '¿También venden equipos?',
+      answer: 'Sí. Asesoramos en la selección, comercializamos equipamiento y acompañamos la puesta en marcha.',
     },
     {
-      question: "¿Ofrecen capacitación para el personal?",
-      answer: "Absolutamente. Incluimos capacitación completa para todo el personal que utilizará el software. Esto incluye sesiones de entrenamiento presenciales o virtuales, manuales de usuario, videos tutoriales y soporte durante el período de implementación."
+      question: '¿Desarrollan software y sitios web?',
+      answer: 'Sí. Incluye trazabilidad de equipamiento médico con software propio, sistemas a medida y sitios profesionales.',
     },
     {
-      question: "¿Qué garantías ofrecen?",
-      answer: "Garantizamos la funcionalidad del software según las especificaciones acordadas. Ofrecemos un período de garantía post-implementación, corrección de bugs sin costo adicional, y mantenimiento continuo. También garantizamos respuesta en 24 horas para consultas técnicas."
+      question: '¿Cómo se inicia un trabajo?',
+      answer: 'Nos contactás por WhatsApp o email, relevamos la necesidad y proponemos un plan concreto.',
     },
     {
-      question: "¿El software es compatible con dispositivos móviles?",
-      answer: "Sí, todos nuestros sistemas son responsive y funcionan en tablets y smartphones. También desarrollamos apps móviles nativas cuando es necesario para acceso desde cualquier dispositivo, permitiendo que los médicos gestionen pacientes desde cualquier lugar."
+      question: '¿Atienden fuera de Buenos Aires?',
+      answer: 'Sí. Evaluamos intervenciones según criticidad, logística y tipo de equipo. También hay soporte remoto cuando corresponde.',
     },
-    {
-      question: "¿Cómo se aseguran la privacidad de los datos médicos?",
-      answer: "Cumplimos con todas las normativas de protección de datos médicos. Implementamos encriptación de extremo a extremo, backups automáticos, acceso controlado por roles y permisos, y auditorías regulares. Todos los datos están protegidos según estándares internacionales de seguridad médica."
-    },
-    {
-      question: "¿Puedo ver una demostración antes de contratar?",
-      answer: "Por supuesto. Ofrecemos demostraciones personalizadas gratuitas donde te mostramos todas las funcionalidades adaptadas a tu tipo de institución. Puedes agendar una demo por WhatsApp o email y nuestro equipo te contactará para coordinar la mejor fecha."
-    }
   ];
 
   return (
     <section id="faq" className={styles.faqSection}>
       <div className={styles.faqContainer}>
         <div className={styles.faqHeader}>
-          <h2 className={styles.faqTitle}>Preguntas Frecuentes</h2>
+          <h2 className={styles.faqTitle}>Preguntas frecuentes</h2>
           <p className={styles.faqSubtitle}>
-            Resolvemos las dudas más comunes sobre nuestros servicios de desarrollo de software médico
+            Dudas habituales sobre equipos, servicio técnico y software.
           </p>
         </div>
         

@@ -1,8 +1,6 @@
-/* Panel admin — paleta alineada con la landing (cyan top bar, azul #2563eb, verde #059669) */
-
 .layout {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 40%, #f0f9ff 100%);
+  background: var(--surface);
   width: 100%;
   max-width: none;
   margin: 0;
@@ -10,51 +8,49 @@
   display: grid;
   grid-template-columns: 280px 1fr;
   gap: 1.25rem;
+  font-family: var(--font-body);
+  color: var(--ink);
 }
 
 .sidebar {
-  position: relative;
-  border: 1px solid rgba(37, 99, 235, 0.12);
-  border-radius: 16px;
-  background: #ffffff;
-  box-shadow: 0 4px 24px rgba(6, 182, 212, 0.08), 0 2px 8px rgba(37, 99, 235, 0.06);
-  padding: 1.15rem;
-  height: fit-content;
   position: sticky;
   top: 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-elevated);
+  box-shadow: var(--shadow);
+  padding: 1.15rem;
+  height: fit-content;
   overflow: hidden;
 }
 
 .sidebar::before {
   content: '';
   display: block;
-  height: 4px;
+  height: 3px;
   margin: -1.15rem -1.15rem 1rem -1.15rem;
-  border-radius: 16px 16px 0 0;
-  background: linear-gradient(90deg, #06b6d4 0%, #2563eb 55%, #059669 100%);
+  border-radius: var(--radius) var(--radius) 0 0;
+  background: var(--accent);
 }
 
 .sidebarTitle {
   margin: 0 0 0.35rem 0;
-  font-size: 1.2rem;
-  font-weight: 800;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
   letter-spacing: -0.02em;
-  color: #111827;
-  background: linear-gradient(135deg, #2563eb, #059669);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--ink);
 }
 
 .sidebarSubtitle {
   margin: 0 0 1rem 0;
-  color: #4b5563;
+  color: var(--muted);
   font-size: 0.875rem;
   line-height: 1.45;
 }
 
 .sidebarSubtitle strong {
-  color: #1e40af;
+  color: var(--accent-deep);
 }
 
 .menu {
@@ -63,9 +59,9 @@
 }
 
 .menuButton {
-  border: 1px solid #e5e7eb;
-  background: #f9fafb;
-  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: var(--radius);
   padding: 0.7rem 0.85rem;
   text-align: left;
   cursor: pointer;
@@ -75,20 +71,19 @@
   align-items: center;
   gap: 0.55rem;
   transition: all 0.2s ease;
-  color: #374151;
+  color: var(--ink-soft);
 }
 
 .menuButtonActive {
-  border-color: transparent;
-  background: linear-gradient(135deg, rgba(37, 99, 235, 0.12) 0%, rgba(5, 150, 105, 0.1) 100%);
-  color: #1d4ed8;
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.15);
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent-deep);
 }
 
 .menuButton:hover {
-  border-color: #bfdbfe;
-  background: linear-gradient(135deg, #f0f9ff 0%, #ecfdf5 100%);
-  color: #2563eb;
+  border-color: rgba(15, 118, 110, 0.35);
+  background: var(--accent-soft);
+  color: var(--accent-deep);
 }
 
 .menuIcon {
@@ -103,20 +98,19 @@
 }
 
 .card {
-  border: 1px solid rgba(37, 99, 235, 0.1);
-  border-radius: 16px;
-  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-elevated);
   padding: 1.25rem 1.35rem;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow);
 }
 
-/* Solo el título principal de cada tarjeta (no ítems anidados) */
 .card > .title {
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: #111827;
-  border-bottom: 2px solid transparent;
-  border-image: linear-gradient(90deg, #2563eb, #059669) 1;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--ink);
+  border-bottom: 2px solid var(--accent);
   padding-bottom: 0.5rem;
   margin-bottom: 0.75rem;
   width: fit-content;
@@ -128,7 +122,7 @@
 }
 
 .muted {
-  color: #6b7280;
+  color: var(--muted);
   margin-top: 0.5rem;
   font-size: 0.9rem;
   line-height: 1.5;
@@ -145,10 +139,12 @@
   width: 100%;
   box-sizing: border-box;
   padding: 0.65rem 0.85rem;
-  border-radius: 10px;
-  border: 1px solid #e2e8f0;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: #fff;
   font-family: inherit;
   font-size: 0.9rem;
+  color: var(--ink);
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
@@ -156,31 +152,30 @@
 .form select:focus,
 .form textarea:focus {
   outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15);
 }
 
 .form input::placeholder,
 .form textarea::placeholder {
-  color: #9ca3af;
+  color: #94a3b8;
 }
 
 .buttonPrimary {
   border: none;
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  background: var(--accent);
   color: #fff;
-  border-radius: 10px;
+  border-radius: var(--radius);
   padding: 0.7rem 1rem;
   cursor: pointer;
   font-weight: 600;
   font-size: 0.9rem;
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: background 0.2s, transform 0.2s;
 }
 
 .buttonPrimary:hover {
+  background: var(--accent-deep);
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.45);
 }
 
 .row2 {
@@ -207,7 +202,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem 0;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--line);
   font-size: 0.9rem;
 }
 
@@ -218,13 +213,13 @@
 .balanceSub {
   margin-top: 0.5rem;
   padding-left: 1rem;
-  border-left: 3px solid #e2e8f0;
+  border-left: 3px solid var(--line);
 }
 
 .balanceTotal {
   margin-top: 0.5rem;
   padding-top: 0.75rem;
-  border-top: 2px solid #2563eb;
+  border-top: 2px solid var(--accent);
   font-size: 1.05rem;
 }
 
@@ -241,19 +236,21 @@
   flex-direction: column;
   gap: 0.35rem;
   font-size: 0.85rem;
-  color: #64748b;
+  color: var(--muted);
 }
 
 .balanceFilterLabel input[type='date'] {
   padding: 0.4rem 0.5rem;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: #fff;
+  font-family: inherit;
 }
 
 .balanceCompare {
   margin-top: 1.25rem;
   padding-top: 1rem;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--line);
   max-width: 520px;
 }
 
@@ -261,18 +258,20 @@
   margin: 0 0 0.5rem;
   font-size: 0.95rem;
   font-weight: 600;
+  font-family: var(--font-display);
 }
 
 .balanceChart {
   margin-top: 1.25rem;
   padding-top: 1rem;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--line);
 }
 
 .balanceChartTitle {
   margin: 0 0 0.5rem;
   font-size: 0.95rem;
   font-weight: 600;
+  font-family: var(--font-display);
 }
 
 .balanceChartLegend {
@@ -283,11 +282,11 @@
 }
 
 .balanceLegendIn {
-  color: #059669;
+  color: var(--accent);
 }
 
 .balanceLegendOut {
-  color: #dc2626;
+  color: #b91c1c;
 }
 
 .balanceChartBars {
@@ -326,16 +325,16 @@
 }
 
 .balanceBarIn {
-  background: linear-gradient(180deg, #34d399, #059669);
+  background: var(--accent);
 }
 
 .balanceBarOut {
-  background: linear-gradient(180deg, #f87171, #dc2626);
+  background: #b91c1c;
 }
 
 .balanceChartColLabel {
   font-size: 0.7rem;
-  color: #64748b;
+  color: var(--muted);
   text-align: center;
   line-height: 1.2;
   max-width: 100%;
@@ -352,18 +351,18 @@
 .quotePipelineBtn,
 .quotePipelineBtnActive {
   padding: 0.4rem 0.65rem;
-  border-radius: 999px;
+  border-radius: var(--radius);
   font-size: 0.8rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--line);
   background: #fff;
   cursor: pointer;
-  color: #475569;
+  color: var(--ink-soft);
 }
 
 .quotePipelineBtnActive {
-  background: #eff6ff;
-  border-color: #2563eb;
-  color: #1e40af;
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent-deep);
   font-weight: 600;
 }
 
@@ -381,21 +380,22 @@
 
 .quoteAlertBlock {
   padding: 0.75rem;
-  border-radius: 10px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  border-radius: var(--radius);
+  background: var(--surface);
+  border: 1px solid var(--line);
 }
 
 .quoteAlertTitle {
   margin: 0 0 0.5rem;
   font-size: 0.85rem;
+  font-family: var(--font-display);
 }
 
 .quoteAlertList {
   margin: 0;
   padding-left: 1.1rem;
   font-size: 0.8rem;
-  color: #334155;
+  color: var(--ink-soft);
 }
 
 .quoteCrm {
@@ -408,25 +408,26 @@
 .quoteCrm textarea {
   width: 100%;
   padding: 0.45rem 0.5rem;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
   font-family: inherit;
   font-size: 0.85rem;
+  background: #fff;
 }
 
 .positive {
-  color: #059669;
+  color: var(--accent);
 }
 
 .negative {
-  color: #dc2626;
+  color: #b91c1c;
 }
 
 .tableWrap {
   overflow-x: auto;
   margin-top: 0.75rem;
-  border-radius: 12px;
-  border: 1px solid #e2e8f0;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
 }
 
 .table {
@@ -437,21 +438,21 @@
 
 .table th {
   text-align: left;
-  background: linear-gradient(135deg, #f0f9ff 0%, #ecfdf5 100%);
-  color: #1e3a5f;
+  background: var(--accent-soft);
+  color: var(--ink);
   font-weight: 700;
   padding: 0.75rem 0.85rem;
-  border-bottom: 2px solid rgba(37, 99, 235, 0.15);
+  border-bottom: 2px solid rgba(15, 118, 110, 0.2);
 }
 
 .table td {
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--line);
   padding: 0.7rem 0.85rem;
-  color: #374151;
+  color: var(--ink-soft);
 }
 
 .table tbody tr:hover {
-  background: #f8fafc;
+  background: var(--surface);
 }
 
 .cellActions {
@@ -474,26 +475,26 @@
   grid-template-columns: 1.4fr 1fr 0.75fr 0.7fr 0.7fr auto;
   align-items: center;
   padding: 0.85rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 14px;
-  background: linear-gradient(135deg, #f0f9ff 0%, #ecfdf5 100%);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--accent-soft);
 }
 
-/* Afinar tamaño dentro de la barra de filtros */
 .filtersBar input,
 .filtersBar select {
   height: 40px;
   padding: 0.55rem 0.75rem;
-  border-radius: 10px;
-  border: 1px solid rgba(37, 99, 235, 0.18);
-  background: rgba(255, 255, 255, 0.9);
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: #fff;
+  font-family: inherit;
 }
 
 .filtersBar input:focus,
 .filtersBar select:focus {
   outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15);
 }
 
 .filtersBar :global(button) {
@@ -506,6 +507,7 @@
   .filtersBar {
     grid-template-columns: 1fr 1fr 0.9fr 0.9fr auto;
   }
+
   .filtersBar input[name='q'] {
     grid-column: 1 / -1;
   }
@@ -523,16 +525,16 @@
 }
 
 .jobItem {
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
   padding: 1rem;
-  background: linear-gradient(180deg, #ffffff 0%, #fafbfc 100%);
+  background: #fff;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .jobItem:hover {
-  border-color: rgba(6, 182, 212, 0.35);
-  box-shadow: 0 4px 16px rgba(6, 182, 212, 0.08);
+  border-color: rgba(15, 118, 110, 0.35);
+  box-shadow: 0 4px 16px rgba(12, 26, 36, 0.06);
 }
 
 .actions {
@@ -544,7 +546,7 @@
 }
 
 .link {
-  color: #2563eb;
+  color: var(--accent);
   align-self: center;
   font-weight: 600;
   text-decoration: none;
@@ -552,7 +554,7 @@
 }
 
 .link:hover {
-  color: #059669;
+  color: var(--ink);
 }
 
 .linkButton {
@@ -560,7 +562,7 @@
   border: none;
   cursor: pointer;
   font: inherit;
-  color: #2563eb;
+  color: var(--accent);
   font-weight: 600;
   text-decoration: underline;
   text-underline-offset: 3px;
@@ -568,23 +570,23 @@
 }
 
 .linkButton:hover {
-  color: #059669;
+  color: var(--ink);
 }
 
 .danger {
   border: none;
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  background: #b91c1c;
   color: #fff;
-  border-radius: 10px;
+  border-radius: var(--radius);
   padding: 0.55rem 0.85rem;
   cursor: pointer;
   font-weight: 600;
   font-size: 0.875rem;
-  box-shadow: 0 2px 10px rgba(239, 68, 68, 0.25);
-  transition: transform 0.2s;
+  transition: background 0.2s, transform 0.2s;
 }
 
 .danger:hover {
+  background: #991b1b;
   transform: translateY(-1px);
 }
 
@@ -611,10 +613,10 @@
     align-items: center;
     justify-content: center;
     gap: 0.4rem;
-    border: 1px solid rgba(6, 182, 212, 0.4);
-    background: linear-gradient(135deg, #ecfeff 0%, #eff6ff 100%);
-    color: #0e7490;
-    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: var(--accent-soft);
+    color: var(--accent-deep);
+    border-radius: var(--radius);
     padding: 0.55rem 0.85rem;
     font-weight: 600;
     margin-bottom: 0.75rem;

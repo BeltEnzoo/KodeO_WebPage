@@ -1,259 +1,58 @@
-import React from 'react';
-import { Stethoscope, Building, Shield, Pill, Activity, Clock } from 'lucide-react';
 import styles from './Products.module.css';
 
-const Products = () => {
+const products = [
+  {
+    title: 'Trazabilidad de equipos',
+    text: 'Software propio para registrar intervenciones, estado operativo e historial del equipamiento médico.',
+  },
+  {
+    title: 'Software a medida',
+    text: 'Sistemas de gestión para consultorios, clínicas y operaciones técnicas.',
+  },
+  {
+    title: 'Sitios web',
+    text: 'Presencia digital clara y profesional para instituciones y empresas de salud.',
+  },
+  {
+    title: 'KodeON Consultorio',
+    text: 'Turnos, historias clínicas y administración para consultorios privados.',
+  },
+];
+
+function Products() {
   return (
-    <section id="productos" className={styles.productsSection}>
-      <div className={styles.productsContainer}>
-        <div className={styles.productsHeader}>
-          <h2 className={styles.productsTitle}>Soluciones digitales para escalar tu operación</h2>
-          <p className={styles.productsSubtitle}>
-            Cuando la operación técnica está ordenada, el software te da trazabilidad, control y crecimiento.
+    <section id="productos" className={styles.section}>
+      <div className={styles.container}>
+        <div className={styles.header}>
+          <p className={styles.eyebrow}>Software</p>
+          <h2 className={styles.title}>Herramientas digitales propias</h2>
+          <p className={styles.subtitle}>
+            Desarrollamos plataformas que ordenan procesos: desde la gestión del consultorio
+            hasta la trazabilidad del equipamiento médico.
           </p>
         </div>
-        
-        <div className={styles.productsGrid}>
-          {/* Desarrollo Personalizado - Destacado */}
-          <div className={`${styles.productCard} ${styles.productCardFeatured}`}>
-            <div className={styles.featuredBadge}>Destacado</div>
-            <div className={`${styles.productIconContainer} ${styles.productIconFeatured}`}>
-              <Shield className={styles.productIconFeaturedStyle} />
-            </div>
-            <h3 className={styles.productTitleFeatured}>Desarrollo personalizado</h3>
-            <p className={styles.productDescriptionFeatured}>
-              ¿Necesitas algo específico? Desarrollamos software a medida para cualquier tipo de empresa o institución. 
-              Especialistas en salud, pero también trabajamos con todo tipo de industrias y sectores.
-            </p>
-            <div className={styles.productFeatures}>
-              <div className={styles.productFeature}>
-                <div className={styles.productFeatureIcon}>✓</div>
-                <span className={styles.productFeatureText}>Desarrollo a medida</span>
-              </div>
-              <div className={styles.productFeature}>
-                <div className={styles.productFeatureIcon}>✓</div>
-                <span className={styles.productFeatureText}>Integración con sistemas existentes</span>
-              </div>
-              <div className={styles.productFeature}>
-                <div className={styles.productFeatureIcon}>✓</div>
-                <span className={styles.productFeatureText}>Soporte especializado</span>
-              </div>
-              <div className={styles.productFeature}>
-                <div className={styles.productFeatureIcon}>✓</div>
-                <span className={styles.productFeatureText}>Para cualquier sector o industria</span>
-              </div>
-            </div>
-            <a 
-              href="https://wa.me/5492944369647?text=Hola%2C%20me%20interesa%20Desarrollo%20Personalizado" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className={styles.productContactButtonFeatured}
-            >
-              Solicitar presupuesto
-            </a>
-          </div>
 
-          <div className={styles.productCard}>
-            <div className={styles.availableBadge}>Disponible</div>
-            <div className={`${styles.productIconContainer} ${styles.productIconBlue}`}>
-              <Stethoscope className={styles.productIconBlueStyle} />
-            </div>
-            <h3 className={styles.productTitle}>KodeON consultorio</h3>
-            <p className={styles.productDescription}>
-              Software completo para consultorios médicos privados.
-              Gestión de pacientes, turnos, historias clinicas y mas.
-            </p>
-            <div className={styles.productFeatures}>
-              <div className={styles.productFeature}>
-                <div className={styles.productFeatureIcon}>✓</div>
-                <span className={styles.productFeatureText}>Gestión de turnos</span>
-              </div>
-              <div className={styles.productFeature}>
-                <div className={styles.productFeatureIcon}>✓</div>
-                <span className={styles.productFeatureText}>Historias clínicas</span>
-              </div>
-              <div className={styles.productFeature}>
-                <div className={styles.productFeatureIcon}>✓</div>
-                <span className={styles.productFeatureText}>Facturación digital</span>
-              </div>
-            </div>
-            <a 
-              href="https://wa.me/5492944369647?text=Hola%2C%20me%20interesa%20KodeON%20Consultorio" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className={styles.productContactButton}
-            >
-              Consultar
-            </a>
-          </div>
-
-          <div className={styles.productCard}>
-            <div className={styles.comingSoonBadge}>¡Próximamente!</div>
-            <div className={`${styles.productIconContainer} ${styles.productIconGreen}`}>
-              <Building className={styles.productIconGreenStyle} />
-            </div>
-            <h3 className={styles.productTitle}>KodeON clínica</h3>
-            <p className={styles.productDescription}>
-              Solución integral para clínicas y centros de salud.
-              Administración completa, finanzas y recursos humanos.
-            </p>
-            <div className={styles.productFeatures}>
-              <div className={styles.productFeature}>
-                <div className={styles.productFeatureIcon}>✓</div>
-                <span className={styles.productFeatureText}>Administración completa</span>
-              </div>
-              <div className={styles.productFeature}>
-                <div className={styles.productFeatureIcon}>✓</div>
-                <span className={styles.productFeatureText}>Gestión de recursos</span>
-              </div>
-              <div className={styles.productFeature}>
-                <div className={styles.productFeatureIcon}>✓</div>
-                <span className={styles.productFeatureText}>Reportes avanzados</span>
-              </div>
-            </div>
-            <div className={styles.productPriceComing}>Muy pronto disponible</div>
-          </div>
-
-          <div className={styles.productCard}>
-            <div className={styles.availableBadge}>Disponible</div>
-            <div className={`${styles.productIconContainer} ${styles.productIconBlue}`}>
-              <Shield className={styles.productIconBlueStyle} />
-            </div>
-            <h3 className={styles.productTitle}>KodeON hospital</h3>
-            <p className={styles.productDescription}>
-              Plataforma hospitalaria completa con gestión de equipamiento médico,
-              cirugías, camas y todo el flujo hospitalario.
-            </p>
-            <div className={styles.productFeatures}>
-              <div className={styles.productFeature}>
-                <div className={styles.productFeatureIcon}>✓</div>
-                <span className={styles.productFeatureText}>Gestión de equipamiento</span>
-              </div>
-              <div className={styles.productFeature}>
-                <div className={styles.productFeatureIcon}>✓</div>
-                <span className={styles.productFeatureText}>Programación quirófano</span>
-              </div>
-              <div className={styles.productFeature}>
-                <div className={styles.productFeatureIcon}>✓</div>
-                <span className={styles.productFeatureText}>Control de camas</span>
-              </div>
-            </div>
-            <a 
-              href="https://wa.me/5492944369647?text=Hola%2C%20me%20interesa%20KodeON%20Hospital" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className={styles.productContactButton}
-            >
-              Consultar
-            </a>
-          </div>
-
-          <div className={styles.productCard}>
-            <div className={styles.availableBadge}>Disponible</div>
-            <div className={`${styles.productIconContainer} ${styles.productIconGreen}`}>
-              <Activity className={styles.productIconGreenStyle} />
-            </div>
-            <h3 className={styles.productTitle}>KodeON equipment</h3>
-            <p className={styles.productDescription}>
-              Software de gestión para equipos médicos. Monitoreo en tiempo real,
-              mantenimiento preventivo y control de inventario.
-            </p>
-            <div className={styles.productFeatures}>
-              <div className={styles.productFeature}>
-                <div className={styles.productFeatureIcon}>✓</div>
-                <span className={styles.productFeatureText}>Monitoreo en tiempo real</span>
-              </div>
-              <div className={styles.productFeature}>
-                <div className={styles.productFeatureIcon}>✓</div>
-                <span className={styles.productFeatureText}>Mantenimiento predictivo</span>
-              </div>
-              <div className={styles.productFeature}>
-                <div className={styles.productFeatureIcon}>✓</div>
-                <span className={styles.productFeatureText}>Control de inventario</span>
-              </div>
-            </div>
-            <a 
-              href="https://wa.me/5492944369647?text=Hola%2C%20me%20interesa%20KodeON%20Equipment" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className={styles.productContactButton}
-            >
-              Consultar
-            </a>
-          </div>
-
-          <div className={styles.productCard}>
-            <div className={styles.availableBadge}>Disponible</div>
-            <div className={`${styles.productIconContainer} ${styles.productIconBlue}`}>
-              <Pill className={styles.productIconBlueStyle} />
-            </div>
-            <h3 className={styles.productTitle}>KodeON farmacia</h3>
-            <p className={styles.productDescription}>
-              Solución completa para farmacias hospitalarias y comunitarias.
-              Stock, recetas digitales, interacciones y farmacovigilancia.
-            </p>
-            <div className={styles.productFeatures}>
-              <div className={styles.productFeature}>
-                <div className={styles.productFeatureIcon}>✓</div>
-                <span className={styles.productFeatureText}>Gestión de stock</span>
-              </div>
-              <div className={styles.productFeature}>
-                <div className={styles.productFeatureIcon}>✓</div>
-                <span className={styles.productFeatureText}>Recetas digitales</span>
-              </div>
-              <div className={styles.productFeature}>
-                <div className={styles.productFeatureIcon}>✓</div>
-                <span className={styles.productFeatureText}>Control de vencimientos</span>
-              </div>
-            </div>
-            <a 
-              href="https://wa.me/5492944369647?text=Hola%2C%20me%20interesa%20KodeON%20Farmacia" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className={styles.productContactButton}
-            >
-              Consultar
-            </a>
-          </div>
-
-          <div className={styles.productCard}>
-            <div className={styles.availableBadge}>Disponible</div>
-            <div className={`${styles.productIconContainer} ${styles.productIconGreen}`}>
-              <Clock className={styles.productIconGreenStyle} />
-            </div>
-            <h3 className={styles.productTitle}>KodeON turnera</h3>
-            <p className={styles.productDescription}>
-              Sistema de gestión de turnos para sala de espera. 
-              El médico puede llamar pacientes desde el consultorio y en una pantalla se visualiza el llamado al paciente en la sala de espera.
-            </p>
-            <div className={styles.productFeatures}>
-              <div className={styles.productFeature}>
-                <div className={styles.productFeatureIcon}>✓</div>
-                <span className={styles.productFeatureText}>Llamada desde consultorio</span>
-              </div>
-              <div className={styles.productFeature}>
-                <div className={styles.productFeatureIcon}>✓</div>
-                <span className={styles.productFeatureText}>Pantalla de sala de espera</span>
-              </div>
-              <div className={styles.productFeature}>
-                <div className={styles.productFeatureIcon}>✓</div>
-                <span className={styles.productFeatureText}>Gestión de cola</span>
-              </div>
-            </div>
-            <a 
-              href="https://wa.me/5492944369647?text=Hola%2C%20me%20interesa%20KodeON%20Turnera" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className={styles.productContactButton}
-            >
-              Consultar
-            </a>
-          </div>
-
+        <div className={styles.grid}>
+          {products.map((product, index) => (
+            <article key={product.title} className={styles.item}>
+              <span className={styles.index}>0{index + 1}</span>
+              <h3>{product.title}</h3>
+              <p>{product.text}</p>
+            </article>
+          ))}
         </div>
+
+        <a
+          href="https://wa.me/5492944369647?text=Hola%2C%20quiero%20consultar%20por%20desarrollo%20o%20software"
+          target="_blank"
+          rel="noopener noreferrer"
+          className={styles.cta}
+        >
+          Consultar software
+        </a>
       </div>
     </section>
   );
-};
+}
 
 export default Products;

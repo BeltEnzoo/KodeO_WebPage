@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Logo from './components/Logo';
-import { supabase, getMyProfile, getDashboardPathByRole } from './lib/supabase.js';
+import { supabase, isSupabaseConfigured, getMyProfile, getDashboardPathByRole } from './lib/supabase.js';
 import styles from './LoginPage.module.css';
 
 function LoginPage() {
@@ -11,6 +11,12 @@ function LoginPage() {
 
   useEffect(() => {
     async function checkSession() {
+      if (!isSupabaseConfigured || !supabase) {
+        setStatus('Acceso no configurado. Faltan variables de Supabase en .env');
+        setLoadingSession(false);
+        return;
+      }
+
       try {
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
@@ -32,6 +38,11 @@ function LoginPage() {
 
   async function handleSubmit(event) {
     event.preventDefault();
+    if (!isSupabaseConfigured || !supabase) {
+      setStatus('Acceso no configurado. Faltan variables de Supabase en .env');
+      return;
+    }
+
     setStatus('Ingresando...');
 
     try {
@@ -105,7 +116,7 @@ function LoginPage() {
           </form>
           {status && <p className={styles.status}>{status}</p>}
           <a href="/" className={styles.back}>
-            Volver a la landing
+            Volver al sitio
           </a>
         </section>
       </div>

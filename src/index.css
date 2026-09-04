@@ -1,8 +1,25 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600;6..72,700&family=Outfit:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --ink: #0c1a24;
+  --ink-soft: #243746;
+  --muted: #5b6b76;
+  --line: #d7e0e6;
+  --surface: #f3f6f8;
+  --surface-elevated: #ffffff;
+  --accent: #0f766e;
+  --accent-deep: #0b5f59;
+  --accent-soft: #e7f4f2;
+  --hero-overlay: linear-gradient(105deg, rgba(8, 18, 28, 0.92) 0%, rgba(8, 18, 28, 0.72) 48%, rgba(8, 18, 28, 0.45) 100%);
+  --font-display: 'Newsreader', Georgia, serif;
+  --font-body: 'Outfit', system-ui, sans-serif;
+  --radius: 0.35rem;
+  --shadow: 0 18px 40px rgba(12, 26, 36, 0.08);
+}
 
 * {
   margin: 0;
@@ -10,13 +27,39 @@
   box-sizing: border-box;
 }
 
-body {
-  font-family: 'Inter', system-ui, sans-serif;
-  line-height: 1.6;
-  color: #1f2937;
-    background-color: #ffffff;
-  }
-
 html {
   scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  line-height: 1.6;
+  color: var(--ink);
+  background: var(--surface);
+  -webkit-font-smoothing: antialiased;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: inherit;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }

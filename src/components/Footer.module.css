@@ -1,160 +1,83 @@
-/* Componente específico de estilos con CSS puro - Diseño Tecnológico */
 .footer {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-  color: white;
-  padding: 2.4rem 0 1.2rem;
-  position: relative;
-  overflow: hidden;
+  background: #08131b;
+  color: rgba(255, 255, 255, 0.82);
+  padding: 3.5rem 0 1.5rem;
 }
 
-.footer::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, #2563eb, #059669, transparent);
-}
-
-.footerContainer {
-  max-width: 1280px;
+.container {
+  max-width: 1180px;
   margin: 0 auto;
-  padding: 0 1rem;
-  position: relative;
-  z-index: 1;
+  padding: 0 1.25rem;
 }
 
-@media (min-width: 640px) {
-  .footerContainer {
-    padding: 0 1.5rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .footerContainer {
-    padding: 0 2rem;
-  }
-}
-
-.footerGrid {
+.grid {
   display: grid;
-  gap: 1.8rem;
+  gap: 2rem;
 }
 
-@media (min-width: 768px) {
-  .footerGrid {
-    grid-template-columns: minmax(0, 1.35fr) repeat(3, minmax(0, 1fr));
-    align-items: start;
+@media (min-width: 900px) {
+  .grid {
+    grid-template-columns: 1.4fr 1fr 1fr 1fr;
   }
 }
 
-@media (max-width: 767px) {
-  .footerGrid {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
+.brand {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  color: #fff;
+  margin-bottom: 0.75rem;
 }
 
-.footerBrandTitle {
-  margin: 0 0 0.6rem;
-  font-size: 1.15rem;
-  font-weight: 800;
-  letter-spacing: 0.02em;
-  color: #f8fafc;
+.description {
+  max-width: 28rem;
+  margin-bottom: 1.1rem;
+  color: rgba(255, 255, 255, 0.68);
 }
 
-.footerDescription {
-  color: #cbd5e1;
-  margin-bottom: 0.95rem;
-  line-height: 1.5;
-  font-size: 0.9rem;
-  max-width: 34ch;
-}
-
-.socialLinks {
+.social {
   display: flex;
-  gap: 0.6rem;
-  margin-top: 0.3rem;
+  gap: 0.75rem;
 }
 
-.socialLink {
-  color: #cbd5e1;
-  transition: all 0.3s ease;
-  padding: 0.5rem;
-  border-radius: 0.6rem;
-  background: rgba(37, 99, 235, 0.1);
-  border: 1px solid rgba(37, 99, 235, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.social a {
+  color: rgba(255, 255, 255, 0.8);
+  transition: color 0.2s ease;
 }
 
-.socialLink:hover {
-  color: white;
-  transform: translateY(-4px);
-  background: linear-gradient(135deg, rgba(37, 99, 235, 0.3), rgba(5, 150, 105, 0.3));
-  border-color: rgba(37, 99, 235, 0.5);
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+.social a:hover {
+  color: #7fd4c8;
 }
 
-.socialIcon {
-  width: 1rem;
-  height: 1rem;
-  transition: transform 0.3s ease;
+.social svg {
+  width: 1.1rem;
+  height: 1.1rem;
 }
 
-.socialLink:hover .socialIcon {
-  transform: scale(1.15) rotate(5deg);
-}
-
-.footerSection h4 {
+.grid h4 {
+  color: #fff;
+  margin-bottom: 0.85rem;
   font-size: 0.95rem;
-  font-weight: 700;
-  margin-bottom: 0.7rem;
-  color: #f8fafc;
-  letter-spacing: 0.01em;
 }
 
-.footerLinks {
-  display: flex;
-  flex-direction: column;
-  gap: 0.45rem;
-  color: #cbd5e1;
+.grid ul {
   list-style: none;
-  padding: 0;
-  margin: 0;
+  display: grid;
+  gap: 0.45rem;
 }
 
-.footerLinks li {
-  transition: all 0.3s ease;
-  font-size: 0.88rem;
-  line-height: 1.45;
-}
-
-.footerLinks li:hover {
-  color: white;
-  transform: translateX(2px);
-}
-
-.footerLinks a {
-  color: inherit;
+.grid a {
   text-decoration: none;
+  color: rgba(255, 255, 255, 0.7);
 }
 
-.footerLinks a:hover {
-  color: #ffffff;
+.grid a:hover {
+  color: #fff;
 }
 
-.footerSectionBrand {
-  padding-right: 0.5rem;
-}
-
-.footerBottom {
-  border-top: 1px solid rgba(37, 99, 235, 0.2);
-  margin-top: 1.6rem;
-  padding-top: 1rem;
-  text-align: center;
-  color: #94a3b8;
-  font-size: 0.8rem;
+.bottom {
+  margin-top: 2.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.55);
 }
