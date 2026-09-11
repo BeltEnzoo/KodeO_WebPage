@@ -21,7 +21,7 @@ const highlights = [
   {
     to: '/nosotros',
     title: 'Nosotros',
-    text: 'Enzo Beltrán: técnico en electromedicina y desarrollador web.',
+    text: 'Empresa joven con dos años de trayectoria. Técnica biomédica y software para la salud.',
   },
 ];
 
