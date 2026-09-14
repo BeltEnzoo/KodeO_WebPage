@@ -38,6 +38,7 @@ import {
   updateEquipmentIntervention,
   deleteEquipmentIntervention,
 } from '../../lib/supabaseApi.js';
+import { downloadRemitoPdf } from '../../lib/generateRemitoPdf.js';
 import styles from './AdminDashboard.module.css';
 
 const INCOME_CATEGORY_LABELS = {
@@ -574,6 +575,16 @@ function AdminDashboard() {
       await loadEquipments();
     } catch (e) {
       setEquipmentStatus(e.message ?? 'No se pudo eliminar.');
+    }
+  }
+
+  async function handleGenerateRemito(equipment) {
+    setEquipmentStatus('Generando remito...');
+    try {
+      await downloadRemitoPdf(equipment);
+      setEquipmentStatus('Remito descargado.');
+    } catch (e) {
+      setEquipmentStatus(e.message ?? 'No se pudo generar el remito.');
     }
   }
 
@@ -2277,9 +2288,21 @@ function AdminDashboard() {
                     {editingEquipmentId ? 'Guardar cambios' : 'Registrar equipo'}
                   </button>
                   {editingEquipmentId && (
-                    <button type="button" onClick={cancelEditEquipment} className={styles.danger}>
-                      Cancelar
-                    </button>
+                    <>
+                      <button type="button" onClick={cancelEditEquipment} className={styles.danger}>
+                        Cancelar
+                      </button>
+                      <button
+                        type="button"
+                        className={styles.buttonPrimary}
+                        onClick={() => {
+                          const current = equipments.find((row) => row.id === editingEquipmentId);
+                          if (current) handleGenerateRemito({ ...current, ...equipmentForm, client: current.client });
+                        }}
+                      >
+                        Generar remito
+                      </button>
+                    </>
                   )}
                 </div>
               </form>
@@ -2346,6 +2369,7 @@ function AdminDashboard() {
                           <td>{e.serialNumber ?? '-'}</td>
                           <td>{e.client?.businessName ?? '-'}</td>
                           <td className={styles.cellActions}>
+                            <button type="button" onClick={() => handleGenerateRemito(e)} className={styles.linkButton}>Remito</button>
                             <button type="button" onClick={() => startEditEquipment(e)} className={styles.linkButton}>Editar</button>
                             <button type="button" onClick={() => handleDeleteEquipment(e.id)} className={styles.danger} style={{ padding: '4px 8px', fontSize: '12px' }}>Eliminar</button>
                           </td>

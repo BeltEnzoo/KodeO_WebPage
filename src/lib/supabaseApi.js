@@ -956,14 +956,48 @@ export async function getEquipmentInterventions() {
     .from('equipment_interventions')
     .select(`
       *,
-      client:clients(id, business_name)
+      client:clients(id, business_name, cuit, address, phone, email)
     `)
     .order('created_at', { ascending: false });
 
   if (error) throw new Error(error.message);
   return (data || []).map((row) => ({
     ...mapKeys(row),
-    client: row.client ? { id: row.client.id, businessName: row.client.business_name } : null,
+    client: row.client
+      ? {
+          id: row.client.id,
+          businessName: row.client.business_name,
+          cuit: row.client.cuit,
+          address: row.client.address,
+          phone: row.client.phone,
+          email: row.client.email,
+        }
+      : null,
+  }));
+}
+
+export async function getMyEquipmentInterventions() {
+  const { data, error } = await supabase
+    .from('equipment_interventions')
+    .select(`
+      *,
+      client:clients(id, business_name, cuit, address, phone, email)
+    `)
+    .order('intake_date', { ascending: false });
+
+  if (error) throw new Error(error.message);
+  return (data || []).map((row) => ({
+    ...mapKeys(row),
+    client: row.client
+      ? {
+          id: row.client.id,
+          businessName: row.client.business_name,
+          cuit: row.client.cuit,
+          address: row.client.address,
+          phone: row.client.phone,
+          email: row.client.email,
+        }
+      : null,
   }));
 }
 
@@ -1028,3 +1062,4 @@ export async function deleteEquipmentIntervention(id) {
   const { error } = await supabase.from('equipment_interventions').delete().eq('id', id);
   if (error) throw new Error(error.message);
 }
+

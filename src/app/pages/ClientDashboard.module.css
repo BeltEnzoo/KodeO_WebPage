@@ -53,20 +53,38 @@
   color: var(--accent-deep);
 }
 
+.menu {
+  display: grid;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
 .menuButton {
-  margin: 0 0 1rem 0;
   border: 1px solid var(--line);
-  background: var(--accent-soft);
-  color: var(--accent-deep);
+  background: #fff;
   border-radius: var(--radius);
   padding: 0.7rem 0.85rem;
   text-align: left;
-  cursor: default;
+  cursor: pointer;
   font-weight: 600;
   font-size: 0.875rem;
   display: flex;
   align-items: center;
   gap: 0.55rem;
+  transition: all 0.2s ease;
+  color: var(--ink-soft);
+}
+
+.menuButtonActive {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent-deep);
+}
+
+.menuButton:hover {
+  border-color: rgba(15, 118, 110, 0.35);
+  background: var(--accent-soft);
+  color: var(--accent-deep);
 }
 
 .menuIcon {
@@ -131,6 +149,24 @@
 .jobItem:hover {
   border-color: rgba(15, 118, 110, 0.35);
   box-shadow: 0 4px 16px rgba(12, 26, 36, 0.06);
+}
+
+.buttonPrimary {
+  margin-top: 0.85rem;
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 0.6rem 0.95rem;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.buttonPrimary:hover {
+  background: var(--accent-deep);
+  transform: translateY(-1px);
 }
 
 .actions {
