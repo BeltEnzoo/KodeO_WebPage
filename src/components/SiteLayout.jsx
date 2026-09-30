@@ -16,11 +16,12 @@ import BackToTop from './BackToTop';
 import styles from './SiteLayout.module.css';
 
 const navItems = [
-  { to: '/equipos', label: 'Equipos' },
-  { to: '/servicios', label: 'Servicio técnico' },
-  { to: '/software', label: 'Software' },
+  { to: '/', label: 'Inicio', end: true },
+  { to: '/equipos', label: 'Equipamiento', also: ['/servicios'] },
+  { to: '/software', label: 'Desarrollo' },
+  { to: '/soluciones', label: 'Soluciones' },
   { to: '/nosotros', label: 'Nosotros' },
-  { to: '/clientes', label: 'Clientes' },
+  { to: '/proyectos', label: 'Proyectos', also: ['/clientes'] },
   { to: '/contacto', label: 'Contacto' },
 ];
 
@@ -80,9 +81,11 @@ function SiteLayout() {
                 <NavLink
                   key={item.to}
                   to={item.to}
-                  className={({ isActive }) =>
-                    `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`
-                  }
+                  end={item.end}
+                  className={({ isActive }) => {
+                    const active = isActive || item.also?.includes(location.pathname);
+                    return `${styles.navLink} ${active ? styles.navLinkActive : ''}`;
+                  }}
                 >
                   {item.label}
                 </NavLink>
@@ -108,9 +111,11 @@ function SiteLayout() {
               <NavLink
                 key={item.to}
                 to={item.to}
-                className={({ isActive }) =>
-                  `${styles.mobileNavLink} ${isActive ? styles.navLinkActive : ''}`
-                }
+                end={item.end}
+                className={({ isActive }) => {
+                  const active = isActive || item.also?.includes(location.pathname);
+                  return `${styles.mobileNavLink} ${active ? styles.navLinkActive : ''}`;
+                }}
               >
                 {item.label}
               </NavLink>

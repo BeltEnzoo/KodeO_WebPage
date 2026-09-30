@@ -90,7 +90,7 @@ function SuccessCases() {
     <section id="clientes" className={styles.section}>
       <div className={styles.container}>
         <div className={styles.header}>
-          <p className={styles.eyebrow}>Clientes</p>
+          <p className={styles.eyebrow}>Organizaciones</p>
           <h2 className={styles.title}>Con quiénes trabajamos</h2>
           <p className={styles.subtitle}>
             Profesionales, consultorios, municipios e instituciones de salud.

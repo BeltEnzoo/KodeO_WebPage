@@ -1,7 +1,7 @@
-import Services from '../components/Services';
+import EquipmentPage from './EquipmentPage';
 
 function ServicesPage() {
-  return <Services />;
+  return <EquipmentPage />;
 }
 
 export default ServicesPage;

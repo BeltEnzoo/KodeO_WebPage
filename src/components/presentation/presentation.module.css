@@ -1,0 +1,660 @@
+.container {
+  width: min(1120px, calc(100% - 2.5rem));
+  margin: 0 auto;
+}
+
+.eyebrow {
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 0.7rem;
+}
+
+.lead {
+  color: var(--muted);
+  font-size: 1.05rem;
+  max-width: 42rem;
+}
+
+.section {
+  padding: 4.5rem 0;
+}
+
+.sectionAlt {
+  background: var(--surface-elevated);
+  border-block: 1px solid var(--line);
+}
+
+.sectionHead {
+  max-width: 40rem;
+  margin-bottom: 2rem;
+}
+
+.sectionHead h2,
+.pageHero h1,
+.heroCopy h1,
+.prose h2,
+.split h2,
+.contactLayout h2,
+.contactCompact h2 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.12;
+  color: var(--ink);
+}
+
+.sectionHead h2,
+.prose h2,
+.split h2,
+.contactLayout h2,
+.contactCompact h2 {
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  margin-bottom: 0.75rem;
+}
+
+.sectionHead p,
+.pageHero p,
+.prose p,
+.split p {
+  color: var(--muted);
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 3rem;
+  align-items: center;
+  padding: 4.5rem 0 3.5rem;
+}
+
+.heroCopy h1 {
+  font-size: clamp(2.4rem, 5vw, 4.15rem);
+  margin-bottom: 1rem;
+  max-width: 12ch;
+}
+
+.heroCopy .lead {
+  font-size: 1.08rem;
+  margin-bottom: 1.6rem;
+}
+
+.actions,
+.cardActions,
+.ctaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.primary,
+.secondary,
+.cardActions a,
+.socialRow a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  padding: 0.55rem 1.05rem;
+  border-radius: var(--radius);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.primary,
+.cardActions a:last-child,
+.form button {
+  background: var(--accent);
+  color: #fff;
+  border: 1px solid var(--accent);
+}
+
+.secondary,
+.cardActions a:first-child,
+.socialRow a {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--line);
+}
+
+.primary:hover,
+.secondary:hover,
+.cardActions a:hover,
+.socialRow a:hover,
+.form button:hover {
+  transform: translateY(-2px);
+}
+
+.primary:hover,
+.form button:hover {
+  background: var(--accent-deep);
+}
+
+.secondary:hover,
+.cardActions a:first-child:hover,
+.socialRow a:hover {
+  border-color: var(--accent);
+  color: var(--accent-deep);
+}
+
+.visualFrame {
+  background: var(--ink);
+  color: #e7eef2;
+  border-radius: 1rem;
+  padding: 1rem;
+  box-shadow: var(--shadow);
+}
+
+.visualBar,
+.visualBody article,
+.nodes span {
+  border: 1px solid rgba(231, 244, 242, 0.14);
+}
+
+.visualBar {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: 0.6rem;
+  margin-bottom: 0.8rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  color: rgba(231, 238, 242, 0.72);
+}
+
+.visualBar span {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: #7dcec6;
+}
+
+.visualBody {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.7rem;
+}
+
+.visualBody article {
+  padding: 0.9rem;
+  border-radius: 0.7rem;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.visualBody p,
+.nodes span {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8fd0c8;
+}
+
+.visualBody strong {
+  display: block;
+  margin: 0.35rem 0 0.7rem;
+  font-weight: 500;
+}
+
+.visualWide {
+  grid-column: 1 / -1;
+}
+
+.bars,
+.queue,
+.visualBody ol,
+.nodes {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.bars i,
+.queue span {
+  display: block;
+  height: 0.35rem;
+  border-radius: 99px;
+  background: rgba(143, 208, 200, 0.85);
+}
+
+.bars i:nth-child(1) { width: 72%; }
+.bars i:nth-child(2) { width: 48%; background: rgba(143, 208, 200, 0.45); }
+.bars i:nth-child(3) { width: 30%; background: rgba(143, 208, 200, 0.28); }
+
+.bars { flex-direction: column; align-items: stretch; }
+
+.queue span {
+  width: 1.7rem;
+  height: 1.7rem;
+  border-radius: 0.4rem;
+}
+
+.visualBody ol {
+  list-style: none;
+  padding: 0;
+}
+
+.visualBody li {
+  font-size: 0.82rem;
+  padding: 0.35rem 0.55rem;
+  border-radius: 99px;
+  background: rgba(15, 118, 110, 0.35);
+}
+
+.nodes {
+  margin-top: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.nodes span {
+  padding: 0.35rem 0.6rem;
+  border-radius: 99px;
+}
+
+.split {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 2.5rem;
+  align-items: start;
+}
+
+.prose {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.cardGrid,
+.reasonGrid,
+.audienceGrid,
+.stepGrid,
+.placeholderGrid {
+  display: grid;
+  gap: 1rem;
+}
+
+.cardGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.card,
+.reason,
+.step,
+.placeholder,
+.form {
+  background: var(--surface-elevated);
+  border: 1px solid var(--line);
+  border-radius: 0.85rem;
+  padding: 1.25rem;
+}
+
+.card h3,
+.reason h3,
+.step h3,
+.placeholder h3 {
+  font-size: 1.08rem;
+  margin-bottom: 0.45rem;
+  color: var(--ink);
+}
+
+.card p,
+.reason p,
+.step p,
+.placeholder p {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.cardActions {
+  margin-top: 1.1rem;
+}
+
+.cardActions a {
+  min-height: 2.4rem;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.85rem;
+}
+
+.step span,
+.work span {
+  display: block;
+  font-family: var(--font-display);
+  color: var(--accent);
+  font-size: 1.35rem;
+  margin-bottom: 0.35rem;
+}
+
+.reasonGrid,
+.audienceGrid {
+  grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr));
+}
+
+.stepGrid {
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+}
+
+.workGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.areaGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.areaCard {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  background: var(--ink);
+  color: #eef5f7;
+  border-radius: 1rem;
+  padding: 1.6rem;
+  min-height: 16rem;
+}
+
+.areaCard h3 {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 2.5vw, 2.1rem);
+  line-height: 1.15;
+  font-weight: 600;
+}
+
+.areaCard p:last-of-type {
+  color: rgba(238, 245, 247, 0.78);
+  flex: 1;
+}
+
+.areaCard .primary {
+  background: #fff;
+  color: var(--ink);
+  border-color: #fff;
+}
+
+.photoRow {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.8rem;
+  margin-top: 1.25rem;
+}
+
+.photoRow figure {
+  margin: 0;
+}
+
+.photoRow img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 0.75rem;
+}
+
+.photoRow figcaption {
+  margin-top: 0.4rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.lineList,
+.featureList {
+  margin: 0.9rem 0 0;
+  padding-left: 1.1rem;
+  color: var(--ink-soft);
+  display: grid;
+  gap: 0.35rem;
+}
+
+.lineList {
+  margin-top: 1rem;
+}
+
+.pageHero {
+  padding: 3.5rem 0 1rem;
+}
+
+.pageHero h1 {
+  font-size: clamp(2.2rem, 4vw, 3.4rem);
+  max-width: 16ch;
+  margin-bottom: 0.8rem;
+}
+
+.logoStrip {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.logoStrip a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-height: 7.2rem;
+  padding: 0.75rem;
+  text-align: center;
+  text-decoration: none;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  color: var(--ink-soft);
+  font-size: 0.82rem;
+}
+
+.logoStrip img {
+  width: 100%;
+  height: 3.4rem;
+  object-fit: contain;
+}
+
+.placeholderGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-bottom: 1rem;
+}
+
+.contactLayout,
+.contactCompact {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+.contactList {
+  list-style: none;
+  display: grid;
+  gap: 0.75rem;
+  margin: 1.25rem 0;
+}
+
+.contactList li {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.contactList svg {
+  width: 1.05rem;
+  height: 1.05rem;
+  color: var(--accent);
+  flex: none;
+}
+
+.contactList a {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.socialRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.socialRow a {
+  min-height: 2.2rem;
+  font-size: 0.82rem;
+}
+
+.form {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+}
+
+.form label {
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.form input,
+.form textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 0.7rem 0.75rem;
+  font: inherit;
+  color: var(--ink);
+  background: #fff;
+}
+
+.form input:focus,
+.form textarea:focus,
+.primary:focus-visible,
+.secondary:focus-visible,
+.cardActions a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.form button {
+  cursor: pointer;
+  font: inherit;
+}
+
+.formStatus {
+  color: var(--accent-deep);
+  font-size: 0.9rem;
+}
+
+.ctaBand {
+  background: var(--ink);
+  color: #eef5f7;
+  border-radius: 1rem;
+  padding: 2rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.ctaBand h2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  margin-bottom: 0.4rem;
+}
+
+.ctaBand p {
+  color: rgba(238, 245, 247, 0.78);
+}
+
+.ctaBand .secondary {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.ctaBand .primary {
+  background: #fff;
+  color: var(--ink);
+  border-color: #fff;
+}
+
+@media (max-width: 980px) {
+  .hero,
+  .split,
+  .contactLayout,
+  .contactCompact,
+  .cardGrid,
+  .workGrid,
+  .placeholderGrid,
+  .logoStrip,
+  .audienceGrid,
+  .areaGrid,
+  .photoRow {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .hero,
+  .split,
+  .contactLayout {
+    grid-template-columns: 1fr;
+  }
+
+  .ctaBand {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 680px) {
+  .section {
+    padding: 3.2rem 0;
+  }
+
+  .hero {
+    padding-top: 2.4rem;
+  }
+
+  .cardGrid,
+  .workGrid,
+  .placeholderGrid,
+  .logoStrip,
+  .formRow,
+  .visualBody,
+  .areaGrid,
+  .photoRow {
+    grid-template-columns: 1fr;
+  }
+
+  .actions a,
+  .form button,
+  .ctaRow a {
+    width: 100%;
+  }
+
+  .heroCopy h1 {
+    max-width: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .primary,
+  .secondary,
+  .cardActions a,
+  .socialRow a,
+  .form button {
+    transition: none;
+  }
+
+  .primary:hover,
+  .secondary:hover,
+  .cardActions a:hover,
+  .socialRow a:hover,
+  .form button:hover {
+    transform: none;
+  }
+}

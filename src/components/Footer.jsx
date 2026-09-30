@@ -12,8 +12,8 @@ function Footer() {
           <div>
             <h3 className={styles.brand}>KodeON</h3>
             <p className={styles.description}>
-              Soluciones en salud: venta de equipos, servicio técnico, asesoramiento
-              y desarrollo de software.
+              Equipamiento médico, servicio técnico y desarrollo de software
+              para instituciones de salud y otros sectores.
             </p>
             <div className={styles.social}>
               <a href="https://www.instagram.com/kode.on.soluciones/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
@@ -31,10 +31,11 @@ function Footer() {
           <div>
             <h4>Navegación</h4>
             <ul>
-              <li><Link to="/equipos">Equipos</Link></li>
-              <li><Link to="/servicios">Servicio técnico</Link></li>
-              <li><Link to="/software">Software</Link></li>
-              <li><Link to="/clientes">Clientes</Link></li>
+              <li><Link to="/equipos">Equipamiento</Link></li>
+              <li><Link to="/software">Desarrollo</Link></li>
+              <li><Link to="/soluciones">Soluciones</Link></li>
+              <li><Link to="/nosotros">Nosotros</Link></li>
+              <li><Link to="/proyectos">Proyectos</Link></li>
               <li><Link to="/contacto">Contacto</Link></li>
             </ul>
           </div>
@@ -42,10 +43,9 @@ function Footer() {
           <div>
             <h4>Servicios</h4>
             <ul>
-              <li>Venta de equipamiento</li>
-              <li>Mantenimiento biomédico</li>
-              <li>Asesoramiento técnico</li>
-              <li>Desarrollo a medida</li>
+              <li>Venta y service de equipos</li>
+              <li>Mantenimiento preventivo y correctivo</li>
+              <li>Sistemas, apps y sitios web</li>
             </ul>
           </div>
 

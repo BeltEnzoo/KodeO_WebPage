@@ -7,6 +7,8 @@ import SoftwarePage from './pages/SoftwarePage';
 import AboutPage from './pages/AboutPage';
 import ClientsPage from './pages/ClientsPage';
 import ContactPage from './pages/ContactPage';
+import SolutionsPage from './pages/SolutionsPage';
+import ProjectsPage from './pages/ProjectsPage';
 import LoginPage from './LoginPage';
 import AdminDashboard from './app/pages/AdminDashboard';
 import ClientDashboard from './app/pages/ClientDashboard';
@@ -17,10 +19,12 @@ function App() {
       <Routes>
         <Route element={<SiteLayout />}>
           <Route path="/" element={<HomePage />} />
+          <Route path="/soluciones" element={<SolutionsPage />} />
           <Route path="/equipos" element={<EquipmentPage />} />
           <Route path="/servicios" element={<ServicesPage />} />
           <Route path="/software" element={<SoftwarePage />} />
           <Route path="/nosotros" element={<AboutPage />} />
+          <Route path="/proyectos" element={<ProjectsPage />} />
           <Route path="/clientes" element={<ClientsPage />} />
           <Route path="/contacto" element={<ContactPage />} />
         </Route>

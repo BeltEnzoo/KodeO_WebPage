@@ -1,7 +1,7 @@
-import SuccessCases from '../components/SuccessCases';
+import ProjectsPage from './ProjectsPage';
 
 function ClientsPage() {
-  return <SuccessCases />;
+  return <ProjectsPage />;
 }
 
 export default ClientsPage;
