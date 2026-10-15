@@ -1,5 +1,5 @@
 .footer {
-  background: #08131b;
+  background: #0b1226;
   color: rgba(255, 255, 255, 0.82);
   padding: 3.5rem 0 1.5rem;
 }
@@ -45,7 +45,7 @@
 }
 
 .social a:hover {
-  color: #7fd4c8;
+  color: #21db77;
 }
 
 .social svg {

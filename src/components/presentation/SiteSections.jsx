@@ -25,21 +25,20 @@ export function AreaSplit() {
       <div className={styles.container}>
         <div className={styles.sectionHead}>
           <p className={styles.eyebrow}>Líneas de trabajo</p>
-          <h2>Equipamiento y desarrollo, para la misma institución.</h2>
-          <p>Una clínica o un hospital puede necesitar adquirir un equipo, mantener el que ya tiene y, al mismo tiempo, ordenar la gestión con un sistema o una aplicación.</p>
+          <h2>Dos ofertas, con alcance distinto.</h2>
         </div>
         <div className={styles.areaGrid}>
           <article className={styles.areaCard}>
-            <p className={styles.eyebrow}>Electromedicina</p>
-            <h3>Venta, mantenimiento y servicio técnico.</h3>
-            <p>Asesoramiento comercial, puesta en marcha, preventivo, correctivo y registro de las intervenciones sobre el equipamiento.</p>
-            <Link to="/equipos" className={styles.primary}>Ver equipamiento y service</Link>
+            <p className={styles.eyebrow}>Desarrollo</p>
+            <h3>Páginas web, sistemas CRM y aplicaciones Android.</h3>
+            <p>Sitios institucionales, gestión de consultorio y turnos, y aplicaciones para el teléfono del profesional o del personal.</p>
+            <Link to="/software" className={styles.primary}>Ver desarrollo</Link>
           </article>
           <article className={styles.areaCard}>
-            <p className={styles.eyebrow}>Desarrollo para la salud</p>
-            <h3>Aplicaciones, sistemas web y sitios institucionales.</h3>
-            <p>Android, gestión de consultorio, turnos por llamado y páginas para presentar un servicio de salud con seriedad.</p>
-            <Link to="/software" className={styles.primary}>Ver desarrollo</Link>
+            <p className={styles.eyebrow}>Equipamiento médico</p>
+            <h3>Venta y servicio técnico.</h3>
+            <p>Comercialización, puesta en marcha, diagnóstico, mantenimiento preventivo y correctivo.</p>
+            <Link to="/equipos" className={styles.primary}>Ver equipamiento</Link>
           </article>
         </div>
       </div>

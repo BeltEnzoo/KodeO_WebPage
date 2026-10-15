@@ -13,8 +13,8 @@ function SoftwarePage() {
     <>
       <header className={styles.pageHero}>
         <div className={styles.container}>
-          <p className={styles.eyebrow}>Desarrollo tecnológico</p>
-          <h1>Aplicaciones y sistemas para instituciones de salud.</h1>
+          <p className={styles.eyebrow}>Desarrollo de software</p>
+          <h1>Aplicaciones, sistemas y sitios para instituciones de salud.</h1>
           <p className={styles.lead}>Android, sistemas web, sitios institucionales y los sistemas propios de gestión de equipos, consultorios y turnos.</p>
           <Link to="/contacto" className={styles.primary}>Solicitar información</Link>
         </div>

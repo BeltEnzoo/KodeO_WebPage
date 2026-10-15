@@ -18,9 +18,8 @@ import { EMAIL, QUOTE_URL } from './presentation/content';
 
 const navItems = [
   { to: '/', label: 'Inicio', end: true },
-  { to: '/equipos', label: 'Equipamiento', also: ['/servicios'] },
-  { to: '/software', label: 'Desarrollo' },
-  { to: '/soluciones', label: 'Soluciones' },
+  { to: '/software', label: 'Desarrollo de software' },
+  { to: '/equipos', label: 'Equipamiento médico', also: ['/servicios'] },
   { to: '/nosotros', label: 'Nosotros' },
   { to: '/contacto', label: 'Contacto' },
 ];

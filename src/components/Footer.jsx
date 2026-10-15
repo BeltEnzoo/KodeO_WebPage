@@ -32,9 +32,8 @@ function Footer() {
           <div>
             <h4>Navegación</h4>
             <ul>
-              <li><Link to="/equipos">Equipamiento</Link></li>
-              <li><Link to="/software">Desarrollo</Link></li>
-              <li><Link to="/soluciones">Soluciones</Link></li>
+              <li><Link to="/software">Desarrollo de software</Link></li>
+              <li><Link to="/equipos">Equipamiento médico</Link></li>
               <li><Link to="/nosotros">Nosotros</Link></li>
               <li><Link to="/contacto">Contacto</Link></li>
             </ul>

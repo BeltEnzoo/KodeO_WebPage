@@ -1,22 +1,23 @@
-@import url('https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600;6..72,700&family=Outfit:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --ink: #0c1a24;
-  --ink-soft: #243746;
-  --muted: #5b6b76;
-  --line: #d7e0e6;
-  --surface: #f3f6f8;
+  --ink: #0b1226;
+  --ink-soft: #243044;
+  --muted: #5c6678;
+  --line: #d9dee8;
+  --surface: #f4f6f8;
   --surface-elevated: #ffffff;
-  --accent: #0f766e;
-  --accent-deep: #0b5f59;
-  --accent-soft: #e7f4f2;
-  --hero-overlay: linear-gradient(105deg, rgba(8, 18, 28, 0.92) 0%, rgba(8, 18, 28, 0.72) 48%, rgba(8, 18, 28, 0.45) 100%);
-  --font-display: 'Newsreader', Georgia, serif;
-  --font-body: 'Outfit', system-ui, sans-serif;
+  --accent: #21db77;
+  --accent-deep: #18b965;
+  --accent-text: #0c7a42;
+  --accent-soft: #e8fbf1;
+  --hero-overlay: linear-gradient(105deg, rgba(11, 18, 38, 0.92) 0%, rgba(11, 18, 38, 0.72) 48%, rgba(11, 18, 38, 0.45) 100%);
+  --font-display: 'Manrope', 'Segoe UI', sans-serif;
+  --font-body: 'Inter', 'Segoe UI', sans-serif;
   --radius: 0.35rem;
   --shadow: 0 18px 40px rgba(12, 26, 36, 0.08);
 }
@@ -37,6 +38,11 @@ body {
   color: var(--ink);
   background: var(--surface);
   -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 700;
 }
 
 img {

@@ -4,7 +4,7 @@
 }
 
 .eyebrow {
-  color: var(--accent);
+  color: var(--accent-text);
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.12em;
@@ -40,7 +40,7 @@
 .contactLayout h2,
 .contactCompact h2 {
   font-family: var(--font-display);
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: -0.03em;
   line-height: 1.12;
   color: var(--ink);
@@ -72,8 +72,32 @@
 
 .heroCopy h1 {
   font-size: clamp(2.15rem, 4vw, 3.35rem);
-  margin-bottom: 1rem;
-  max-width: 16ch;
+  margin-bottom: 1.25rem;
+  max-width: 14ch;
+}
+
+.heroLines {
+  list-style: none;
+  display: grid;
+  gap: 0.9rem;
+  margin: 0 0 1.6rem;
+  padding: 0;
+}
+
+.heroLines li {
+  display: grid;
+  gap: 0.15rem;
+  padding-left: 0.85rem;
+  border-left: 3px solid var(--accent);
+  color: var(--muted);
+  font-size: 1rem;
+}
+
+.heroLines span {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--ink);
+  font-size: 1.02rem;
 }
 
 .heroPhotos {
@@ -128,7 +152,7 @@
 .cardActions a:last-child,
 .form button {
   background: var(--accent);
-  color: #fff;
+  color: var(--ink);
   border: 1px solid var(--accent);
 }
 
@@ -190,7 +214,7 @@
   width: 0.45rem;
   height: 0.45rem;
   border-radius: 50%;
-  background: #7dcec6;
+  background: var(--accent);
 }
 
 .visualBody {
@@ -381,9 +405,9 @@
 
 .areaCard h3 {
   font-family: var(--font-display);
-  font-size: clamp(1.6rem, 2.5vw, 2.1rem);
-  line-height: 1.15;
-  font-weight: 600;
+  font-size: clamp(1.45rem, 2.2vw, 1.85rem);
+  line-height: 1.2;
+  font-weight: 700;
 }
 
 .areaCard p:last-of-type {
@@ -393,7 +417,7 @@
 
 .areaCard .primary {
   background: var(--accent);
-  color: #fff;
+  color: var(--ink);
   border-color: var(--accent);
 }
 

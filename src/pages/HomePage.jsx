@@ -4,11 +4,7 @@ import {
   AreaSplit,
   ClosingCta,
   CustomSection,
-  DigitalSection,
-  EquipmentSection,
-  HealthSection,
   ProductsSection,
-  WhySection,
 } from '../components/presentation/SiteSections';
 import { usePageMeta } from '../components/presentation/usePageMeta';
 import { QUOTE_URL } from '../components/presentation/content';
@@ -27,14 +23,21 @@ function HomePage() {
       <section className={styles.container}>
         <div className={styles.hero}>
           <div className={styles.heroCopy}>
-            <p className={styles.eyebrow}>Soluciones para la salud</p>
-            <h1>Equipamiento médico y tecnología para instituciones de salud.</h1>
-            <p className={styles.lead}>
-              KodeON comercializa y mantiene equipamiento médico, y desarrolla aplicaciones, sistemas web y sitios para hospitales, clínicas y consultorios.
-            </p>
+            <p className={styles.eyebrow}>KodeON Soluciones</p>
+            <h1>Tecnología al servicio de la salud.</h1>
+            <ul className={styles.heroLines}>
+              <li>
+                <span>Desarrollo</span>
+                Páginas web, sistemas CRM y aplicaciones Android.
+              </li>
+              <li>
+                <span>Equipamiento médico</span>
+                Venta y servicio técnico.
+              </li>
+            </ul>
             <div className={styles.actions}>
               <a href={QUOTE_URL} className={styles.primary} target="_blank" rel="noopener noreferrer">Solicitar presupuesto</a>
-              <a href="#areas" className={styles.secondary}>Conozca las soluciones</a>
+              <a href="/contacto" className={styles.secondary}>Consultar por un servicio</a>
             </div>
           </div>
           <div className={styles.heroPhotos}>
@@ -46,12 +49,8 @@ function HomePage() {
       </section>
 
       <AreaSplit />
-      <EquipmentSection />
-      <DigitalSection />
       <ProductsSection />
       <CustomSection />
-      <HealthSection />
-      <WhySection />
 
       <ClosingCta />
       <ContactPanel compact />
