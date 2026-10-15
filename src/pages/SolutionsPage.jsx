@@ -14,9 +14,9 @@ function SolutionsPage() {
       <header className={styles.pageHero}>
         <div className={styles.container}>
           <p className={styles.eyebrow}>Soluciones</p>
-          <h1>Equipamiento médico y desarrollo, en el mismo lugar.</h1>
+          <h1>Soluciones de electromedicina y de desarrollo para la salud.</h1>
           <p className={styles.lead}>
-            Una institución puede necesitar un equipo, un service o un sistema. KodeON cubre las tres conversaciones.
+            Equipamiento, servicio técnico y software de gestión, presentados para que una institución evalúe cada línea con el mismo criterio.
           </p>
           <div className={styles.actions}>
             <a href="#equipamiento" className={styles.primary}>Equipamiento</a>

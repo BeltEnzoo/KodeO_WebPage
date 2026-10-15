@@ -38,9 +38,9 @@ function ContactPanel({ compact = false }) {
         <div className={compact ? styles.contactCompact : styles.contactLayout}>
           <div>
             <p className={styles.eyebrow}>Contacto</p>
-            <h2>¿Necesitás una solución tecnológica?</h2>
+            <h2>Información técnica y comercial</h2>
             <p className={styles.lead}>
-              Contanos qué necesitás y analizamos juntos la mejor solución: un equipo, un service o un desarrollo.
+              Indique si la consulta es por equipamiento, servicio técnico, una aplicación o un sistema de gestión. Respondemos con una propuesta concreta.
             </p>
             <ul className={styles.contactList}>
               <li>
@@ -89,7 +89,7 @@ function ContactPanel({ compact = false }) {
               Consulta
               <textarea name="message" rows={5} value={form.message} onChange={update} required />
             </label>
-            <button type="submit" className={styles.primary}>Solicitar información</button>
+            <button type="submit" className={styles.primary}>Enviar consulta por WhatsApp</button>
             {status ? <p className={styles.formStatus} role="status">{status}</p> : null}
           </form>
         </div>

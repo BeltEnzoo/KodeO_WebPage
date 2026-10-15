@@ -24,22 +24,22 @@ export function AreaSplit() {
     <section id="areas" className={`${styles.section} ${styles.sectionAlt}`}>
       <div className={styles.container}>
         <div className={styles.sectionHead}>
-          <p className={styles.eyebrow}>Qué hacemos</p>
-          <h2>Dos áreas. Una misma visión tecnológica.</h2>
-          <p>KodeON trabaja el equipamiento y el software. Una institución puede comprar o mantener un equipo, y también digitalizar la gestión.</p>
+          <p className={styles.eyebrow}>Líneas de trabajo</p>
+          <h2>Equipamiento y desarrollo, para la misma institución.</h2>
+          <p>Una clínica o un hospital puede necesitar adquirir un equipo, mantener el que ya tiene y, al mismo tiempo, ordenar la gestión con un sistema o una aplicación.</p>
         </div>
         <div className={styles.areaGrid}>
           <article className={styles.areaCard}>
-            <p className={styles.eyebrow}>Equipamiento médico</p>
+            <p className={styles.eyebrow}>Electromedicina</p>
             <h3>Venta, mantenimiento y servicio técnico.</h3>
-            <p>Para quien necesita adquirir un equipo y para quien ya lo tiene y debe repararlo, prevenir fallas o llevar su historial.</p>
-            <Link to="/equipos" className={styles.primary}>Ver soluciones de equipamiento</Link>
+            <p>Asesoramiento comercial, puesta en marcha, preventivo, correctivo y registro de las intervenciones sobre el equipamiento.</p>
+            <Link to="/equipos" className={styles.primary}>Ver equipamiento y service</Link>
           </article>
           <article className={styles.areaCard}>
-            <p className={styles.eyebrow}>Desarrollo tecnológico</p>
-            <h3>Aplicaciones, sistemas, webs y automatizaciones.</h3>
-            <p>Soluciones digitales a medida, además de sistemas propios para equipamiento, consultorios y turnos.</p>
-            <Link to="/software" className={styles.primary}>Ver soluciones tecnológicas</Link>
+            <p className={styles.eyebrow}>Desarrollo para la salud</p>
+            <h3>Aplicaciones, sistemas web y sitios institucionales.</h3>
+            <p>Android, gestión de consultorio, turnos por llamado y páginas para presentar un servicio de salud con seriedad.</p>
+            <Link to="/software" className={styles.primary}>Ver desarrollo</Link>
           </article>
         </div>
       </div>
@@ -52,9 +52,9 @@ export function EquipmentSection() {
     <section id="equipamiento" className={styles.section}>
       <div className={styles.container}>
         <div className={styles.sectionHead}>
-          <p className={styles.eyebrow}>Área 1</p>
-          <h2>Equipamiento médico</h2>
-          <p>Soluciones desde la adquisición hasta el mantenimiento y el soporte técnico. El equipo se acompaña con criterio técnico y con registro de cada intervención.</p>
+          <p className={styles.eyebrow}>Electromedicina</p>
+          <h2>Equipamiento médico y servicio técnico</h2>
+          <p>Acompañamos a la institución desde la consulta comercial hasta el mantenimiento. El respaldo técnico cubre equipos por adquirir y equipos que ya están en servicio.</p>
         </div>
         <div className={styles.cardGrid}>
           {equipmentServices.map((item) => (
@@ -62,7 +62,7 @@ export function EquipmentSection() {
               <h3>{item.title}</h3>
               <p>{item.text}</p>
               <div className={styles.cardActions}>
-                <a href={solutionConsultUrl(item.title)} target="_blank" rel="noopener noreferrer">Consultar</a>
+                <a href={solutionConsultUrl(item.title)} target="_blank" rel="noopener noreferrer">Solicitar información</a>
               </div>
             </article>
           ))}
@@ -90,9 +90,9 @@ export function DigitalSection() {
     <section id="desarrollo" className={`${styles.section} ${styles.sectionAlt}`}>
       <div className={styles.container}>
         <div className={styles.sectionHead}>
-          <p className={styles.eyebrow}>Área 2</p>
-          <h2>Desarrollo de soluciones digitales</h2>
-          <p>Diseñamos y desarrollamos tecnología adaptada a cada proyecto: una aplicación, un sistema, un sitio o una automatización.</p>
+          <p className={styles.eyebrow}>Desarrollo</p>
+          <h2>Aplicaciones y sistemas para la salud</h2>
+          <p>Desarrollamos la herramienta digital que la institución necesita: una aplicación Android, un sistema web, un sitio o la automatización de un proceso de atención o de gestión.</p>
         </div>
         <div className={styles.cardGrid}>
           {digitalServices.map((item) => (
@@ -100,7 +100,7 @@ export function DigitalSection() {
               <h3>{item.title}</h3>
               <p>{item.text}</p>
               <div className={styles.cardActions}>
-                <a href={solutionConsultUrl(item.title)} target="_blank" rel="noopener noreferrer">Consultar</a>
+                <a href={solutionConsultUrl(item.title)} target="_blank" rel="noopener noreferrer">Solicitar información</a>
               </div>
             </article>
           ))}
@@ -115,9 +115,9 @@ export function ProductsSection() {
     <section id="productos" className={styles.section}>
       <div className={styles.container}>
         <div className={styles.sectionHead}>
-          <p className={styles.eyebrow}>Soluciones propias</p>
-          <h2>Sistemas que KodeON ya desarrolla.</h2>
-          <p>No son ideas sueltas. Son productos en curso, con el alcance que hoy está publicado.</p>
+          <p className={styles.eyebrow}>Sistemas propios</p>
+          <h2>Soluciones de gestión desarrolladas por KodeON.</h2>
+          <p>Tres sistemas en uso dentro de la oferta de software para salud. El detalle publicado es el alcance actual de cada uno.</p>
         </div>
         <div className={styles.cardGrid}>
           {ownProducts.map((product) => (
@@ -128,7 +128,7 @@ export function ProductsSection() {
                 {product.features.map((feature) => <li key={feature}>{feature}</li>)}
               </ul>
               <div className={styles.cardActions}>
-                <a href={solutionConsultUrl(product.title)} target="_blank" rel="noopener noreferrer">Consultar</a>
+                <a href={solutionConsultUrl(product.title)} target="_blank" rel="noopener noreferrer">Solicitar información</a>
               </div>
             </article>
           ))}
@@ -144,8 +144,8 @@ export function CustomSection() {
       <div className={styles.container}>
         <div className={styles.sectionHead}>
           <p className={styles.eyebrow}>A medida</p>
-          <h2>¿Tenés una idea? La desarrollamos.</h2>
-          <p>Cada organización tiene necesidades diferentes. Diseñamos aplicaciones, sistemas y herramientas adaptadas a cada proyecto.</p>
+          <h2>Si el proceso es propio, el sistema también.</h2>
+          <p>Hospitales, clínicas y consultorios no trabajan todos igual. El desarrollo parte de esa forma de trabajar y llega hasta la puesta en marcha.</p>
         </div>
         <div className={`${styles.stepGrid} ${styles.workGrid}`}>
           {customSteps.map((step) => (
@@ -167,12 +167,12 @@ export function HealthSection() {
       <div className={`${styles.container} ${styles.split}`}>
         <div className={styles.prose}>
           <p className={styles.eyebrow}>Salud</p>
-          <h2>Tecnología que entiende la realidad del sector salud.</h2>
+          <h2>Un interlocutor para el equipo y para el sistema.</h2>
           <p>
-            KodeON combina conocimiento de tecnología, equipamiento médico y desarrollo de software. Eso permite hablar con un hospital, una clínica o un consultorio sobre el equipo, el mantenimiento y el sistema que registra la operación.
+            KodeON reúne electromedicina y desarrollo de software. La institución puede consultar la compra o la reparación de un equipo y, en la misma conversación, la aplicación o el sitio que ordena su gestión.
           </p>
           <p>
-            La especialización nace en salud. También desarrollamos para empresas, profesionales, municipios e instituciones cuando el problema es tecnológico y hay que resolverlo con una solución concreta.
+            El trabajo está pensado para hospitales, clínicas, centros de salud y consultorios. Cuando el proyecto lo requiere, el desarrollo también alcanza a empresas e instituciones públicas del área de salud.
           </p>
         </div>
         <div className={styles.audienceGrid}>
@@ -192,7 +192,7 @@ export function WhySection() {
       <div className={styles.container}>
         <div className={styles.sectionHead}>
           <p className={styles.eyebrow}>Por qué KodeON</p>
-          <h2>Equipamiento y software, con el mismo criterio.</h2>
+          <h2>Criterio técnico en el equipo y en el software.</h2>
         </div>
         <div className={styles.reasonGrid}>
           {reasons.map((item) => (
@@ -213,12 +213,12 @@ export function ClosingCta() {
       <div className={styles.container}>
         <div className={styles.ctaBand}>
           <div>
-            <h2>Equipamiento, service o un sistema. Se puede empezar por cualquiera.</h2>
-            <p>Hospital, clínica, consultorio, empresa o municipio: la conversación arranca por la necesidad concreta.</p>
+            <h2>Solicite información técnica o comercial.</h2>
+            <p>Equipamiento, servicio técnico, una aplicación Android o un sistema de gestión para su institución.</p>
           </div>
           <div className={styles.actions}>
             <Link to="/equipos" className={styles.secondary}>Equipamiento</Link>
-            <Link to="/contacto" className={styles.primary}>Hablemos de tu proyecto</Link>
+            <Link to="/contacto" className={styles.primary}>Contactar a KodeON</Link>
           </div>
         </div>
       </div>

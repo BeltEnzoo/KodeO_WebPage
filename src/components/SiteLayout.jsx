@@ -14,6 +14,7 @@ import Logo from './Logo';
 import Footer from './Footer';
 import BackToTop from './BackToTop';
 import styles from './SiteLayout.module.css';
+import { EMAIL, QUOTE_URL } from './presentation/content';
 
 const navItems = [
   { to: '/', label: 'Inicio', end: true },
@@ -21,7 +22,6 @@ const navItems = [
   { to: '/software', label: 'Desarrollo' },
   { to: '/soluciones', label: 'Soluciones' },
   { to: '/nosotros', label: 'Nosotros' },
-  { to: '/proyectos', label: 'Proyectos', also: ['/clientes'] },
   { to: '/contacto', label: 'Contacto' },
 ];
 
@@ -52,7 +52,7 @@ function SiteLayout() {
             </div>
             <div className={styles.topBarItem}>
               <Mail className={styles.topBarIcon} />
-              <span>on.kode.soluciones@gmail.com</span>
+              <span>{EMAIL}</span>
             </div>
           </div>
           <div className={styles.topBarRight}>
@@ -90,8 +90,17 @@ function SiteLayout() {
                   {item.label}
                 </NavLink>
               ))}
-              <Link to="/login" className={styles.loginButton}>Iniciar sesión</Link>
             </nav>
+
+            <Link to="/login" className={styles.loginButton}>Iniciar sesión</Link>
+            <a
+              href={QUOTE_URL}
+              className={styles.quoteButton}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Solicitar presupuesto
+            </a>
 
             <button
               type="button"
@@ -120,6 +129,9 @@ function SiteLayout() {
                 {item.label}
               </NavLink>
             ))}
+            <a href={QUOTE_URL} className={styles.mobileQuote} target="_blank" rel="noopener noreferrer">
+              Solicitar presupuesto
+            </a>
             <Link to="/login" className={styles.mobileLogin}>Iniciar sesión</Link>
           </nav>
         )}

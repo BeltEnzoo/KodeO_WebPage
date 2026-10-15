@@ -169,7 +169,7 @@ export async function downloadRemitoPdf(equipment) {
 
   page.drawRectangle({ x: 300, y: 36, width: 260, height: 18, color: brandBlue });
   page.drawText('www.kodeonsoluciones.com', { x: 348, y: 42, size: 8.5, font: fontBold, color: rgb(1, 1, 1) });
-  page.drawText('WhatsApp 2944369647  |  on.kode.soluciones@gmail.com', {
+  page.drawText('WhatsApp 2944369647  |  info@kodeonsoluciones.com', {
     x: 35,
     y: 42,
     size: 8,

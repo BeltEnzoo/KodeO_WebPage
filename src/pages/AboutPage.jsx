@@ -14,9 +14,9 @@ function AboutPage() {
       <header className={styles.pageHero}>
         <div className={styles.container}>
           <p className={styles.eyebrow}>Nosotros</p>
-          <h1>Tecnología pensada para resolver problemas reales.</h1>
+          <h1>Electromedicina y desarrollo, con el mismo respaldo.</h1>
           <p className={styles.lead}>
-            No vendemos una herramienta por venderla. Primero entendemos qué hay que resolver y después desarrollamos el sistema, la aplicación o la automatización que corresponde.
+            KodeON atiende la consulta comercial y técnica del equipamiento, y desarrolla las aplicaciones y los sistemas que la institución usa para gestionar su operación.
           </p>
         </div>
       </header>

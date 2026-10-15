@@ -14,9 +14,9 @@ function EquipmentPage() {
       <header className={styles.pageHero}>
         <div className={styles.container}>
           <p className={styles.eyebrow}>Equipamiento médico</p>
-          <h1>Venta, service y seguimiento del equipo.</h1>
-          <p className={styles.lead}>Para instituciones que necesitan adquirir equipamiento y para las que ya lo tienen y deben mantenerlo, repararlo o registrarlo.</p>
-          <Link to="/contacto" className={styles.primary}>Consultar equipamiento</Link>
+          <h1>Venta, service y seguimiento del equipamiento.</h1>
+          <p className={styles.lead}>Para instituciones que evalúan una compra y para las que necesitan mantener, reparar o registrar el equipamiento que ya está en servicio.</p>
+          <Link to="/contacto" className={styles.primary}>Solicitar información técnica</Link>
         </div>
       </header>
       <EquipmentSection />

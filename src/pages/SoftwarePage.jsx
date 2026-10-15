@@ -14,9 +14,9 @@ function SoftwarePage() {
       <header className={styles.pageHero}>
         <div className={styles.container}>
           <p className={styles.eyebrow}>Desarrollo tecnológico</p>
-          <h1>Aplicaciones, sistemas y sitios a medida.</h1>
-          <p className={styles.lead}>Además de los desarrollos propios para salud, KodeON construye la herramienta que el proyecto necesita.</p>
-          <Link to="/contacto" className={styles.primary}>Consultar un desarrollo</Link>
+          <h1>Aplicaciones y sistemas para instituciones de salud.</h1>
+          <p className={styles.lead}>Android, sistemas web, sitios institucionales y los sistemas propios de gestión de equipos, consultorios y turnos.</p>
+          <Link to="/contacto" className={styles.primary}>Solicitar información</Link>
         </div>
       </header>
       <DigitalSection />

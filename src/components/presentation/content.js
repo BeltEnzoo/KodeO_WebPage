@@ -1,27 +1,27 @@
 export const WHATSAPP_URL = 'https://wa.me/5492944369647';
-export const EMAIL = 'on.kode.soluciones@gmail.com';
+export const EMAIL = 'info@kodeonsoluciones.com';
 export const PHONE_LABEL = '+54 9 2944 36-9647';
 
 export const equipmentServices = [
   {
-    title: 'Venta de equipamiento',
-    text: 'Asesoramiento y comercialización según la necesidad de la institución, con puesta en marcha incluida.',
+    title: 'Venta y asesoramiento',
+    text: 'Comercialización de equipamiento médico con asesoramiento previo y puesta en marcha, según la necesidad de la institución.',
   },
   {
     title: 'Servicio técnico',
-    text: 'Diagnóstico y reparación de hardware médico, en campo o en taller, con seguimiento hasta el cierre.',
+    text: 'Diagnóstico y reparación de equipamiento de uso médico, en la institución o en taller, con seguimiento hasta el cierre del trabajo.',
   },
   {
     title: 'Mantenimiento preventivo',
-    text: 'Revisiones planificadas para reducir fallas y alargar la vida útil del equipo.',
+    text: 'Revisiones programadas para reducir fallas y cuidar la vida útil del equipo.',
   },
   {
     title: 'Mantenimiento correctivo',
-    text: 'Intervención técnica cuando el equipo falla. Cada trabajo queda documentado.',
+    text: 'Intervención ante una falla de funcionamiento. Cada trabajo queda registrado.',
   },
   {
-    title: 'Gestión y monitoreo',
-    text: 'Software propio para registrar intervenciones, estado operativo e historial del equipamiento.',
+    title: 'Gestión y seguimiento',
+    text: 'Sistema propio para consultar estado, intervenciones e historial del equipamiento.',
   },
 ];
 
@@ -34,27 +34,27 @@ export const equipmentLines = [
 export const digitalServices = [
   {
     title: 'Aplicaciones Android',
-    text: 'Desarrollo de aplicaciones para dispositivos Android, según el uso real del proyecto.',
+    text: 'Aplicaciones para el teléfono del profesional o del personal de la institución, desarrolladas para el uso concreto del servicio.',
   },
   {
-    title: 'Aplicaciones web',
-    text: 'Sistemas accesibles desde el navegador, adaptados a la organización que los va a usar.',
+    title: 'Aplicaciones y sistemas web',
+    text: 'Sistemas de gestión accesibles desde el navegador, para consultorios, clínicas y áreas administrativas.',
   },
   {
-    title: 'Páginas web',
-    text: 'Sitios profesionales para instituciones, consultorios y empresas.',
+    title: 'Sitios institucionales',
+    text: 'Páginas web para presentar un servicio de salud, un consultorio o una institución con información clara y verificable.',
   },
   {
-    title: 'Sistemas a medida',
-    text: 'Sistemas de gestión para procesos concretos de una clínica, un negocio o una institución.',
+    title: 'Desarrollo a medida',
+    text: 'Cuando el circuito de trabajo es propio, el sistema se diseña sobre ese circuito y no sobre una plantilla.',
   },
   {
-    title: 'Automatizaciones',
-    text: 'Digitalización de tareas repetitivas para que la información no dependa de pasos sueltos.',
+    title: 'Automatización de procesos',
+    text: 'Tareas repetitivas de registro y seguimiento, resueltas para que la información quede en un solo lugar.',
   },
   {
-    title: 'Integraciones',
-    text: 'Conexión entre sistemas y herramientas cuando el proyecto lo necesita.',
+    title: 'Integración entre sistemas',
+    text: 'Conexión entre herramientas existentes cuando la institución ya opera con más de un sistema.',
   },
 ];
 
@@ -62,19 +62,19 @@ export const ownProducts = [
   {
     id: 'gestion-equipos',
     title: 'Gestión de equipamiento médico',
-    text: 'Sistema propio para organizar la información del equipamiento: intervenciones, estado operativo e historial.',
+    text: 'Sistema para organizar la información técnica del parque de equipos: intervenciones, estado e historial.',
     features: ['Registro de intervenciones', 'Estado operativo', 'Historial del equipo'],
   },
   {
     id: 'consultorios',
     title: 'Gestión de consultorios privados',
-    text: 'KodeON Consultorio ordena la administración de un consultorio privado.',
+    text: 'Sistema para la administración de un consultorio privado.',
     features: ['Turnos', 'Historias clínicas', 'Administración'],
   },
   {
     id: 'turnos',
     title: 'Sistema de turnos por llamado',
-    text: 'Solución orientada a la gestión de turnos mediante llamados.',
+    text: 'Solución para organizar turnos mediante llamados en la sala de atención.',
     features: ['Organización de llamados', 'Gestión de turnos'],
   },
 ];
@@ -96,6 +96,8 @@ export const reasons = [
   { title: 'Innovación', text: 'Ordenar un proceso con una herramienta usable, no con complejidad de más.' },
   { title: 'Acompañamiento', text: 'El trabajo queda documentado y hay seguimiento después de la intervención o la entrega.' },
 ];
+
+export const QUOTE_URL = `${WHATSAPP_URL}?text=${encodeURIComponent('Hola, quiero solicitar un presupuesto.')}`;
 
 export function solutionConsultUrl(title) {
   const text = `Hola, quiero consultar por: ${title}`;

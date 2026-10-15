@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { EMAIL } from './presentation/content';
 import { Instagram, Facebook, Linkedin } from 'lucide-react';
 import styles from './Footer.module.css';
 
@@ -35,7 +36,6 @@ function Footer() {
               <li><Link to="/software">Desarrollo</Link></li>
               <li><Link to="/soluciones">Soluciones</Link></li>
               <li><Link to="/nosotros">Nosotros</Link></li>
-              <li><Link to="/proyectos">Proyectos</Link></li>
               <li><Link to="/contacto">Contacto</Link></li>
             </ul>
           </div>
@@ -58,7 +58,7 @@ function Footer() {
                 </a>
               </li>
               <li>
-                <a href="mailto:on.kode.soluciones@gmail.com">on.kode.soluciones@gmail.com</a>
+                <a href={`mailto:${EMAIL}`}>{EMAIL}</a>
               </li>
               <li>Buenos Aires, Argentina</li>
             </ul>
